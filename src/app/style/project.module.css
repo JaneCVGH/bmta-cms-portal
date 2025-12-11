@@ -1,0 +1,299 @@
+/* project/page.module.css */
+
+
+/* body {
+  
+} */
+
+/* รายการโปรเจกต์ */
+
+/* พื้นหลังของหน้า */
+.ProjectList {
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(to right, #a7bff3, #e9c5ff);
+  min-height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
+  padding: 2rem;
+  max-width: 1200px;
+  margin: auto;
+}
+
+/* แถวหัวเรื่อง */
+.ProjectHeaderRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+/* หัวข้อหลัก */
+.Projectheader {
+  font-size: 36px;
+  font-weight: bold;
+  color: #000000;
+  margin: 0 auto;
+  text-align: center;
+  width: 100%;
+}
+
+/* ปุ่มเพิ่มโปรเจกต์ */
+.AddBtnProject {
+  background-color: #2ead6b;
+  color: white;
+  border: none;
+  padding: 0.6rem 0.8rem;
+  font-size: 17px;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  margin-left: auto;
+  font-weight: bold;
+  
+}
+
+.AddBtnProject:hover {
+  background-color: #14894c;
+}
+
+/* การ์ดโปรเจกต์ */
+.ProjectCard {
+  background-color: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+  transition: box-shadow 0.2s ease;
+}
+
+.ProjectCard:hover {
+  box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+}
+
+/* แถวบนของการ์ด */
+.ProjectCardTopRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+/* ชื่อโปรเจกต์ */
+.ProjectCardName {
+  font-size: 26px;
+  font-weight: 600;
+  color: #000000;
+}
+
+/* กลุ่มปุ่ม action */
+.ProjectCardActions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* ปุ่มดู / แก้ไข / ลบ */
+.ViewBtn,
+.EditBtn,
+.DeleteBtn {
+  color: white;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 0.4rem;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  transition: background-color 0.2s ease;
+}
+
+/* ปุ่มดู Project = ฟ้า */
+.ViewBtn {
+  background-color: #379ddd;
+}
+
+.ViewBtn:hover {
+  background-color: #06639c;
+}
+
+/* ปุ่มแก้ไข Project = เหลือง */
+.EditBtn {
+  background-color: #f4ba0b;
+}
+
+.EditBtn:hover {
+  background-color: #d47f00;
+}
+
+/* ปุ่มลบ Project = แดง */
+.DeleteBtn {
+  background-color: #e03c4c;
+}
+
+.DeleteBtn:hover {
+  background-color: rgb(156, 0, 0);
+}
+
+.AddTaskBtn{
+  color: #000000;
+  font-size: 24px;
+}
+
+/* คำอธิบาย */
+.ProjectCardDesc {
+  color: #000000;
+  font-size: 18px;
+  margin-bottom: 0.8rem;
+}
+
+/* วันที่เริ่ม - สิ้นสุด */
+.ProjectCardDate {
+  font-size: 15px;
+  color: #000000;
+}
+
+/* กล่องรวม Task List */
+.TaskList {
+  margin-top: 20px;
+  padding: 1rem;
+  background-color: #d1d1d1;
+  border-left: 4px solid #3b82f6;
+  border-radius: 0.5rem;
+  color: #000; 
+}
+
+.TaskList ul {
+  padding-left: 0;
+  list-style-type: none;
+}
+
+.AddTaskButton,
+.ViewBtnTask,
+.EditBtnTask,
+.DeleteBtnTask {
+   color: white;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 0.4rem;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  transition: background-color 0.2s ease;
+}
+
+
+/* ปุ่มเพิ่ม Task */
+.AddTaskButton {
+  background-color:  #2ead6b;
+
+  font-weight: bold;
+}
+.AddTaskButton:hover {
+  background-color: #14894c;
+}
+
+/* กล่องปุ่มเพิ่ม Task */
+.TaskButtonContainer {
+  display: flex;
+  justify-content:  space-between;
+  margin-bottom: 1rem;
+  align-items: center;
+}
+
+/* ปุ่มดู Task */
+.ViewBtnTask {
+  background-color: #379ddd;
+}
+
+.ViewBtnTask:hover
+ {
+  background-color: #06639c;
+}
+
+/* ปุ่มแก้ไข Task */
+.EditBtnTask {
+  background-color: #f4ba0b;
+}
+.EditBtnTask:hover {
+  background-color: #d47f00;
+}
+
+/* ปุ่มลบ Task */
+.DeleteBtnTask {
+  background-color: #e03c4c;
+}
+.DeleteBtnTask:hover {
+  background-color: rgb(156, 0, 0);
+}
+
+.TaskHeader{
+  margin: 0;
+  font-size: 22px;
+  font-weight: bold;
+  color: #000;
+}
+
+/* กล่องแต่ละแถวของ Task */
+.TaskRow {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px;
+  margin-bottom: 12px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+.TaskHeaderRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* ชื่อ Task */
+.TaskTitle {
+  font-size: 18px;
+  color: #000000;
+}
+
+/* ปุ่มดู/แก้ไข/ลบ ชิดขวา */
+.TaskActionButtons {
+  display: flex;
+  gap: 8px;
+}
+
+/* สถานะและวันครบกำหนด */
+.inputTask {
+  font-size: 15px;
+  color: #000000;
+  margin-top: 4px;
+}
+
+.TaskRow:not(:last-child) {
+  border-bottom: 1px dashed #ccc;
+}
+
+.InputStatetask{
+  font-size: 17px;
+  font-weight: normal;
+}
+
+.InputDatetask{
+  font-size: 17px;
+  font-weight: normal;
+}
+
+.InputNametask{
+  font-size: 20px;
+  font-weight: bold;
+}

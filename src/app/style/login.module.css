@@ -1,0 +1,138 @@
+/* login.module.css */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: linear-gradient(to right, #a7bff3, #e9c5ff);
+}
+
+/* iconWrapper ให้อยู่บนกล่อง login */
+.iconWrapper {
+  margin-bottom: -30px;
+  z-index: 1;
+}
+
+.iconRegister {
+  /* font-size: 90px; */
+  color: white;
+  background-color: #000000;
+  padding: 16px;
+  border-radius: 50%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  width: 76px;
+  height: 84px;
+  
+}
+
+/* .iconRegister :global(svg) {
+  font-size: 28px;  ขนาดตัว icon */
+  /* color: white;
+  margin-bottom: 1cm;
+  margin-left: 10%;
+} */
+
+.iconUserRegister{
+  font-size: 48px;
+  margin-bottom: 1cm;
+  margin-left: 0.05cm;
+}
+
+/* กล่อง login form */
+.login {
+  background-color: white;
+  padding: 3rem;
+  padding-top: 4rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  position: relative;
+}
+
+.loginHeader {
+  font-size: 28px;
+  color: #000000;
+  margin-bottom: 1.5rem;
+}
+
+.loginForm {
+  display: flex;
+  flex-direction: column;
+}
+
+.inputContainer {
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 0.6rem 1rem;
+  margin-bottom: 1.2rem;
+}
+
+.inputContainer input {
+   flex: 1;
+  border: none;
+  outline: none;
+  font-size: 18px;
+  padding: 8px;
+  background: transparent;
+  color: black;
+}
+
+.inputContainer input::placeholder {
+  color: black;
+}
+
+/* ปุ่ม Login */
+.buttonCentered {
+  text-align: center;
+}
+
+.btnLogin {
+  background-color: #3f51b5;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  font-size: 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.btnLogin:hover {
+  background-color: #303d8a;
+}
+
+.btnLogin:disabled {
+  background-color: #9fa8da;
+  cursor: not-allowed;
+}
+
+/* ลิงก์ไป Register */
+.registerLink {
+  margin-top: 20px;
+  color: #000000;
+  text-decoration: none;
+  font-size: 18px;
+}
+
+.registerLink:hover {
+  text-decoration: underline;
+}
+
+/* Link เปลี่ยนรหัสผ่าน */
+.ChangePassword {
+  color: #000;
+  margin-left: 5cm;
+}
+
+/* Icon */
+.IconInput{
+  color: #000;
+}

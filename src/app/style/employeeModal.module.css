@@ -1,0 +1,123 @@
+/* src/app/style/employeeModal.module.css */
+
+.modalShow {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.ModalContent {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 30px 25px;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  animation: slideDown 0.3s ease;
+  position: relative;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* หัวข้อ modal */
+.veiwEdit {
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #000;
+}
+
+.FormVertical {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  color: #000;
+}
+
+.viewModal {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-bottom: 10px;
+  color: #000;
+  font-size: 16px;
+}
+
+.EditandAdd {
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.inlineLabel {
+  width: 90px; /* ปรับให้ label กว้างพอเหมาะ */
+  font-weight: bold;
+  color: #000;
+}
+
+.inputField {
+  flex: 1; /* ให้ input ขยายเต็มที่เท่าที่เหลือ */
+  padding: 10px; /*14px; */
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 16px;
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 0.3s;
+}
+
+/* ปุ่มใน modal */
+.saveBtn  {
+  
+  font-size: 16px;
+  background-color: #3dd47c;
+  color: rgb(0, 0, 0);
+
+  width: 450px;            /* กำหนดความกว้างของปุ่ม */
+  height: 50px;            /* ความสูง (ถ้าไม่ใช้ padding) */
+  
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  
+  /* margin-top: 15px; */
+}
+.saveBtn:hover {
+  background-color: #00a344;
+}
+.closeBtn {
+  background-color: #c6c6c6;
+  color: black;
+
+  width: 450px;            /* กำหนดความกว้างของปุ่ม */
+  height: 50px;            /* ความสูง (ถ้าไม่ใช้ padding) */
+  
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.closeBtn:hover {
+  background-color: #696969;
+}
+
+

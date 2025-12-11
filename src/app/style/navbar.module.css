@@ -1,0 +1,88 @@
+.navbarList{
+    display: flex; /*จัดเรียงองค์ประกอบภายใน navbar เป็นแนวนอน*/
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 10px;
+    background-color:#5930a4;
+    width: 100%;       /* เต็มความกว้างหน้าจอ */
+    /* max-width: 100%; ความกว้างเต็ม viewport width (หน้าจอ) */
+    height: auto; /* ความสูงปรับตามเนื้อหา */
+    box-sizing: border-box; /* ป้องกัน padding ทำให้ element ขยายเกินขอบจอ */
+}
+
+/* โลโก้อยู่ซ้าย */
+.logo{
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.iconlogo{
+  font-size: 34px;
+}
+
+/* เมนูรวมทั้งหมด */
+.navLinks {
+  display: flex;
+  gap: 20px; /* ระยะห่างระหว่างไอคอน */
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.subsetting{
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 60px; /* ปรับตามตำแหน่งที่ต้องการให้เมนูย่อยแสดง */
+  right: 20px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  padding: 10px;
+  z-index: 100;
+}
+
+.navItem {
+    font-size: 18px;
+}
+
+/* ✅ จุดสำคัญ: ปรับขนาด icon ด้วย class นี้ */
+.icon {
+  margin-top: 0.3cm;
+  font-size: 22px;  /* ปรับขนาดไอคอนได้ที่นี่ */
+  color: #ffffff;      /* ปรับสีไอคอน */
+  transition: transform 0.2s ease;
+}
+
+/* .sunsetting-icon {
+  font-size: 20px;
+} */
+.subSetting {
+  margin: 5px 0;
+  cursor: pointer;
+  font-size: 18px;
+  margin-right: 8px; /* เว้นห่างจากข้อความ */
+}
+
+
+.btnLogout {
+  background-color: #f05353; /* สีแดง */
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 18px;
+  transition: background-color 0.3s ease;
+}
+
+ /* .btn-logout:hover {
+  background-color: #8f0000; /* สีแดงเข้มเมื่อ hover */
+/*}  */
+
+.LogOutIcon{
+  font-size: 18px;
+  margin-right: 8px;
+}

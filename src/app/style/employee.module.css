@@ -1,0 +1,209 @@
+/*style\employee.module.css */
+/* container และพื้นหลัง */
+/* พื้นหลังของหน้า */
+/* body {
+  
+} */
+
+.container {
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(to right, hwb(221 75% 0%), #e9c7ff);
+  min-height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
+  color: #000000;
+  padding: 20px;
+  font-family: 'Segoe UI', sans-serif;
+  min-height: 100vh;
+}
+
+/* หัวข้อหลัก */
+.title {
+  text-align: center;
+  font-size: 36px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #000000;
+}
+
+/* ปุ่มเพิ่ม/แก้ไข ด้านบน */
+.edit {
+  margin-bottom: 15px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* ปุ่ม เพิ่ม (ใช้ไอคอนดินสอ) */
+.btnAdd {
+  background-color: #2ead6b;
+  color: white;
+  font-weight: bold;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.btnAdd:hover {
+  background-color: #14894c;
+}
+
+/* ปุ่มในแต่ละแถว */
+/* ปุ่มดู (ไอคอนดวงตา) สีเขียว */
+.viewBtn {
+  background-color: #379ddd;
+  color:#fff;
+  margin-right: 5px;
+  border: none;
+  border-radius: 6px;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.viewBtn:hover {
+  background-color: #06639c;
+}
+
+/* ปุ่มแก้ไข (ไอคอนไม้บรรทัด/ดินสอ) สีน้ำเงิน */
+.editBtn {
+  background-color: #f4ba0b;
+  color: white;
+  margin-right: 5px;
+  border: none;
+  border-radius: 6px;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.editBtn:hover {
+  background-color: #d47f00;
+}
+
+/* ปุ่มลบ (ไอคอนถังขยะ) สีแดง */
+.deleteBtn {
+  background-color: #e03c4c;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.deleteBtn:hover {
+  background-color: rgb(156, 0, 0);
+}
+
+/* ตาราง */
+.tableEmployee {
+  width: 20cm;
+  border-collapse: collapse;
+  margin: 0 auto;
+  margin-top: 20px;
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+  height: 2cm;
+}
+
+/* หัวตาราง  #31649 */
+.EmployeeThead {
+  background-color: #000000;
+  color: white;
+}
+
+/* คอลัมน์หัวตาราง, คอลัมน์ข้อมูล */
+.th,.td {
+  text-align: left;
+  padding: 12px 10px;
+  border-bottom: 1px solid #ddd;
+  font-size: 16px;
+
+}
+
+/* แถวข้อมูล */
+.tr:hover {
+  background-color: #f5f5f5;
+}
+
+/* --------Row per page = 5 แสดงรายชื่อพนักงานหน้าละ 5 คน-------- */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 8rem;
+  
+}
+
+.pagination button {
+  padding: 6px 12px;
+  background-color: #1f7cff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.pagination button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.pagination span {
+  font-weight: bold;
+  font-size: 24px;
+}
+
+/* --------searchEmployee-------- */
+.topBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+/* กล่องครอบรวมทั้งหมด */
+
+/* .searchEmployee {
+  display: flex;
+   justify-content: flex-end;
+  margin-bottom: 20px; 
+} */
+
+
+/* กล่องครอบ input + ไอคอน */
+.searchBox {
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  border: 1.5px solid #ccc;
+  border-radius: 8px;
+  padding: 8px 12px;
+  width: 300px;
+}
+
+/* ไอคอนค้นหา */
+.searchIcon {
+  color: #000;
+  font-weight: bold;
+  margin-right: 8px;
+  font-size: 18px;
+}
+
+/* input */
+.searchInput {
+  border: none;
+  outline: none;
+  font-size: 16px;
+  flex: 1;
+  background-color: transparent;
+  color: #000;
+}
+
+/* สีของ placeholder */
+.searchInput::placeholder {
+  color: #aaa;
+  font-weight: normal;
+}
+
