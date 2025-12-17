@@ -123,8 +123,8 @@ const printText = (value, maxWidth) => (
   <div
     className={`${styles.titleLabel} ${styles.fontTH}`}
     style={{
-      minHeight: "20px",
-      padding: "2px 4px",
+      // minHeight: "20px",
+      // padding: "2px 4px",
       maxWidth,
       whiteSpace: "pre-wrap",
     }}
