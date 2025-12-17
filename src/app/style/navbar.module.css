@@ -46,6 +46,7 @@
 
 .navItem {
     font-size: 18px;
+      color: #ffffff; 
 }
 
 /* ✅ จุดสำคัญ: ปรับขนาด icon ด้วย class นี้ */

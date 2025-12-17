@@ -13,6 +13,7 @@ import {
   faHome,
   faUsers,
   faFileLines,
+  faFile,
   // faGear, //เพิ่มไอคอน gear
   // faUserSecret,
   faRightFromBracket,
@@ -94,7 +95,12 @@ export default function Navbar() {
         >
           <FontAwesomeIcon icon={faHome} className={styles.icon} /> Home
         </li>
-
+<li
+          onClick={() => router.push("/pages/form")}
+          className={styles.navItem}
+        >
+          <FontAwesomeIcon icon={faFile} className={styles.icon} /> Form
+        </li>
         <li
           onClick={() => router.push("/pages/employee")}
           className={styles.navItem}
