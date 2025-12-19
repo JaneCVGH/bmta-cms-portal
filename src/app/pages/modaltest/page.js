@@ -1,14 +1,12 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "../../components/Navbar";
 import styles from "../../style/form.module.css";
 import Container from "react-bootstrap/Container";
 import Swal from "sweetalert2";
 import Button from "react-bootstrap/Button";
 import ModalForm from "../form/formEditModal";
-import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
 import { useSearchParams } from "next/navigation";
 
 
@@ -23,14 +21,11 @@ export default function FormPage() {
     const [formFields, setFormFields] = useState(null);
     const [formResponse, setformResponse] = useState(null);
     const [isDefault, setisDefault] = useState(true);
-    const [isPrint, setisPrint] = useState(false);
     const [casewithsub, setcasewithsub] = useState(null);
-    const [isEdit, setisEdit] = useState(false);
     const [username, setusername] = useState(searchParams.get("username"));
     const [JsonData, setJsonData] = useState({});
     const [Area, setArea] = useState(null);
     const [formSelect, setformSelect] = useState("");
-    const printRef = useRef(null);
 
     useEffect(() => {
         const init = async () => {
@@ -209,7 +204,7 @@ export default function FormPage() {
                     const response = await fetch(
                         "https://welcome-service-stg.metthier.ai:65000/api/v1/case/add",
                         {
-                            method: "POST",
+                            method: "PUT",
                             headers: {
                                 "Content-Type": "application/json",
                                 Authorization: `Bearer ${token}`,
@@ -331,9 +326,7 @@ export default function FormPage() {
             {formFields != null &&
                 <ModalForm
                     formFieldJson={formFields}
-                    setisEdit={setisEdit}
                     setFormFields={setFormFields}
-                    isPrint={isPrint}
                     handleClose={handleClose}
                     show={show}
                     caseId={caseId}

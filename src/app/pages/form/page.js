@@ -300,9 +300,9 @@ export default function FormPage() {
       <Container fluid className="d-flex justify-content-center">
         <div >
           <div>
+            <div className="mb-2">
             <Button onClick={downloadPDF} disabled={!isEdit} className="mt-2 me-2">Save PDF</Button>
-            <Button onClick={CreateCase} disabled={!isEdit} variant="secondary" className="mt-2 me-2">Create Case</Button>
-            <Button onClick={() => handleShow("001")}   variant="secondary" className="mt-2 me-2">Create Case</Button>
+            <Button onClick={CreateCase} disabled={!isEdit} variant="secondary" className="mt-2 me-2">Create Case</Button></div>
             <Header casewithsub={casewithsub} formSelect={formSelect} onFormChange={onFormChange}
               onDataChange={onDataChange} JsonData={JsonData} Area={Area}
               countries={country} provincesByCountry={province} districtsByProvince={districts}
@@ -311,8 +311,7 @@ export default function FormPage() {
 
           </div>
           <div ref={printRef} style={{
-            width: "210mm", minHeight: "297mm", padding: "20mm", background: "#fff",
-          }}>
+            width: "210mm", minHeight: "297mm", padding: "20mm", background: "#fff" }}>
             {formFields != null &&
               <DynamicFormRenderer
                 formFieldJson={formFields}
