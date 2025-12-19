@@ -40,3 +40,8 @@
 }
 
 
+.modal-a4 {
+  width: 210mm;
+  padding: 5px;
+  /* width: 100%; */
+}

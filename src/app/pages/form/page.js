@@ -15,7 +15,8 @@ import { useSearchParams } from "next/navigation";
 
 export default function FormPage() {
   const searchParams = useSearchParams();
-
+  const [show, setShow] = useState(false);
+  const [caseId, setcaseId] = useState("CASE-001");
   const mobileNo = searchParams.get("mobileNo");
   const method = searchParams.get("method");
   // const username = searchParams.get("username");
@@ -28,7 +29,7 @@ export default function FormPage() {
   const [isEdit, setisEdit] = useState(false);
   const [username, setusername] = useState(searchParams.get("username"));
   const [JsonData, setJsonData] = useState({});
-  const [Area, setArea] = useState(false);
+  const [Area, setArea] = useState(null);
   const [country, setcountry] = useState(null);
   const [province, setprovince] = useState(null);
   const [districts, setdistricts] = useState(null);
@@ -92,13 +93,14 @@ export default function FormPage() {
     }));
   };
 
-
   const CreateCase = async () => {
     const token = localStorage.getItem("access_token");
     if (username != null || username != "") {
       setusername(localStorage.getItem("username"))
     }
-
+          const selectedArea = Area.find(
+    item => item.id === JsonData.Area
+  );
     Swal.fire({
       html: `<span class="${styles.fontTH}">เปิดเหตุ?</span>`,
       // text: "You won't be able to revert this!",
@@ -121,14 +123,7 @@ export default function FormPage() {
           const json = {
             arrivedDate: null,
             assignUser: "",
-            attachments: [
-              {
-                attId: "",
-                attName: "",
-                attUrl: "",
-                type: "",
-              },
-            ],
+            attachments: [],
             caseDetail: "",
             caseDuration: 0,
             caseId: "",
@@ -141,21 +136,21 @@ export default function FormPage() {
             caseVersion: "publish",
             closedDate: null,
             commandedDate: null,
-            countryId: JsonData.country,
+            countryId: selectedArea.countryId,
             createdDate: new Date().toISOString(),
             deviceId: "",
-            distId: JsonData.districts,
+            distId: selectedArea.distId,
             extReceive: "",
             formData: formData,
             nodeId: formData.nextNodeId,
             phoneNo: "",
             phoneNoHide: true,
             priority: 0,
-            provId: JsonData.province,
+            provId: selectedArea.provId,
             receivedDate: null,
             referCaseId: "",
             resDetail: "",
-            resId: "",
+            resId: null,
             scheduleDate: null,
             scheduleFlag: false,
             source: JsonData.method,
@@ -199,38 +194,7 @@ export default function FormPage() {
         }
       }
     });
-
-
-
-
   }
-  const updateFieldValue = (fields, id, value) => {
-    return fields.map((field) => {
-      // normal field
-      if (field.id === id) {
-        return { ...field, value };
-      }
-
-      // InputGroup (children)
-      if (field.type === "InputGroup" && Array.isArray(field.value)) {
-        return {
-          ...field,
-          value: field.value.map((child) =>
-            child.id === id ? { ...child, value } : child
-          ),
-        };
-      }
-
-      return field;
-    });
-  };
-
-  const handleChange = useCallback((id, value) => {
-    setisEdit(true)
-    setFormFields((prev) =>
-      updateFieldValue(prev, id, value)
-    );
-  }, []);
 
   const downloadPDF = async () => {
     setisPrint(true);
@@ -257,7 +221,6 @@ export default function FormPage() {
     }, 300); // 200–300ms is ideal
   };
 
-
   const getDefaultData = async () => {
     const token = localStorage.getItem("access_token");
     if (!token) {
@@ -265,7 +228,7 @@ export default function FormPage() {
       return;
     }
     try {
-      console.log("ส่ง request ไปยัง API:");
+      console.log("API: casetypes_with_subtype");
       const response = await fetch(
         "https://welcome-service-stg.metthier.ai:65000/api/v1/casetypes_with_subtype",
         // `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/auth/login`,
@@ -275,11 +238,6 @@ export default function FormPage() {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`, // ✅ correct
           },
-          // body: JSON.stringify({
-          //   username,
-          //   password,
-          //   organization,
-          // }),
         }
       );
 
@@ -316,15 +274,7 @@ export default function FormPage() {
       const data = await response.json();
       console.log("✅ API Response:", data);
       if (response.ok) {
-        const {
-          countries,
-          provincesByCountry,
-          districtsByProvince,
-        } = transformLocationData(data.data);
-        setcountry(countries)
-        setprovince(provincesByCountry)
-        setdistricts(districtsByProvince)
-        setArea(true)
+        setArea(data.data)
       }
 
 
@@ -334,79 +284,16 @@ export default function FormPage() {
     }
   };
 
-  function transformLocationData(data) {
-    const countries = {};
-    const provincesByCountry = {};
-    const districtsByProvince = {};
-
-    data.forEach((item) => {
-      const {
-        countryId,
-        countryEn,
-        countryTh,
-        provId,
-        provinceEn,
-        provinceTh,
-        distId,
-        districtEn,
-        districtTh,
-      } = item;
-
-      // 1️⃣ Countries
-      if (!countries[countryId]) {
-        countries[countryId] = {
-          countryId,
-          countryEn,
-          countryTh,
-        };
-      }
-
-      // 2️⃣ Provinces by country
-      if (!provincesByCountry[countryId]) {
-        provincesByCountry[countryId] = {};
-      }
-
-      if (!provincesByCountry[countryId][provId]) {
-        provincesByCountry[countryId][provId] = {
-          provId,
-          provinceEn,
-          provinceTh,
-        };
-      }
-
-      // 3️⃣ Districts by province
-      if (!districtsByProvince[provId]) {
-        districtsByProvince[provId] = {};
-      }
-
-      if (!districtsByProvince[provId][distId]) {
-        districtsByProvince[provId][distId] = {
-          distId,
-          districtEn,
-          districtTh,
-        };
-      }
-    });
-
-    return {
-      countries: Object.values(countries),
-      provincesByCountry: Object.fromEntries(
-        Object.entries(provincesByCountry).map(([k, v]) => [
-          k,
-          Object.values(v),
-        ])
-      ),
-      districtsByProvince: Object.fromEntries(
-        Object.entries(districtsByProvince).map(([k, v]) => [
-          k,
-          Object.values(v),
-        ])
-      ),
+  const handleClose = () => {
+    setShow(false)
+    setcaseId(null)
     };
-  }
 
+  const handleShow = (caseId) => {
+    setcaseId(caseId)
+    setShow(true)};
 
-  if (isDefault && country == null && province == null && districts == null) return null;
+  if (isDefault) return null;
   return (
     <div className={styles.homepage} >
       <Navbar />
@@ -415,6 +302,7 @@ export default function FormPage() {
           <div>
             <Button onClick={downloadPDF} disabled={!isEdit} className="mt-2 me-2">Save PDF</Button>
             <Button onClick={CreateCase} disabled={!isEdit} variant="secondary" className="mt-2 me-2">Create Case</Button>
+            <Button onClick={() => handleShow("001")}   variant="secondary" className="mt-2 me-2">Create Case</Button>
             <Header casewithsub={casewithsub} formSelect={formSelect} onFormChange={onFormChange}
               onDataChange={onDataChange} JsonData={JsonData} Area={Area}
               countries={country} provincesByCountry={province} districtsByProvince={districts}
@@ -428,7 +316,8 @@ export default function FormPage() {
             {formFields != null &&
               <DynamicFormRenderer
                 formFieldJson={formFields}
-                onChange={handleChange}
+                setisEdit={setisEdit}
+                setFormFields={setFormFields}
                 isPrint={isPrint}
               />}</div>
         </div>

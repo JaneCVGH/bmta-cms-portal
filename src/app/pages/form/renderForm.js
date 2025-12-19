@@ -1,3 +1,4 @@
+import { useCallback } from "react";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
@@ -118,7 +119,7 @@ const renderField = (field, onChange, isPrint) => {
   );
 };
 
-
+  
 const printText = (value, maxWidth) => (
   <div
     className={`${styles.titleLabel} ${styles.fontTH}`}
@@ -134,14 +135,42 @@ const printText = (value, maxWidth) => (
 );
 
 
-const DynamicFormRenderer = ({ formFieldJson, onChange,isPrint }) => {
+const DynamicFormRenderer = ({ formFieldJson, setisEdit,setFormFields,isPrint }) => {
+
+    const handleChange = useCallback((id, value) => {
+    setisEdit(true)
+    setFormFields((prev) =>
+      updateFieldValue(prev, id, value)
+    );
+  }, []);
+
+    const updateFieldValue = (fields, id, value) => {
+    return fields.map((field) => {
+      // normal field
+      if (field.id === id) {
+        return { ...field, value };
+      }
+
+      // InputGroup (children)
+      if (field.type === "InputGroup" && Array.isArray(field.value)) {
+        return {
+          ...field,
+          value: field.value.map((child) =>
+            child.id === id ? { ...child, value } : child
+          ),
+        };
+      }
+
+      return field;
+    });
+  };
+
   return (
     <div style={{ padding:"5px"}}>
-      {/* <Row className="g-3" style={{ background}}> */}
         {formFieldJson.map((field) =>
-           renderField(field, onChange, isPrint)
+           renderField(field, handleChange, isPrint)
         )}
-      {/* </Row> */}
+
     </div>
   );
 };
