@@ -12,7 +12,7 @@
 //     faLock,
 //     //faUser,
 //     //faPencil,
-//     //faTrashCan
+//     faTrashCan
 // } from "@fortawesome/free-solid-svg-icons";
 
 import Navbar from "../../components/Navbar";
