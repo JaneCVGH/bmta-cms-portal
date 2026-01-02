@@ -1,0 +1,199 @@
+/* src\app\style\ticketlistModal.module.css */
+
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  /* color: black; */
+}
+
+/* modal box */
+.modalContent {
+  background-color: #ffffff; 
+  width: 100%;
+  max-width: 500px;
+  padding: 28px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2); 
+  position: relative;
+  animation: slideDown 0.3s ease;
+  color: #000;
+}
+
+/* animation */
+@keyframes slideDown {
+  from {
+    transform: translateY(-15px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* ปุ่มปิด X */
+.closeTopRight {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  background: transparent;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  color: #000; 
+}
+
+/* หัวข้อ modal อย่าง รายละเอียดคำร้อง */
+.modalTitle {
+  text-align: center;
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 18px;
+  color: #000000; 
+}
+
+/* ชื่อ คอลัมน์ ในกล่องข้อมูล อย่าง รหัสคำร้อง:, หัวข้อ: */
+.modalBody {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  color: #000000; 
+  font-size: 16px;
+  
+  /* padding-bottom: 12px; */
+}
+
+/* field wrapper */
+.field {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+/* .field label เช่น หัวข้อ, สถานะ */
+.label {
+  min-width: 90px;
+  font-weight: 600;
+  font-size: 15px;
+  color: #000;
+  margin-right: 6px;   
+  margin-bottom: 0px;
+  white-space: nowrap;
+}
+
+/* กล่องค่า (เหมือน input / select แต่ readonly) */
+.valueBox {
+  /* width: 100%; */
+  flex: 1;
+  padding: 8px 12px;
+  font-size: 15px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background-color: #f9f9f9;
+  color: #000;
+  line-height: 1.4;
+}
+
+/* dropdown พื้นที่รับผิดชอบ */
+.rs__control {
+  min-height: 38px;
+  align-items: flex-start;
+  border-radius: 8px;
+  border-color: #ccc;
+  background-color: #f9f9f9;
+}
+
+.rs__value-container {
+  padding: 4px 8px;
+  white-space: normal;
+}
+
+.rs__single-value {
+  color: #000;
+  font-size: 14px;
+  white-space: normal;   
+  line-height: 1.4;
+  max-width: 100%;
+}
+
+.rs__menu {
+  z-index: 9999;
+}
+
+.rs__option {
+  font-size: 14px;
+  padding: 6px 10px;
+  text-align: left;
+}
+
+.rs__option--is-selected {
+  background-color: #3498db;
+  color: white;
+}
+
+.rs__option--is-focused {
+  background-color: #ecf5ff;
+}
+
+.fieldSelect {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* แสดงพื้นที่รับผิดชอบที่เลือกแล้ว (เต็มบรรทัด) */
+.selectedAreaBox {
+  white-space: normal;
+  word-break: break-word;
+}
+
+.selectWrapper {
+  flex: 1;
+}
+
+
+/* ปุ่มล่าง */
+.footerButtons {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+/* ปุ่มปฏิเสธ */
+.rejectBtn {
+  width: 30%;
+  padding: 10px 0;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background-color: #e74c3c; 
+  color: white;
+  font-size: 16px;
+  transition: 0.2s ease;
+}
+.rejectBtn:hover {
+  background-color: #c0392b; 
+}
+
+/* ปุ่มส่งออก */
+.exportBtn {
+  width: 30%;
+  padding: 10px 0;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background-color: #3498db; 
+  color: white;
+  font-size: 16px;
+  transition: 0.2s ease;
+}
+.exportBtn:hover {
+  background-color: #2980b9; 
+}
