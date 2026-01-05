@@ -17,7 +17,7 @@ import {
 
 } from "@fortawesome/free-solid-svg-icons";
 
-import { hasPermission } from "../utils/checkPermission";
+// import { hasPermission } from "../utils/checkPermission";
 import styles from "../style/navbar.module.css";
 
 
@@ -30,10 +30,11 @@ const menuConfig = [
     //
     { name: "Employee", path: "/pages/employee",  icon: faUsers },
     { name: "Project", path: "/pages/project",  icon: faFileLines },
-    
     { name: "Create Ticket", path: "/pages/create-ticket", permission: "case.create", icon: faPlus },
+    
     { name: "Approve Ticket", path: "/pages/approve-ticket", permission: "case.view_history", icon: faCheck },
-    { name: "Ticket Lists", path: "/pages/ticket-list", permission: "case.view_history", icon: faList },
+    { name: "Ticket Lists", path: "/pages/ticketlist",  permission: "case.view_history", icon: faList },
+    
     { name: "User Management", path: "/pages/user", permission: "user.create", icon: faUsers },
     { name: "Service Type", path: "/pages/service-type", permission: "service.create", icon: faCogs },
     { name: "Service Sub Type", path: "/pages/service-sub-type", permission: "service.create", icon: faCogs },
@@ -122,14 +123,3 @@ export default function Navbar() {
 
 
 
-
- //router.push("/login") จะเปลี่ยนหน้าไป /login เมื่อกดปุ่ม   
-    //const goToHome = () => {
-        //router.push("/home");
-  //}
-
-
-
-//      const goToSetting = () => {
-//         router.push("/setting");
-//     }

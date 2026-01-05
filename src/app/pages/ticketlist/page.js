@@ -8,12 +8,8 @@ import TicketListModal from "../../components/TicketListModal";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faPencil,
   faEye,
-  faTrash,
   faSquarePlus,
-  faUserTie,
-  faImage,
   faMagnifyingGlass,
 } from "@fortawesome/free-solid-svg-icons";
 
@@ -22,7 +18,8 @@ import {
   safeNormalize,
   safeDate,
   sanitizeCase,
-} from "../../utils/safe";
+} from "@/app/utils/safe";
+
 
 import styles from "../../style/ticketlist.module.css";
 import Navbar from "../../components/Navbar";
@@ -70,7 +67,7 @@ export default function TicketListPage() {
   //fetchTickets – ดึงข้อมูลคำร้องจาก API
   const fetchTickets = async () => {
     try {
-      const token = localStorage.getItem("access_token");
+      const token = localStorage.getItem("accessToken");
       if (!token) return;
 
       const start = (page - 1) * rowsPerPage;
@@ -120,7 +117,7 @@ export default function TicketListPage() {
 
   const fetchCaseTypes = async () => {
     try {
-      const token = localStorage.getItem("access_token");
+      const token = localStorage.getItem("accessToken");
       if (!token) return;
 
       const res = await fetch(
@@ -165,7 +162,7 @@ export default function TicketListPage() {
   const fetchAreas = async () => {
     try {
       // console.log("AREA: start fetching");
-      const token = localStorage.getItem("access_token");
+      const token = localStorage.getItem("accessToken");
       if (!token) return;
 
       const res = await fetch(
@@ -198,7 +195,7 @@ export default function TicketListPage() {
 
     console.log("FETCH DETAIL CASE:", ticket.caseId);
 
-    const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("accessToken");
     if (!token) return;
 
     try {

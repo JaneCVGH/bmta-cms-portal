@@ -2,7 +2,13 @@
 "use client";
 
 import React from "react";
-import { safeText, safeDate, safeNormalize } from "../utils/safe";
+import {
+  safeText,
+  safeNormalize,
+  safeDate,
+  sanitizeCase,
+} from "@/app/utils/safe";
+
 import Select from "react-select";
 import styles from "../style/ticketlistModal.module.css";
 
