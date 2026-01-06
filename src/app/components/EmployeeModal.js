@@ -6,13 +6,15 @@ import React from "react";
 import styles from "../style/employeeModal.module.css";
 
 const defaultFieldLabels = {
-  firstName: 'ชื่อ',
-  lastName: 'นามสกุล',
-  position: 'ตำแหน่ง',
-  department: 'แผนก',
-  email: 'อีเมล',
-  phone: 'เบอร์โทร',
-  username: 'username'
+  empId: "รหัสพนักงาน",
+  firstName: "ชื่อ",
+  lastName: "นามสกุล",
+  username: "Username",
+  email: "อีเมล",
+  mobileNo: "เบอร์โทร",
+  deptId: "แผนก",
+  roleId: "บทบาท",
+  active: "สถานะ"
 };
 
 export default function EmployeeModal({
@@ -54,13 +56,19 @@ export default function EmployeeModal({
 
          {type === 'view' ? (
           <div className={styles.viewModal}>
-            <p><strong>ชื่อ:</strong> {formData.firstName || '-'}</p>
-            <p><strong>นามสกุล:</strong> {formData.lastName || '-'}</p>
-            <p><strong>ตำแหน่ง:</strong> {formData.position || '-'}</p>
-            <p><strong>แผนก:</strong> {formData.department || '-'}</p>
-            <p><strong>อีเมล:</strong> {formData.email || '-'}</p>
-            <p><strong>เบอร์โทร:</strong> {formData.phone || '-'}</p>
-            <p><strong>username:</strong> {formData.username || '-'}</p>
+            <p><strong>{labels.empId}:</strong> {formData.empId || "-"}</p>
+            <p><strong>{labels.firstName}:</strong> {formData.firstName || "-"}</p>
+            <p><strong>{labels.lastName}:</strong> {formData.lastName || "-"}</p>
+            <p><strong>{labels.username}:</strong> {formData.username || "-"}</p>
+            <p><strong>{labels.email}:</strong> {formData.email || "-"}</p>
+            <p><strong>{labels.mobileNo}:</strong> {formData.mobileNo || "-"}</p>
+            <p><strong>{labels.deptId}:</strong> {formData.deptId || "-"}</p>
+            <p><strong>{labels.roleId}:</strong> {formData.roleId || "-"}</p>
+            <p>
+              <strong>{labels.active}:</strong>{" "}
+              {formData.active ? "ใช้งาน" : "ไม่ใช้งาน"}
+            </p>
+
             <button className={styles.closeBtn} onClick={onClose}>ปิด</button>
           </div>
         ) :
@@ -68,22 +76,64 @@ export default function EmployeeModal({
         // กรณี type === 'edit' หรือ 'add'
         (
           <form className={styles.FormVertical} onSubmit={handleSubmit}>
-            {['firstName', 'lastName', 'position', 'department', 'email', 'phone', 'username'].map(field => (
+            {[
+              "empId",
+              "firstName",
+              "lastName",
+              "username",
+              "email",
+              "mobileNo",
+              "deptId",
+              "roleId"
+            ].map(field => (
               <div key={field} className={styles.EditandAdd}>
-                <label className={styles.inlineLabel}>{labels[field]}:</label>
+                <label className={styles.inlineLabel}>
+                  {labels[field]}:
+                </label>
                 <input
                   type="text"
                   name={field}
-                  placeholder={labels[field]}
-                  value={formData?.[field] || ''}
+                  value={formData?.[field] || ""}
                   onChange={handleChange}
-                  required={field !== 'email' && field !== 'phone'}
                   className={styles.inputField}
+                  required={["empId", "firstName", "lastName", "username"].includes(field)}
                 />
               </div>
             ))}
-            <button className={styles.saveBtn} type="submit">บันทึก</button>
-            <button className={styles.closeBtn} type="button" onClick={onClose}>ยกเลิก</button>
+            
+            
+            {/* active */}
+            <div className={styles.EditandAdd}>
+              <label className={styles.inlineLabel}>{labels.active}:</label>
+              <select
+                name="active"
+                value={formData.active ? "true" : "false"}
+                onChange={(e) =>
+                  handleChange({
+                    target: {
+                      name: "active",
+                      value: e.target.value === "true"
+                    }
+                  })
+                }
+                className={styles.inputField}
+              >
+                <option value="true">ใช้งาน</option>
+                <option value="false">ไม่ใช้งาน</option>
+              </select>
+            </div>
+
+            <button className={styles.saveBtn} type="submit">
+              บันทึก
+            </button>
+            <button
+              className={styles.closeBtn}
+              type="button"
+              onClick={onClose}
+            >
+              ยกเลิก
+            </button>
+
           </form>
         )}
       </div>

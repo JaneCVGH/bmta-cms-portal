@@ -40,12 +40,10 @@ export default function RegisterPage() {
 
     try {
       const res = await fetch(
-        "https://welcome-service-stg.metthier.ai:65000/api/v1/auth/login",
-        // `${process.env.NEXT_PUBLIC_API_URL}/auth/register`,
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/register`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          // credentials: "include",
           body: JSON.stringify({ username, password }),
         }
       );
@@ -58,14 +56,13 @@ export default function RegisterPage() {
         const data = await res.json();
         Swal.fire("Error", data.detail || "ไม่สามารถลงทะเบียนได้", "error");
       }
-      //
     } catch (err) {
-        console.error(err);
-        Swal.fire("Error", "เชื่อมต่อเซิร์ฟเวอร์ไม่สำเร็จ", "error");
-      } finally {
-        setIsLoading(false);
-      }
-    };
+      console.error(err);
+      Swal.fire("Error", "เชื่อมต่อเซิร์ฟเวอร์ไม่สำเร็จ", "error");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
    return (
     <div className={styles.container}>
@@ -116,3 +113,5 @@ export default function RegisterPage() {
     </div>
   );
 }
+
+// Change Password?

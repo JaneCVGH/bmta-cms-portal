@@ -1,16 +1,14 @@
-/*style\employee.module.css */
 /* container และพื้นหลัง */
-/* พื้นหลังของหน้า */
-/* body {
-  
-} */
-
-.container {
+/* พื้นหลังของหน้า 
+body {
   margin: 0;
   padding: 0;
   background: linear-gradient(to right, hwb(221 75% 0%), #e9c7ff);
   min-height: 100vh;
   font-family: 'Segoe UI', sans-serif;
+}*/
+
+.container {
   color: #000000;
   padding: 20px;
   font-family: 'Segoe UI', sans-serif;
@@ -96,7 +94,7 @@
 
 /* ตาราง */
 .tableEmployee {
-  width: 20cm;
+  width: 100%;
   border-collapse: collapse;
   margin: 0 auto;
   margin-top: 20px;

@@ -4,7 +4,7 @@
 "use client";
 
 //ใช้ useEffect() เพื่อรันโค้ดเมื่อ component ถูกโหลด
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 //useRouter ใช้สำหรับนำทางไปยังหน้าอื่น, next/navigation คือเวอร์ชันใหม่ที่ใช้ใน App Router
 import { useRouter } from "next/navigation";
@@ -15,6 +15,7 @@ import {
   //เพิ่มไอคอน
   faLock,
   faUser,
+  faBuilding,
 } from "@fortawesome/free-solid-svg-icons";
 
 //weetalert2 เป็นไลบรารี JavaScript สำหรับแสดง popup สวยงาม
@@ -24,31 +25,26 @@ import Swal from "sweetalert2";
 import styles from "../../style/./login.module.css";
 //import { run } from "node:test";
 
-// import { setToken } from "../../../components/Token";
-
 // function หลัก
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [organization, setOrganization] = useState("");
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
-  // ปุ่มไป Register
+  useEffect(() => {
+    console.log("API BASE =", process.env.NEXT_PUBLIC_API_BASE_URL);
+  }, []);
+
   const handleRegisterClick = () => {
     //เพิ่ม console.log เพื่อดูว่าเรียกจริงไหม
-    console.log("กำลังกดปุ่มลงทะเบียน...");
+    console.log("กำลังลงทะเบียน...");
     router.push("/pages/register"); // เส้นทางไปยังหน้า /register
   };
 
-  // input องค์กร แบบล็อกค่า
-  const [organization, setOrganization] = useState("");
-
-  // Login Submit
   const handleSubmit = async (e) => {
-    console.log("Submit ถูกเรียกแล้ว");
     e.preventDefault();
-    // if (e?.preventDefault);  ป้องกันการรีเฟรชหน้า
-
     setIsLoading(true);
 
     if (!username.trim()) {
@@ -56,7 +52,7 @@ export default function Login() {
         icon: "warning",
         title: "Incomplete Information!",
         text: "กรุณากรอกชื่อผู้ใช้งาน",
-        confirmButtonText: "ตกลง",
+        confirmButtonText: "OK",
         iconColor: "#ff9500",
       });
       setIsLoading(false);
@@ -68,7 +64,7 @@ export default function Login() {
         icon: "warning",
         title: "Incomplete Information!",
         text: "กรุณากรอกรหัสผ่าน",
-        confirmButtonText: "ตกลง",
+        confirmButtonText: "OK",
         iconColor: "#ff9500",
       });
       setIsLoading(false);
@@ -78,19 +74,29 @@ export default function Login() {
     if (organization.trim().toUpperCase() !== "SKY-AI") {
       Swal.fire({
         icon: "error",
-        title: "องค์กรไม่ถูกต้อง",
-        text: "กรุณากรอกองค์กรให้ถูกต้อง",
-        confirmButtonText: "ตกลง",
+        title: "Access Denied",
+        text: "องค์กรไม่ถูกต้อง",
+        confirmButtonText: "OK",
       });
       setIsLoading(false);
       return;
     }
 
+    // --------------------- Call API ---------------------
+
+    // ตรวจสอบว่าได้ค่า URL ถูกต้องไหม
+    //console.log("API URL:", process.env.NEXT_PUBLIC_API_URL);
+    // เชื่อมต่อกับ FastAPI backend
+    //const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
+    //  method: 'POST',
+    //  headers: { 'Content-Type': 'application/json'},
+    // body: JSON.stringify({
+    //  username,
+    //  password
+    //})
     try {
-      console.log("ส่ง request ไปยัง API:");
       const response = await fetch(
-        "https://welcome-service-stg.metthier.ai:65000/api/v1/auth/login",
-        // `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/auth/login`,
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/auth/login`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -102,36 +108,53 @@ export default function Login() {
         }
       );
 
-      // console.log("Response status:", response.status);
+      //console.log(response)
       const data = await response.json();
-      console.log("✅ API Response:", data);
-      // console.log("Response data:", data);
+      console.log("LOGIN RESPONSE =", data);
 
-      //response.ok && data.access_token
-      if (response.ok && data?.data?.accessToken && data?.data?.user) {
+      // --------------------- Success ---------------------
+      if (response.ok && data?.data?.accessToken) {
+        const user = data.data.user;
+        const accessToken = data.data.accessToken;
+        const refreshToken = data.data.refreshToken;
         // **เก็บ token และข้อมูล user ใน localStorage**
-        localStorage.setItem("access_token", data.data.accessToken);
-        localStorage.setItem("refresh_token", data.data.refreshToken);
-        localStorage.setItem("token_type", data.data.token_type);
+        const expiresIn = 15 * 60 * 1000; // 15 นาที
+        const expireAt = Date.now() + expiresIn;
 
-        // **ข้อมูล user ใน localStorage
+        localStorage.setItem("accessToken", accessToken);
+        localStorage.setItem("refreshToken", refreshToken);
+        localStorage.setItem("token_expire_at", expireAt.toString()); // เก็บเวลา Expire
+
+        localStorage.setItem("user_data", JSON.stringify(data.user));
+
+        //localStorage.setItem("permissions", JSON.stringify(data.user.permissions));
+
+        // ข้อมูล user ใน localStorage
         localStorage.setItem("user_data", JSON.stringify(data.data.user));
-        localStorage.setItem("user_id", data.data.user.id.toString());
-        localStorage.setItem("username", data.data.user.username);
-        localStorage.setItem("user_role", data.data.user.role);
-        localStorage.setItem(
-          "is_verified",
-          data.data.user.active?.toString() || "false"
-        );
+        localStorage.setItem("user_id", user.id.toString());
+        localStorage.setItem("username", user.username);
+        localStorage.setItem("user_role", user.role);
+        localStorage.setItem("is_verified", user.active?.toString() || "false");
 
-        // ✅ เช็คว่าเก็บได้จริงไหม (จุดสำคัญ)
         console.log("ACCESS TOKEN =", data.data.accessToken);
-        
+
+        // เก็บ Permission ไว้เช็คเมนู
+        if (Array.isArray(user.permission)) {
+          localStorage.setItem("permissions", JSON.stringify(user.permission));
+        } else {
+          localStorage.setItem("permissions", JSON.stringify([])); // ป้องกัน error
+        }
+
+        //localStorage.setItem('user_id', data.user.id.toString());
+        //localStorage.setItem('username', data.user.username);
+        //localStorage.setItem('user_role', data.user.role);
+        //localStorage.setItem('is_verified', data.user.is_verified.toString());
+
         Swal.fire({
           icon: "success",
           title: "เข้าสู่ระบบสำเร็จ",
           text: `ยินดีต้อนรับ ${data.data.user.username || ""}`,
-          confirmButtonText: "ตกลง",
+          confirmButtonText: "OK",
         }).then(() => {
           router.push("../../pages/home");
         });
@@ -140,17 +163,16 @@ export default function Login() {
           icon: "error",
           title: "เข้าสู่ระบบไม่สำเร็จ",
           text: data.detail || "กรุณากรอก ชื่อผู้ใช้ และ รหัสผ่านให้ถูกต้อง",
-          confirmButtonText: "ตกลง",
+          confirmButtonText: "Try Again",
         });
       }
     } catch (error) {
       console.error("Login error:", error);
-
       Swal.fire({
         icon: "error",
         title: "เข้าสู่ระบบไม่สำเร็จ",
         text: "กรุณาลงทะเบียนก่อนเข้าสู่ระบบอีกครั้ง",
-        confirmButtonText: "ตกลง",
+        confirmButtonText: "OK",
       });
     } finally {
       setIsLoading(false);
@@ -168,8 +190,7 @@ export default function Login() {
       <div className={styles.login}>
         <h2 className={styles.loginHeader}>เข้าสู่ระบบ</h2>
 
-        {/* <form className={styles.loginForm} noValidate> */}
-        <form onSubmit={handleSubmit} className={styles.loginForm} noValidate>
+        <form onSubmit={handleSubmit} className={styles.loginForm}>
           <div className={styles.inputContainer}>
             <FontAwesomeIcon icon={faUser} className={styles.IconInput} />
             <input
@@ -191,21 +212,21 @@ export default function Login() {
               placeholder="รหัสผ่าน"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              // required
+              required
               disabled={isLoading}
               autoComplete="new-password"
             />
           </div>
 
           <div className={styles.inputContainer}>
-            <FontAwesomeIcon icon={faUser} className={styles.IconInput} />
+            <FontAwesomeIcon icon={faBuilding} className={styles.IconInput} />
             <input
               type="text"
-              placeholder="ชื่อองค์กร"
+              placeholder="องค์กร"
               value={organization}
               onChange={(e) => setOrganization(e.target.value)}
-              disabled={isLoading}
               required
+              disabled={isLoading}
             />
           </div>
 
@@ -220,9 +241,8 @@ export default function Login() {
               type="submit"
               className={styles.btnLogin}
               disabled={isLoading}
-              // onClick={handleSubmit}
             >
-              {isLoading ? "กำลังเข้าสู่ระบบ..." : "เข้าสู่ระบบ"}
+              เข้าสู่ระบบ
             </button>
           </div>
 

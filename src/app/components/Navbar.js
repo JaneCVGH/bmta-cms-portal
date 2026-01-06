@@ -1,169 +1,125 @@
-//บอกให้ Next.js รู้ว่าไฟล์นี้ทำงานฝั่ง Client Side, จำเป็นเมื่อคุณใช้ Next.js App Router
 "use client";
 
-//ใช้ useEffect() เพื่อรันโค้ดเมื่อ component ถูกโหลด
-import { useState } from "react";
-
-// useRouter ใช้สำหรับนำทางไปยังหน้าอื่น, next/navigation คือเวอร์ชันใหม่ที่ใช้ใน App Router
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faSun,
-  faHome,
-  faUsers,
-  faFileLines,
-  faFile,
-  // faGear, //เพิ่มไอคอน gear
-  // faUserSecret,
-  faRightFromBracket,
+    faSun,
+    faHome,
+    faUsers,
+    faFileLines,
+    faRightFromBracket,
+    faPlus,
+    faCheck,
+    faList,
+    faCogs,
+
 } from "@fortawesome/free-solid-svg-icons";
 
+// import { hasPermission } from "../utils/checkPermission";
 import styles from "../style/navbar.module.css";
-import axios from "axios";
-import Logout from "./Logout";
+
+
+// -----------------------------
+// เมนูที่เห็นได้
+// -----------------------------
+const menuConfig = [
+    { name: "Home", path: "/pages/home", permission: null, icon: faHome },
+
+    //
+    { name: "Employee", path: "/pages/employee",  icon: faUsers },
+    { name: "Project", path: "/pages/project",  icon: faFileLines },
+    { name: "Create Ticket", path: "/pages/create-ticket", permission: "case.create", icon: faPlus },
+    
+    { name: "Approve Ticket", path: "/pages/approve-ticket", permission: "case.view_history", icon: faCheck },
+    { name: "Ticket Lists", path: "/pages/ticketlist",  permission: "case.view_history", icon: faList },
+    
+    { name: "User Management", path: "/pages/user", permission: "user.create", icon: faUsers },
+    { name: "Service Type", path: "/pages/service-type", permission: "service.create", icon: faCogs },
+    { name: "Service Sub Type", path: "/pages/service-sub-type", permission: "service.create", icon: faCogs },
+];
+
 
 export default function Navbar() {
-  // ใช้เพื่อเปลี่ยนเส้นทาง
-  const router = useRouter();
+    const router = useRouter();
+    const [permissions, setPermissions] = useState([]);
+    
 
-  //   const [ShowSubMenu, setShowSubMenu] = useState(false);
 
-  //   const toggleSubMenu = () => {
-  //     setShowSubMenu(!ShowSubMenu);
-  //   };
+    // -----------------------------
+    // โหลด permission จาก localStorage
+    // -----------------------------
 
-  //   const goTo = (path) => {
-  //     setShowSubMenu(false); // ซ่อนเมนูหลังคลิก
-  //     router.push(path);
-  //   };
+    useEffect(() => {
+        const stored = JSON.parse(localStorage.getItem("permissions") || "[]");
+        setPermissions(stored);
+    }, []);
 
-  const [showLogout, setShowLogout] = useState(false);
 
-  //   const handleLogout = async () => {
-  //     const confirmLogout = window.confirm("คุณต้องการออกจากระบบใช่ไหม?");
-  //     if (!confirmLogout) return;
-  const confirmLogout = async () => {
-    setShowLogout(false);
-    localStorage.removeItem("token");
+    // -----------------------------
+    // Filter เมนูตาม permission
+    // -----------------------------
+    const visibleMenus = menuConfig.filter(menu => {
+        // Home ไม่ต้องมี permission
+        if (!menu.permission) return true;
 
-    // เรียก API /auth/logout (optional)
-    try {
-      const response = await axios.post(
-        "https://welcome-service-stg.metthier.ai:65000/api/v1/auth/logout",
-        {},
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true, // ส่ง cookies ด้วย
+        // ถ้ามี permission → ผ่าน
+        return permissions.includes(menu.permission);
+    });
+
+
+    // ถ้าไม่มี permission ใดๆ → เห็นแค่ Home
+    const finalMenus = visibleMenus.length > 1 ? visibleMenus : menuConfig.filter(m => m.name === "Home");
+
+
+    // -----------------------------
+    // Logout
+    // -----------------------------
+    const handleLogout = () => {
+        const confirmLogout = window.confirm("คุณต้องการออกจากระบบใช่ไหม?");
+        if (confirmLogout) {
+            localStorage.removeItem("accessToken");
+            localStorage.removeItem("refreshToken");
+            localStorage.removeItem("permissions");
+
+            router.push("../pages/login");
         }
-      );
-      //   if (response.status === 200) {
-      //     // ถ้า logout สำเร็จ ให้ไปหน้า login
-      //     window.location.href =
-      //       "https://welcome-service-stg.metthier.ai:65000/api/v1/auth/login";
-      //   } else {
-      //     // กรณีไม่ใช่ 200 ก็ redirect ไปหน้า login
-      //     window.location.href =
-      //       "https://welcome-service-stg.metthier.ai:65000/api/v1/auth/login";
-      //   }
-    } catch (error) {
-      console.error("Logout error:", error);
-      // ถ้า error ให้ไปหน้า login อยู่ดี
-      //   window.location.href =
-      //     "https://welcome-service-stg.metthier.ai:65000/api/v1/auth/login";
-      // }
-    } finally {
-      router.push("/pages/login");
-    }
-  };
+    };
 
-  return (
-    <nav className={styles.navbarList}>
-      {/* Logo */}
-      <div className={styles.logo}>
-        <FontAwesomeIcon icon={faSun} className={styles.iconlogo} /> LOGO
-      </div>
 
-      {/* router.push("/__name folder หลัก__/__namefile__") */}
+    return (
+        <nav className={styles.navbarList}>
+            {/* LOGO */}
+            <div className={styles.logo}>
+                <FontAwesomeIcon icon={faSun} className={styles.iconlogo} /> LOGO
+            </div>
 
-      <ul className={styles.navLinks}>
-        <li
-          onClick={() => router.push("/pages/home")}
-          className={styles.navItem}
-        >
-          <FontAwesomeIcon icon={faHome} className={styles.icon} /> Home
-        </li>
-<li
-          onClick={() => router.push("/pages/form")}
-          className={styles.navItem}
-        >
-          <FontAwesomeIcon icon={faFile} className={styles.icon} /> Form
-        </li>
-        <li
-          onClick={() => router.push("/pages/employee")}
-          className={styles.navItem}
-        >
-          <FontAwesomeIcon icon={faUsers} className={styles.icon} /> Employee
-        </li>
+            <ul className={styles.navLinks}>
 
-        <li
-          onClick={() => router.push("/pages/project")}
-          className={styles.navItem}
-        >
-          <FontAwesomeIcon icon={faFileLines} className={styles.icon} /> Project
-        </li>
+                {/* แสดงเมนูที่มีสิทธิ์ */}
+                {finalMenus.map((menu, index) => (
+                    <li
+                        key={index}
+                        onClick={() => router.push(menu.path)}
+                        className={styles.navItem}
+                    >
+                        <FontAwesomeIcon icon={menu.icon} className={styles.icon} />
+                        {menu.name}
+                    </li>
+                ))}
 
-        {/* setting มี 2 อัน คือ settingrole กับ settinguser 
-                 <li
-                    onClick={toggleSubMenu} className= {styles.navItem}>
-                    <FontAwesomeIcon icon={ faGear } className={styles.icon} /> Setting
-                </li>*/}
+                {/* Logout */}
+                <button className={styles.btnLogout} onClick={handleLogout}>
+                    <FontAwesomeIcon icon={faRightFromBracket} className={styles.LogOutIcon} />
+                    ออกจากระบบ
+                </button>
 
-        {/*{ShowSubMenu &&(
-                    <ul className={styles.subSetting}>
-                        
-                            <li onClick={() => goTo("/pages/setting/settingprofile")}>
-                                <FontAwesomeIcon icon= { faUser } className={styles.subSettingIcon}/> Setting Profile
-                            </li>
-
-                            <li onClick={() => goTo("/pages/setting/settingrole")}>
-                                <FontAwesomeIcon icon= { faUserSecret } className={styles.subSettingIcon}/> Setting Role
-                            </li>
-                        
-                    </ul>
-                )}*/}
-
-        <button
-          className={styles.btnLogout}
-          onClick={() => setShowLogout(true)}
-        >
-          {/* {handleLogout} */}
-          <FontAwesomeIcon
-            icon={faRightFromBracket}
-            className={styles.LogOutIcon}
-          />
-          {/* {" "}   {" "}*/}
-          ออกจากระบบ
-        </button>
-      </ul>
-      
-      {/* Modal Logout */}
-      <Logout
-        show={showLogout}
-        onClose={() => setShowLogout(false)}
-        onConfirm={confirmLogout}
-      />
-    </nav>
-  );
+            </ul>
+        </nav>
+    );
 }
 
-//router.push("/login") จะเปลี่ยนหน้าไป /login เมื่อกดปุ่ม
-//const goToHome = () => {
-//router.push("/home");
-//}
 
-//      const goToSetting = () => {
-//         router.push("/setting");
-//     }
+
+

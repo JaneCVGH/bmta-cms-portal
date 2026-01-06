@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import Navbar from "../../components/Navbar";
 import styles from "../../style/form.module.css";
 import Container from "react-bootstrap/Container";
@@ -51,7 +51,7 @@ export default function FormPage() {
     var value = e.target.value
     setformSelect(value)
     setFormFields(null);
-    const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("accessToken");
     try {
       console.log("ส่ง request ไปยัง API:");
       const response = await fetch(
@@ -94,7 +94,7 @@ export default function FormPage() {
   };
 
   const CreateCase = async () => {
-    const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("accessToken");
     if (username != null || username != "") {
       setusername(localStorage.getItem("username"))
     }
@@ -222,7 +222,7 @@ export default function FormPage() {
   };
 
   const getDefaultData = async () => {
-    const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("accessToken");
     if (!token) {
       console.error("No access token found");
       return;
@@ -253,7 +253,7 @@ export default function FormPage() {
   };
 
   const getArea = async () => {
-    const token = localStorage.getItem("access_token");
+    const token = localStorage.getItem("accessToken");
     if (!token) {
       console.error("No access token found");
       return;

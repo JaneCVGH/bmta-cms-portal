@@ -10,9 +10,9 @@
 // import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 // import {//เพิ่มไอคอน 
 //     faLock,
-//     //faUser,
+//     faUser,
 //     //faPencil,
-//     //faTrashCan
+//     faTrashCan
 // } from "@fortawesome/free-solid-svg-icons";
 
 import Navbar from "../../components/Navbar";

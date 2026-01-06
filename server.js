@@ -1,20 +1,23 @@
 const { createServer } = require("https");
-const { readFileSync } = require("fs");
+const { parse } = require("url");
+const fs = require("fs");
 const next = require("next");
-// s
+
 const dev = true;
 const app = next({ dev });
 const handle = app.getRequestHandler();
 
-app.prepare().then(() => {
-  const httpsOptions = {
-    key: readFileSync("./localhost-key.pem"),
-    cert: readFileSync("./localhost.pem"),
-  };
+const httpsOptions = {
+  key: fs.readFileSync("./cert/localhost-key.pem"),
+  cert: fs.readFileSync("./cert/localhost.pem"),
+};
 
+app.prepare().then(() => {
   createServer(httpsOptions, (req, res) => {
-    handle(req, res);
+    const parsedUrl = parse(req.url, true);
+    handle(req, res, parsedUrl);
   }).listen(3000, () => {
-    console.log("HTTPS Server running at...https://localhost:3000");
+    console.log("HTTPS ready on---> https://localhost:3000");
   });
 });
+

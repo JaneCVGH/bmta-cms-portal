@@ -1,0 +1,158 @@
+/* frontend\src\app\style\ticketlist.module.css */
+.TicketListPage {
+ /* background: linear-gradient(to right, hwb(221 75% 0%), #e9c7ff); */
+  min-height: 100vh;
+  background: #dfe5ef;
+}
+
+.container{
+  max-width: none;
+  width: 100%;
+  margin: 0 auto;
+  padding: 24px;
+  color: #000;
+  background: #dfe5ef;
+  /* background: linear-gradient(to right, hwb(221 75% 0%), #e9c7ff); */
+}
+
+.title {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.topBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  gap: 16px;
+}
+
+.searchTicketList {
+  flex: 1;
+}
+
+.formSearch {
+  width: 100%;
+}
+
+.searchBox {
+  position: relative;
+  width: 100%;
+  background-color: #fff;
+  border-radius: 8px;
+}
+
+.searchIcon {
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  transform: translateY(-50%);
+  color: #696969;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 10px 12px 10px 36px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 15px;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: #3498db;
+}
+
+/* =====ปุ่ม เพิ่ม คำร้อง Add Button ===== */
+.edit {
+  display: flex;
+  align-items: center;
+}
+
+.btnAdd {
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: none;
+  background-color: #3498db;
+  color: #fff;
+  font-size: 15px;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.btnAdd:hover {
+  background-color: #2980b9;
+}
+
+/* ===== Table ===== */
+.tableTicketList {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+  border-radius: 10px;
+  overflow: hidden; 
+}
+
+.TicketListThead {
+  background-color: #f2f2f2;
+}
+
+.TicketListThead th {
+  padding: 14px 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.th {
+  padding: 12px 10px;
+  font-weight: 600;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+  font-size: 14px;
+}
+
+.trTicketList td {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+}
+
+.trTicketList:hover {
+  background-color: #fafafa;
+}
+
+/* ===== ปุ่มดู View Button ===== */
+.viewBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #3498db;
+  font-size: 18px;
+}
+
+.viewBtn:hover {
+  color: #2980b9;
+}
+
+/* ===== Pagination ===== */
+.pagination {
+  margin-top: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+}
+
+.pagination button {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  cursor: pointer;
+}
+
+.pagination button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

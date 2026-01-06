@@ -39,14 +39,13 @@
   top: 60px; /* ปรับตามตำแหน่งที่ต้องการให้เมนูย่อยแสดง */
   right: 20px;
   background-color: #fff;
-  border: 1px solid #ccc;
+  border: 1px solid #ddd;
   padding: 10px;
   z-index: 100;
 }
 
 .navItem {
     font-size: 18px;
-      color: #ffffff; 
 }
 
 /* ✅ จุดสำคัญ: ปรับขนาด icon ด้วย class นี้ */
