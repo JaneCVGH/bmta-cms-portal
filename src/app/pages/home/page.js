@@ -11,7 +11,11 @@
 // import {//เพิ่มไอคอน 
 //     faLock,
 //     faUser,
+<<<<<<< HEAD
 //     //faPencil,
+=======
+//     faPencil,
+>>>>>>> a8615051374e77417017d9374e3a04ee51fdcdbe
 //     faTrashCan
 // } from "@fortawesome/free-solid-svg-icons";
 
