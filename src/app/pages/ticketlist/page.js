@@ -232,7 +232,7 @@ const [show, setShow] = useState(false);
         var value = e.target.value
         setformSelect(value)
         setFormFields(null);
-        const token = localStorage.getItem("access_token");
+        const token = localStorage.getItem("accessToken");
         try {
             console.log("ส่ง request ไปยัง API:");
             const response = await fetch(
@@ -280,7 +280,7 @@ const [show, setShow] = useState(false);
     };
 
     const getDefaultData = async () => {
-        const token = localStorage.getItem("access_token");
+        const token = localStorage.getItem("accessToken");
         if (!token) {
             console.error("No access token found");
             return;
@@ -311,7 +311,7 @@ const [show, setShow] = useState(false);
     };
 
     const UpdateCase = async () => {
-        const token = localStorage.getItem("access_token");
+        const token = localStorage.getItem("accessToken");
         if (username != null || username != "") {
             setusername(localStorage.getItem("username"))
         }
@@ -380,7 +380,7 @@ const [show, setShow] = useState(false);
     }
 
     const getFormBycaseId = async (caseId) => {
-        const token = localStorage.getItem("access_token");
+        const token = localStorage.getItem("accessToken");
         if (!token) {
             console.error("No access token found");
             return;
@@ -425,7 +425,7 @@ const [show, setShow] = useState(false);
     };
 
     const getArea = async () => {
-        const token = localStorage.getItem("access_token");
+        const token = localStorage.getItem("accessToken");
         if (!token) {
             console.error("No access token found");
             return;
