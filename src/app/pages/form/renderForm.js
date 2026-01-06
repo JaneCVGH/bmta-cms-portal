@@ -81,7 +81,7 @@ const renderField = (field, onChange, isPrint) => {
 
     // ===== INPUT GROUP =====
     const colSize = 12 / (field.GroupColSpan || 1);
-
+    
     return (
         <Row key={field.id}>
             {field.showLabel && (
@@ -103,16 +103,19 @@ const renderField = (field, onChange, isPrint) => {
                         </Form.Label>
                     )}
 
-                    {isPrint ? (
-                        printText(child.value, "150px")
-                    ) : (
-                        <Form.Control
-                            className={`${styles.titleLabel} ${styles.fontTH} form-control-sm mb-2`}
-                            value={child.value}
-                            onChange={(e) => onChange(child.id, e.target.value)}
-                            style={{ maxWidth: "150px" }}
-                        />
-                    )}
+{isPrint ? (
+  field.id === "11f096ed-96c9-463b-8903-842e518a2c97"
+    ? `(${printText(child.value, "150px")})`
+    : printText(child.value, "150px")
+) : (
+  <Form.Control
+    className={`${styles.titleLabel} ${styles.fontTH} form-control-sm mb-2`}
+    value={child.value}
+    onChange={(e) => onChange(child.id, e.target.value)}
+    style={{ maxWidth: "150px" }}
+  />
+)}
+
                 </Col>
             ))}
         </Row>

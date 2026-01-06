@@ -284,14 +284,6 @@ export default function FormPage() {
     }
   };
 
-  const handleClose = () => {
-    setShow(false)
-    setcaseId(null)
-    };
-
-  const handleShow = (caseId) => {
-    setcaseId(caseId)
-    setShow(true)};
 
   if (isDefault) return null;
   return (

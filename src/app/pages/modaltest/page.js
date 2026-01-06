@@ -26,6 +26,7 @@ export default function FormPage() {
     const [JsonData, setJsonData] = useState({});
     const [Area, setArea] = useState(null);
     const [formSelect, setformSelect] = useState("");
+    const [FormBycaseIdRes, setFormBycaseIdRes] = useState(null);
 
     useEffect(() => {
         const init = async () => {
@@ -147,64 +148,20 @@ export default function FormPage() {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
-                    let formData = { ...formResponse };
-                    formData.formFieldJson = formFields;
-
-                    const item = casewithsub?.data?.find(
-                        (c) => c.sTypeId === formSelect
-                    );
-
-                    const json = {
-                        arrivedDate: null,
-                        assignUser: "",
-                        attachments: [],
-                        caseDetail: "",
-                        caseDuration: 0,
-                        caseId: "",
-                        caseLat: "",
-                        caseLocAddr: "",
-                        caseLocAddrDecs: "",
-                        caseLon: "",
-                        caseSTypeId: formSelect,
-                        caseTypeId: item?.typeId,
-                        caseVersion: "publish",
-                        closedDate: null,
-                        commandedDate: null,
-                        countryId: selectedArea.countryId,
-                        createdDate: new Date().toISOString(),
-                        deviceId: "",
-                        distId: selectedArea.distId,
-                        extReceive: "",
-                        formData: formData,
-                        nodeId: formData.nextNodeId,
-                        phoneNo: "",
-                        phoneNoHide: true,
-                        priority: 0,
-                        provId: selectedArea.provId,
-                        receivedDate: null,
-                        referCaseId: "",
-                        resDetail: "",
-                        resId: null,
-                        scheduleDate: null,
-                        scheduleFlag: false,
-                        source: JsonData.method,
-                        startedDate: new Date().toISOString(),
-                        statusId: "S001",
-                        userarrive: "",
-                        userclose: "",
-                        usercommand: "",
-                        usercreate: username,
-                        userreceive: "",
-                        versions: formData.versions,
-                        wfId: formData.wfId,
-                    };
+                              let formData = { ...formResponse };
+                    let json = { ...FormBycaseIdRes}
+                    json.countryId= selectedArea.countryId,
+                    json.distId= selectedArea.distId,
+                    json.formData= formData,
+                    json.provId= selectedArea.provId,
+                    json.source= JsonData.method,
 
                     console.log("REQUEST JSON:", json);
 
                     const response = await fetch(
-                        "https://welcome-service-stg.metthier.ai:65000/api/v1/case/add",
+                        `https://welcome-service-stg.metthier.ai:65000/api/v1/case/${caseId}`,
                         {
-                            method: "PUT",
+                            method: "PATCH",
                             headers: {
                                 "Content-Type": "application/json",
                                 Authorization: `Bearer ${token}`,
@@ -221,7 +178,17 @@ export default function FormPage() {
                             title: "Success",
                             icon: "success",
                             draggable: true,
+                            timer: 1500,  
+                            showConfirmButton: false
                         });
+                        setShow(false)
+                        setFormFields(null)
+                        setformResponse(null)
+                        setisDefault(true)
+                        setJsonData(null)                        
+                        // setcasewithsub(null)
+                        // setArea(null)
+                        setformSelect(null)
                     }
                 } catch (error) {
                     console.error("API error:", error);
@@ -254,6 +221,7 @@ export default function FormPage() {
             console.log("✅ API Response:", data);
             if (response.ok) {
                 setFormFields(data.data.formAnswer.formFieldJson);
+                setFormBycaseIdRes(data.data)
                 const selectedArea = Area.find(
                     item =>
                         item.countryId === data.data.countryId &&
@@ -266,6 +234,7 @@ export default function FormPage() {
 
                 })
                 setformSelect(data.data.caseSTypeId)
+                
             }
         } catch (error) {
             console.error("Login error:", error);
