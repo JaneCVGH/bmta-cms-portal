@@ -50,7 +50,7 @@ export default function FormPage() {
         var value = e.target.value
         setformSelect(value)
         setFormFields(null);
-        const token = localStorage.getItem("access_token");
+        const token = localStorage.getItem("accessToken");
         try {
             console.log("ส่ง request ไปยัง API:");
             const response = await fetch(
@@ -98,7 +98,7 @@ export default function FormPage() {
     };
 
     const getDefaultData = async () => {
-        const token = localStorage.getItem("access_token");
+        const token = localStorage.getItem("accessToken");
         if (!token) {
             console.error("No access token found");
             return;
@@ -129,7 +129,7 @@ export default function FormPage() {
     };
 
     const UpdateCase = async () => {
-        const token = localStorage.getItem("access_token");
+        const token = localStorage.getItem("accessToken");
         if (username != null || username != "") {
             setusername(localStorage.getItem("username"))
         }
@@ -198,7 +198,7 @@ export default function FormPage() {
     }
 
     const getFormBycaseId = async (caseId) => {
-        const token = localStorage.getItem("access_token");
+        const token = localStorage.getItem("accessToken");
         if (!token) {
             console.error("No access token found");
             return;
@@ -243,7 +243,7 @@ export default function FormPage() {
     };
 
     const getArea = async () => {
-        const token = localStorage.getItem("access_token");
+        const token = localStorage.getItem("accessToken");
         if (!token) {
             console.error("No access token found");
             return;
@@ -305,7 +305,7 @@ export default function FormPage() {
                     update={true}
                 />}
             <Container fluid className="d-flex justify-content-center">
-                <Button onClick={() => handleShow("D251218-00001")} variant="secondary" className="mt-2 me-2">Update Case001</Button>
+                <Button onClick={() => handleShow("D260105-00001")} variant="secondary" className="mt-2 me-2">Update Case001</Button>
             </Container>
         </div>
     );

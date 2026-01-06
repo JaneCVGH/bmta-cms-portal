@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import {  useState, useRef, useEffect } from "react";
 import Navbar from "../../components/Navbar";
 import styles from "../../style/form.module.css";
 import Container from "react-bootstrap/Container";
@@ -15,8 +15,6 @@ import { useSearchParams } from "next/navigation";
 
 export default function FormPage() {
   const searchParams = useSearchParams();
-  const [show, setShow] = useState(false);
-  const [caseId, setcaseId] = useState("CASE-001");
   const mobileNo = searchParams.get("mobileNo");
   const method = searchParams.get("method");
   // const username = searchParams.get("username");
