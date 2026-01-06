@@ -26,6 +26,7 @@ import styles from "../../style/ticketlist.module.css";
 import Navbar from "../../components/Navbar";
 
 export default function TicketListPage() {
+      const searchParams = useSearchParams();
   const normalize = (v) => String(v).trim().toLowerCase();
     const router = useRouter();
   const [tickets, setTickets] = useState([]);
