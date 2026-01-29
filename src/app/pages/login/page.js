@@ -1,122 +1,160 @@
-//<--------------Login-------------->
+// <-------------- Login -------------->
 
-//บอกให้ Next.js รู้ว่าไฟล์นี้ทำงานฝั่ง Client Side, จำเป็นเมื่อคุณใช้ Next.js App Router
 "use client";
-
-//ใช้ useEffect() เพื่อรันโค้ดเมื่อ component ถูกโหลด
 import React, { useState, useEffect } from "react";
-
-//useRouter ใช้สำหรับนำทางไปยังหน้าอื่น, next/navigation คือเวอร์ชันใหม่ที่ใช้ใน App Router
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 
+// FontAwesome
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  //เพิ่มไอคอน
-  faLock,
-  faUser,
-  faBuilding,
-} from "@fortawesome/free-solid-svg-icons";
+import { faLock, faUser, faBuilding } from "@fortawesome/free-solid-svg-icons";
 
-//weetalert2 เป็นไลบรารี JavaScript สำหรับแสดง popup สวยงาม
+// SweetAlert2
 import Swal from "sweetalert2";
 
-//เพราะ ../../ หมายถึงย้อนกลับ 2 ชั้นจาก pages/home/ ไปหา style///
-import styles from "../../style/./login.module.css";
-//import { run } from "node:test";
+// CSS
+import styles from "../../style/login.module.css";
 
-// function หลัก
+// ================== Component ==================
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [organization, setOrganization] = useState("");
-  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+
+  const router = useRouter();
 
   useEffect(() => {
     console.log("API BASE =", process.env.NEXT_PUBLIC_API_BASE_URL);
   }, []);
 
   const handleRegisterClick = () => {
-    //เพิ่ม console.log เพื่อดูว่าเรียกจริงไหม
     console.log("กำลังลงทะเบียน...");
-    router.push("/pages/register"); // เส้นทางไปยังหน้า /register
+    router.push("/pages/register");
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
 
+    // ------ตรวจสอบ ชื่อผู้ใช้งาน รหัสผ่าน และ ชื่อองค์กร-------
+    if (!username.trim() && !password.trim() && !organization.trim()) {
+      // ----------ชื่อผู้ใช้งาน รหัสผ่าน และ ชื่อองค์กร ว่าง----------
+      Swal.fire({
+        icon: "warning",
+        title: "ข้อมูลไม่ครบถ้วน",
+        text: "กรุณากรอกชื่อผู้ใช้งาน รหัสผ่าน และ ชื่อองค์กรให้ถูกต้อง",
+        confirmButtonText: "ตกลง",
+        iconColor: "#ff9500",
+      });
+      setIsLoading(false);
+      return;
+    }
+
+    // ---------- ชื่อผู้ใช้งาน ว่าง----------
     if (!username.trim()) {
       Swal.fire({
         icon: "warning",
-        title: "Incomplete Information!",
-        text: "กรุณากรอกชื่อผู้ใช้งาน",
-        confirmButtonText: "OK",
+        title: "ชื่อผู้ใช้งานไม่ถูกต้อง",
+        text: "กรุณากรอกชื่อผู้ใช้งานให้ถูกต้อง",
+        confirmButtonText: "ตกลง",
         iconColor: "#ff9500",
       });
       setIsLoading(false);
       return;
     }
 
+    // ---------- รหัสผ่าน ว่าง----------
     if (!password.trim()) {
       Swal.fire({
         icon: "warning",
-        title: "Incomplete Information!",
-        text: "กรุณากรอกรหัสผ่าน",
-        confirmButtonText: "OK",
+        title: "รหัสผ่านไม่ถูกต้อง",
+        text: "กรุณากรอกรหัสผ่านให้ถูกต้อง",
+        confirmButtonText: "ตกลง",
         iconColor: "#ff9500",
       });
       setIsLoading(false);
       return;
     }
 
-    if (organization.trim().toUpperCase() !== "SKY-AI") {
+    // ---------- องค์กร ว่าง----------
+    if (organization.trim().toUpperCase() !== "BMA") {
       Swal.fire({
-        icon: "error",
-        title: "Access Denied",
-        text: "องค์กรไม่ถูกต้อง",
-        confirmButtonText: "OK",
+        icon: "warning",
+        title: "องค์กรไม่ถูกต้อง",
+        text: "กรุณากรอกองค์กรให้ถูกต้อง",
+        confirmButtonText: "ตกลง",
+        iconColor: "#ff9500",
       });
       setIsLoading(false);
       return;
     }
-
     // --------------------- Call API ---------------------
+    let data = null;
 
-    // ตรวจสอบว่าได้ค่า URL ถูกต้องไหม
-    //console.log("API URL:", process.env.NEXT_PUBLIC_API_URL);
-    // เชื่อมต่อกับ FastAPI backend
-    //const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
-    //  method: 'POST',
-    //  headers: { 'Content-Type': 'application/json'},
-    // body: JSON.stringify({
-    //  username,
-    //  password
-    //})
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/auth/login`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
+          credentials: "include",
           body: JSON.stringify({
             username,
             password,
             organization,
           }),
-        }
+        },
       );
 
+      // // ---------- Error Handling ----------
+      // const result = await response.json();
+
+      // // ---------- username ไม่ถูก ----------
+      // if (!response.ok && result?.detail === "USER_NOT_FOUND") {
+      //   Swal.fire(
+      //     "ชื่อผู้ใช้งานไม่ถูกต้อง",
+      //     "กรุณากรอกชื่อผู้ใช้งานให้ถูกต้อง",
+      //     "error",
+      //   );
+      //   return;
+      // }
+
+      // // ---------- password ไม่ถูก ----------
+      // if (!response.ok && result?.detail === "INVALID_PASSWORD") {
+      //   Swal.fire("รหัสผ่านไม่ถูกต้อง", "กรุณากรอกรหัสผ่านให้ถูกต้อง", "error");
+      //   return;
+      // }
+
+      // // ---------- error อื่น ----------
+      // if (!response.ok) {
+      //   Swal.fire("เกิดข้อผิดพลาด", "ไม่สามารถเข้าสู่ระบบได้", "error");
+      //   return;
+      // }
+
       //console.log(response)
-      const data = await response.json();
-      console.log("LOGIN RESPONSE =", data);
+      // ค่อย parse JSON เฉพาะกรณี success
+      // const data = result;
+      // console.log("FULL LOGIN RESPONSE =", result);
+      // console.log("LOGIN DATA ONLY =", result.data);
+
+      // const data = await response.json();
+      try {
+        data = await response.json();
+      } catch {
+        data = {};
+      }
+
+      console.log("FULL LOGIN RESPONSE =", data);
+      console.log("LOGIN DATA ONLY =", data.data);
+      console.log("USER DATA =", data.data?.user);
 
       // --------------------- Success ---------------------
       if (response.ok && data?.data?.accessToken) {
         const user = data.data.user;
         const accessToken = data.data.accessToken;
         const refreshToken = data.data.refreshToken;
+
         // **เก็บ token และข้อมูล user ใน localStorage**
         const expiresIn = 15 * 60 * 1000; // 15 นาที
         const expireAt = Date.now() + expiresIn;
@@ -124,10 +162,6 @@ export default function Login() {
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("refreshToken", refreshToken);
         localStorage.setItem("token_expire_at", expireAt.toString()); // เก็บเวลา Expire
-
-        localStorage.setItem("user_data", JSON.stringify(data.user));
-
-        //localStorage.setItem("permissions", JSON.stringify(data.user.permissions));
 
         // ข้อมูล user ใน localStorage
         localStorage.setItem("user_data", JSON.stringify(data.data.user));
@@ -138,32 +172,53 @@ export default function Login() {
 
         console.log("ACCESS TOKEN =", data.data.accessToken);
 
-        // เก็บ Permission ไว้เช็คเมนู
-        if (Array.isArray(user.permission)) {
-          localStorage.setItem("permissions", JSON.stringify(user.permission));
-        } else {
-          localStorage.setItem("permissions", JSON.stringify([])); // ป้องกัน error
-        }
+        // เก็บ Permission ไว้เช็คเมนู บน navbar
+        // if (Array.isArray(user.permission)) {
+        //   localStorage.setItem("permissions", JSON.stringify(user.permission));
+        // } else {
+        //   localStorage.setItem("permissions", JSON.stringify([])); // ป้องกัน error
+        // }
+        // if (Array.isArray(user.permission?.cms)) {
+        //   localStorage.setItem(
+        //     "permissions",
+        //     JSON.stringify(user.permission.cms),
+        //   );
+        // } else {
+        //   localStorage.setItem("permissions", JSON.stringify([]));
+        // }
 
         //localStorage.setItem('user_id', data.user.id.toString());
         //localStorage.setItem('username', data.user.username);
         //localStorage.setItem('user_role', data.user.role);
         //localStorage.setItem('is_verified', data.user.is_verified.toString());
 
+        localStorage.setItem(
+          "permissions",
+          JSON.stringify(user.permission?.cms || []),
+        );
+
+        // ----------เข้าสู่ระบบสำเร็จ----------
         Swal.fire({
           icon: "success",
           title: "เข้าสู่ระบบสำเร็จ",
-          text: `ยินดีต้อนรับ ${data.data.user.username || ""}`,
+          text: `ยินดีต้อนรับ ${user.username || ""}`,
           confirmButtonText: "OK",
         }).then(() => {
           router.push("../../pages/home");
         });
       } else {
+        const messageMap = {
+          USER_NOT_FOUND: "ชื่อผู้ใช้งานไม่ถูกต้อง",
+          INVALID_PASSWORD: "รหัสผ่านไม่ถูกต้อง",
+        };
+
         Swal.fire({
           icon: "error",
           title: "เข้าสู่ระบบไม่สำเร็จ",
-          text: data.detail || "กรุณากรอก ชื่อผู้ใช้ และ รหัสผ่านให้ถูกต้อง",
-          confirmButtonText: "Try Again",
+          text:
+            messageMap[data.detail] ||
+            "กรุณากรอก ชื่อผู้ใช้ และ รหัสผ่านให้ถูกต้อง",
+          confirmButtonText: "ลองอีกครั้ง",
         });
       }
     } catch (error) {
@@ -172,13 +227,14 @@ export default function Login() {
         icon: "error",
         title: "เข้าสู่ระบบไม่สำเร็จ",
         text: "กรุณาลงทะเบียนก่อนเข้าสู่ระบบอีกครั้ง",
-        confirmButtonText: "OK",
+        confirmButtonText: "ตกลง",
       });
     } finally {
       setIsLoading(false);
     }
   };
 
+  // ================== UI ==================
   return (
     <div className={styles.container}>
       <div className={styles.iconWrapper}>
@@ -198,9 +254,7 @@ export default function Login() {
               placeholder="ชื่อผู้ใช้"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              required
               disabled={isLoading}
-              // autocomplete —>เพื่อ "ไม่ให้ Browser จำค่าที่เคยกรอกไว้" แล้วเติมค่าให้โดยอัตโนมัติ ทำให้ตอนโหลดหน้าใหม่ช่อง username ไม่มีค่าเป็น "Admin"
               autoComplete="new-username"
             />
           </div>
@@ -212,7 +266,6 @@ export default function Login() {
               placeholder="รหัสผ่าน"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              required
               disabled={isLoading}
               autoComplete="new-password"
             />
@@ -225,7 +278,6 @@ export default function Login() {
               placeholder="องค์กร"
               value={organization}
               onChange={(e) => setOrganization(e.target.value)}
-              required
               disabled={isLoading}
             />
           </div>

@@ -1,0 +1,276 @@
+/* app\components\CaseSubtypeModal.js */
+
+.modalCaseSubtype {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 2000;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* pointer-events: auto; */
+}
+
+.modalCaseSubtypeBox {
+ width: 560px;
+  max-height: 90vh;
+  background: #fff;
+  border-radius: 14px;
+  overflow: hidden;
+  position: relative;
+}
+
+.CaseSubtypelContent {
+ padding: 24px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+/* ===== Title ===== */
+.CaseSubtypeTitle {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #000;
+  text-align: center;
+}
+
+.CloseCSButtons {
+  background: #e5e7eb;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* ===== Edit / Add ===== */
+.editRow {
+  display: flex;
+  align-items: center;
+  grid-template-columns: 180px 1fr;
+  column-gap: 10px;
+  margin-bottom: 1rem;
+  /* gap: 8px; */
+}
+
+.editLabel {
+  /* width: 150px; */
+  font-weight: bold;
+  color: #000;
+  white-space: nowrap;
+}
+
+.editInput {
+   width: 100%;
+  min-height: 38px;
+  padding: 8px 12px;
+
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #000;
+}
+
+/*------ modal------*/
+.viewField {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+.viewRow {
+  display: flex;
+  margin-bottom: 0.6rem;
+  font-size: 15px;
+  color: #000;
+}
+
+.viewLabel {
+  width: 150px;
+  font-weight: bold;
+}
+
+.viewValue {
+  color: #374151;
+}
+
+.editInput,
+.viewBox {
+  width: 100%;          
+  min-height: 38px;
+  padding: 8px 12px;
+
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  background-color: #f5f5f5;
+
+  font-size: 16px;
+  color: #212529;
+
+  display: flex;
+  align-items: center;
+}
+
+/* ===== ข้อความอธิบายความสำคัญ ===== */
+.priorityHint {
+  font-size: 12px;
+  color: #6b7280;
+  margin-bottom: 4px;
+}
+
+/* ===== View Box ความสำคัญ ===== */
+.priorityViewBox {
+  width: 100%;
+  min-height: 38px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background-color: #f8f9fa;
+  display: flex;
+  align-items: center;
+  color: #000;
+  border: 1px solid #ced4da;
+}
+
+/* ===== สูง (1,2) ===== */
+/* สูง (1,2) */
+.priorityHigh {
+  border: 1px solid #f59e0b;
+  background-color: #fff7ed;
+  border-radius: 10px;
+}
+
+/* วิกฤต (0) */
+.priorityCritical {
+  border: 1px solid #ef4444;
+  background-color: #fee2e2;
+  border-radius: 10px;
+}
+
+/*------ ปุ่ม บันทึก แก้ไข, เพิ่ม ------*/
+.modalSave {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.SaveCSButtons {
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.SaveCSButtons:hover {
+  background: #1d4ed8;
+}
+
+.editInput[multiple] {
+  min-height: 100px;
+}
+
+.selectWrapper {
+  width: 100%;
+  padding: 0;
+  border: none;        
+  background: none;
+}
+
+/* ------ dropdown menu คุณสมบัติ, ทักษะ ------ */
+.selectWrapper :global(.rs__menu) {
+  background-color: #ffffff;
+  color: #000000;
+  z-index: 9999;
+}
+
+/* ===== option ปกติ ===== */
+.selectWrapper :global(.rs__option) {
+  color: #000000;
+  background-color: #ffffff;
+  font-size: 14px;
+}
+
+/* ===== hover option ===== */
+.selectWrapper :global(.rs__option--is-focused) {
+  background-color: #e5e7eb; 
+  color: #000000;
+}
+
+/* ===== option ที่เลือกแล้ว ===== */
+.selectWrapper :global(.rs__option--is-selected) {
+  background-color: #dbeafe;  
+  color: #000000;
+}
+
+/* ===== ตัวอักษรที่เลือกแล้ว (ในกล่อง) ===== */
+.selectWrapper :global(.rs__single-value),
+.selectWrapper :global(.rs__multi-value__label) {
+  color: #000000;
+}
+
+/* ===== tag ที่เลือกหลายค่า ===== */
+.selectWrapper :global(.rs__multi-value) {
+  background-color: #e5e7eb;
+}
+
+/* ===== placeholder ===== */
+.selectWrapper :global(.rs__placeholder) {
+  color: #6b7280;
+}
+
+/* ===== react-select control ปกติ ===== */
+.selectWrapper :global(.rs__control) {
+  background-color: #f8f9fa;
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  box-shadow: none;       /* สำคัญ */
+}
+
+/* ===== hover ===== */
+.selectWrapper :global(.rs__control:hover) {
+  /* border-color: #000000; */
+  border: 2px solid #000000;
+}
+
+/* ===== focus (ตอนคลิก) ===== */
+.selectWrapper :global(.rs__control--is-focused) {
+   border: 2px solid #000000 !important;
+  box-shadow: none !important;   /* 🔥 ตัวนี้ลบน้ำเงิน */
+}
+
+
+/* ------ ปุ่มยกเลิก x ------ */
+.CloseCTButtons {
+  width: 40px;
+  height: 40px;
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 18px;
+  font-weight: bold;
+
+  position: absolute;
+  top: 2px;
+  right: -2px;
+  /* background: transparent;*/
+  border: none;
+  cursor: pointer; 
+  margin-right: 1cm;
+  color: #fff;
+  background-color: #e03c4c;
+  padding: 0.4rem 0.8rem;
+  border-radius: 0.4rem;
+  border: none;
+}
+
+.CloseCTButtons:hover {
+  background-color: rgb(156, 0, 0);
+}
+
+
+

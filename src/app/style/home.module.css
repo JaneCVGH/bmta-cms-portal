@@ -6,11 +6,18 @@
 .homepage {
   display: flex;
   flex-direction: column;
-  align-items: center;  /* จัดกลางแนวนอน */
-  padding: 20px;
+  align-items: stretch; 
+  padding: 0;
   background-color: #f0f2f5;
-  min-height: 100vh;    /* ให้เต็มความสูงหน้าจอ */
+  min-height: 100vh;    
   box-sizing: border-box;
+}
+
+.homeContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
 }
 
 .title {
@@ -22,8 +29,8 @@
 }
 
 .image {
-  width: 10cm;  /* ปรับขนาดตามที่ต้องการ*/
-  height: 10cm;   /* ปรับตามอัตราส่วนที่เหมาะสม*/
+  width: 10cm;  
+  height: 10cm;   
   margin-top: 20px;
   max-width: 100%;
   height: auto;
