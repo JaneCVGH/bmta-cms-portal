@@ -36,13 +36,6 @@
   margin-top: 1rem;
 }
 
-/* .viewRow {
-  display: flex;
-  margin-bottom: 0.6rem;
-  font-size: 15px;
-  color: #000;
-} */
-
 .viewLabel {
   width: 150px;
   font-weight: bold;
@@ -114,7 +107,6 @@
 }
 
 .editLabel {
-  /* width: 150px; */
   font-weight: bold;
   color: #000;
   white-space: nowrap;

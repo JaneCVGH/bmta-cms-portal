@@ -20,7 +20,7 @@
   animation: fadeIn 0.2s ease;
 }
 
-/* หัวข้อ */
+/* หัวข้อ ออกจากระบบ*/
 .LogoutModalTitle {
   font-size: 20px;
   font-weight: 600;

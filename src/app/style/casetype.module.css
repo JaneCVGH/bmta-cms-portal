@@ -1,3 +1,5 @@
+/* src\app\style\casetype.module.css */
+
 .CaseTypeListheader {
   min-height: 100vh;
   padding: 2rem;
@@ -139,7 +141,6 @@
 
   min-width: 0;
   gap: 0.5rem;
-   /* align-self: flex-start;  */
   flex-wrap: wrap;
 }
 
@@ -202,7 +203,6 @@
   gap: 6px;
 
 }
-
 .BtnCasesubType:hover {
   background-color: #14894c;
 }
@@ -253,7 +253,7 @@
   cursor: not-allowed;
 }
 
-/* ---- หน้าที่..... ---- */
+/* ---- หน้าที่..n... ---- */
 .PageText {
   color: #000;
   font-weight: bold;
