@@ -9,7 +9,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  /* pointer-events: auto; */
 }
 
 .modalCaseSubtypeBox {
@@ -27,7 +26,7 @@
   overflow-y: auto;
 }
 
-/* ===== Title ===== */
+/* ------Title------*/
 .CaseSubtypeTitle {
   font-size: 20px;
   font-weight: 600;
@@ -44,14 +43,13 @@
   cursor: pointer;
 }
 
-/* ===== Edit / Add ===== */
+/*------Edit / Add------*/
 .editRow {
   display: flex;
   align-items: center;
   grid-template-columns: 180px 1fr;
   column-gap: 10px;
   margin-bottom: 1rem;
-  /* gap: 8px; */
 }
 
 .editLabel {
@@ -112,14 +110,14 @@
   align-items: center;
 }
 
-/* ===== ข้อความอธิบายความสำคัญ ===== */
+/* ------ข้อความอธิบายความสำคัญ------*/
 .priorityHint {
   font-size: 12px;
   color: #6b7280;
   margin-bottom: 4px;
 }
 
-/* ===== View Box ความสำคัญ ===== */
+/*------View Box ความสำคัญ------*/
 .priorityViewBox {
   width: 100%;
   min-height: 38px;
@@ -132,15 +130,14 @@
   border: 1px solid #ced4da;
 }
 
-/* ===== สูง (1,2) ===== */
-/* สูง (1,2) */
+/*------สูง (1,2)------*/
 .priorityHigh {
   border: 1px solid #f59e0b;
   background-color: #fff7ed;
   border-radius: 10px;
 }
 
-/* วิกฤต (0) */
+/*------วิกฤต (0)------*/
 .priorityCritical {
   border: 1px solid #ef4444;
   background-color: #fee2e2;
@@ -186,61 +183,59 @@
   z-index: 9999;
 }
 
-/* ===== option ปกติ ===== */
+/*------option ปกติ------*/
 .selectWrapper :global(.rs__option) {
   color: #000000;
   background-color: #ffffff;
   font-size: 14px;
 }
 
-/* ===== hover option ===== */
+/*------hover option------*/
 .selectWrapper :global(.rs__option--is-focused) {
   background-color: #e5e7eb; 
   color: #000000;
 }
 
-/* ===== option ที่เลือกแล้ว ===== */
+/*------option ที่เลือกแล้ว------*/
 .selectWrapper :global(.rs__option--is-selected) {
   background-color: #dbeafe;  
   color: #000000;
 }
 
-/* ===== ตัวอักษรที่เลือกแล้ว (ในกล่อง) ===== */
+/*------ตัวอักษรที่เลือกแล้ว (ในกล่อง)------*/
 .selectWrapper :global(.rs__single-value),
 .selectWrapper :global(.rs__multi-value__label) {
   color: #000000;
 }
 
-/* ===== tag ที่เลือกหลายค่า ===== */
+/* ------tag ที่เลือกหลายค่า------*/
 .selectWrapper :global(.rs__multi-value) {
   background-color: #e5e7eb;
 }
 
-/* ===== placeholder ===== */
+/*------placeholder------*/
 .selectWrapper :global(.rs__placeholder) {
   color: #6b7280;
 }
 
-/* ===== react-select control ปกติ ===== */
+/*------react-select control ปกติ------*/
 .selectWrapper :global(.rs__control) {
   background-color: #f8f9fa;
   border: 1px solid #ced4da;
   border-radius: 6px;
-  box-shadow: none;       /* สำคัญ */
+  box-shadow: none;       
 }
 
-/* ===== hover ===== */
+/*------hover------*/
 .selectWrapper :global(.rs__control:hover) {
-  /* border-color: #000000; */
   border: 2px solid #000000;
 }
 
-/* ===== focus (ตอนคลิก) ===== */
+/*------focus (ตอนคลิก)------*/
 .selectWrapper :global(.rs__control--is-focused) {
-   border: 2px solid #000000 !important;
-  box-shadow: none !important;   /* 🔥 ตัวนี้ลบน้ำเงิน */
+  border: 2px solid #000000 !important;
+  box-shadow: none !important; 
 }
-
 
 /* ------ ปุ่มยกเลิก x ------ */
 .CloseCTButtons {
@@ -257,7 +252,6 @@
   position: absolute;
   top: 2px;
   right: -2px;
-  /* background: transparent;*/
   border: none;
   cursor: pointer; 
   margin-right: 1cm;

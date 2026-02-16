@@ -107,37 +107,6 @@ export default function Login() {
         },
       );
 
-      // // ---------- Error Handling ----------
-      // const result = await response.json();
-
-      // // ---------- username ไม่ถูก ----------
-      // if (!response.ok && result?.detail === "USER_NOT_FOUND") {
-      //   Swal.fire(
-      //     "ชื่อผู้ใช้งานไม่ถูกต้อง",
-      //     "กรุณากรอกชื่อผู้ใช้งานให้ถูกต้อง",
-      //     "error",
-      //   );
-      //   return;
-      // }
-
-      // // ---------- password ไม่ถูก ----------
-      // if (!response.ok && result?.detail === "INVALID_PASSWORD") {
-      //   Swal.fire("รหัสผ่านไม่ถูกต้อง", "กรุณากรอกรหัสผ่านให้ถูกต้อง", "error");
-      //   return;
-      // }
-
-      // // ---------- error อื่น ----------
-      // if (!response.ok) {
-      //   Swal.fire("เกิดข้อผิดพลาด", "ไม่สามารถเข้าสู่ระบบได้", "error");
-      //   return;
-      // }
-
-      //console.log(response)
-      // ค่อย parse JSON เฉพาะกรณี success
-      // const data = result;
-      // console.log("FULL LOGIN RESPONSE =", result);
-      // console.log("LOGIN DATA ONLY =", result.data);
-
       // const data = await response.json();
       try {
         data = await response.json();
@@ -155,13 +124,13 @@ export default function Login() {
         const accessToken = data.data.accessToken;
         const refreshToken = data.data.refreshToken;
 
+        // const expiresIn = 15 * 60 * 1000; // 15 นาที
+        // const expireAt = Date.now() + expiresIn;
+        // localStorage.setItem("token_expire_at", expireAt.toString()); // เก็บเวลา Expire
+ 
         // **เก็บ token และข้อมูล user ใน localStorage**
-        const expiresIn = 15 * 60 * 1000; // 15 นาที
-        const expireAt = Date.now() + expiresIn;
-
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("refreshToken", refreshToken);
-        localStorage.setItem("token_expire_at", expireAt.toString()); // เก็บเวลา Expire
 
         // ข้อมูล user ใน localStorage
         localStorage.setItem("user_data", JSON.stringify(data.data.user));
@@ -202,7 +171,7 @@ export default function Login() {
           icon: "success",
           title: "เข้าสู่ระบบสำเร็จ",
           text: `ยินดีต้อนรับ ${user.username || ""}`,
-          confirmButtonText: "OK",
+          confirmButtonText: "ตกลง",
         }).then(() => {
           router.push("../../pages/home");
         });

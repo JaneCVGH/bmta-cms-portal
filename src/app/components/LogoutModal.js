@@ -27,6 +27,7 @@ export default function LogoutModal({ show, onConfirm, onCancel }) {
           <button className={styles.btnConfirm} onClick={onConfirm}>
             ออกจากระบบ
           </button>
+          
           <button className={styles.btnCancel} onClick={onCancel}>
             ยกเลิก
           </button>

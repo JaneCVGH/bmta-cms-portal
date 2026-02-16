@@ -10,6 +10,9 @@ import CreatableSelect from "react-select/creatable";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 
+import { apiFetch, BASE_URL } from "@/app/lib/apiClient";
+import { clearSessionAndLogout, showErrorSwal } from "../lib/ErrorSwal";
+
 export default function CaseSubtypeModal({
   show,
   type,
@@ -77,24 +80,20 @@ export default function CaseSubtypeModal({
   // ทักษะ
   useEffect(() => {
     const fetchSkills = async () => {
-      const token = localStorage.getItem("accessToken");
-      if (!token) return;
-
       try {
-        const res = await fetch(
-          "https://welcome-service-stg.metthier.ai:65000/api/v1/skill?start=0&length=100",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              Accept: "application/json",
-            },
-          },
-        );
-
-        const result = await res.json();
+        const result = await apiFetch(`${BASE_URL}/skill?start=0&length=100`);
         setSkills(result.data || []);
       } catch (err) {
         console.error("fetchSkills error:", err);
+
+        if (err.message === "NO_TOKEN" || err.message === "UNAUTHORIZED") {
+          clearSessionAndLogout("กรุณาเข้าสู่ระบบใหม่");
+        } else if (err.message === "NETWORK_ERROR") {
+          showErrorSwal("ไม่สามารถเชื่อมต่อระบบได้");
+        } else {
+          showErrorSwal("ไม่สามารถโหลดข้อมูลทักษะได้");
+        }
+
         setSkills([]);
       }
     };
@@ -105,24 +104,22 @@ export default function CaseSubtypeModal({
   // คุณสมบัติ
   useEffect(() => {
     const fetchProperties = async () => {
-      const token = localStorage.getItem("accessToken");
-      if (!token) return;
-
       try {
-        const res = await fetch(
-          "https://welcome-service-stg.metthier.ai:65000/api/v1/mdm/properties?start=0&length=100",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              Accept: "application/json",
-            },
-          },
+        const result = await apiFetch(
+          `${BASE_URL}/mdm/properties?start=0&length=100`,
         );
-
-        const result = await res.json();
         setProperties(result.data || []);
       } catch (err) {
         console.error("fetchProperties error:", err);
+
+        if (err.message === "NO_TOKEN" || err.message === "UNAUTHORIZED") {
+          clearSessionAndLogout("กรุณาเข้าสู่ระบบใหม่");
+        } else if (err.message === "NETWORK_ERROR") {
+          showErrorSwal("ไม่สามารถเชื่อมต่อระบบได้");
+        } else {
+          showErrorSwal("ไม่สามารถโหลดข้อมูลคุณสมบัติได้");
+        }
+
         setProperties([]);
       }
     };
@@ -133,30 +130,24 @@ export default function CaseSubtypeModal({
   // เวิร์กโฟลว์
   useEffect(() => {
     const fetchWorkflows = async () => {
-      const token = localStorage.getItem("accessToken");
-      if (!token) return;
-
       try {
-        const res = await fetch(
-          "https://welcome-service-stg.metthier.ai:65000/api/v1/workflows",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              Accept: "application/json",
-            },
-          },
-        );
-
-        const result = await res.json();
-        console.log("WORKFLOWS RESPONSE:", result);
+        const result = await apiFetch(`${BASE_URL}/workflows`);
 
         const workflowList =
           result.data?.content || result.data || result.content || [];
 
         setWorkflows(workflowList);
-        // setWorkflows(result.data || []);
       } catch (err) {
         console.error("fetchWorkflows error:", err);
+
+        if (err.message === "NO_TOKEN" || err.message === "UNAUTHORIZED") {
+          clearSessionAndLogout("กรุณาเข้าสู่ระบบใหม่");
+        } else if (err.message === "NETWORK_ERROR") {
+          showErrorSwal("ไม่สามารถเชื่อมต่อระบบได้");
+        } else {
+          showErrorSwal("ไม่สามารถโหลดข้อมูลเวิร์กโฟลว์ได้");
+        }
+
         setWorkflows([]);
       }
     };
@@ -165,7 +156,7 @@ export default function CaseSubtypeModal({
   }, []);
 
   {
-    /* -------modal view ------- */
+    /* -------Modal View ------- */
   }
   const ViewField = ({ label, value }) => (
     <div className={styles.viewField}>
@@ -203,9 +194,8 @@ export default function CaseSubtypeModal({
                 : "ประเภทย่อย"}
           </h2>
 
-          {/* <form onSubmit={handleSubmit}> */}
           <form onSubmit={handleSubmit} noValidate>
-            {/* -------Modal ADD / EDIT ------- */}
+            {/* -------Modal Add/ Edit ------- */}
             {(isAdd || isEdit) && (
               <>
                 {/* ประเภท */}
@@ -215,17 +205,6 @@ export default function CaseSubtypeModal({
                     type="text"
                     value={formData.caseTypeName || ""}
                     readOnly
-                    className={styles.editInput}
-                  />
-                </div>
-
-                <div className={styles.editRow}>
-                  <label className={styles.editLabel}>รหัสประเภทย่อย:</label>
-                  <input
-                    ref={sTypeCodeRef}
-                    name="sTypeCode"
-                    value={formData.sTypeCode}
-                    onChange={handleChange}
                     className={styles.editInput}
                   />
                 </div>
@@ -247,6 +226,17 @@ export default function CaseSubtypeModal({
                     ref={enRef}
                     name="en"
                     value={formData.en}
+                    onChange={handleChange}
+                    className={styles.editInput}
+                  />
+                </div>
+
+                <div className={styles.editRow}>
+                  <label className={styles.editLabel}>รหัสประเภทย่อย:</label>
+                  <input
+                    ref={sTypeCodeRef}
+                    name="sTypeCode"
+                    value={formData.sTypeCode}
                     onChange={handleChange}
                     className={styles.editInput}
                   />
@@ -455,18 +445,12 @@ export default function CaseSubtypeModal({
               </>
             )}
 
-            {/* {/* ------- Modal VIEW ------- */}
+            {/* {/* ------- Modal View ------- */}
             {isView && (
               <>
                 <div className={styles.editRow}>
                   <label className={styles.editLabel}>ประเภท:</label>
                   <ViewBox value={formData.caseTypeName} />
-                </div>
-
-                {/* รหัสประเภทย่อย */}
-                <div className={styles.editRow}>
-                  <label className={styles.editLabel}>รหัสประเภทย่อย:</label>
-                  <ViewBox value={formData.sTypeCode} />
                 </div>
 
                 {/* ชื่อภาษาไทย */}
@@ -479,6 +463,12 @@ export default function CaseSubtypeModal({
                 <div className={styles.editRow}>
                   <label className={styles.editLabel}>ชื่อภาษาอังกฤษ:</label>
                   <ViewBox value={formData.en} />
+                </div>
+
+                {/* รหัสประเภทย่อย */}
+                <div className={styles.editRow}>
+                  <label className={styles.editLabel}>รหัสประเภทย่อย:</label>
+                  <ViewBox value={formData.sTypeCode} />
                 </div>
 
                 {/* ความสำคัญ */}
@@ -612,14 +602,6 @@ export default function CaseSubtypeModal({
                   บันทึก
                 </button>
               )}
-
-              {/* <button
-                type="button"
-                className={styles.CloseCSButtons}
-                onClick={onClose}
-              >
-                ปิด
-              </button> */}
             </div>
           </form>
         </div>

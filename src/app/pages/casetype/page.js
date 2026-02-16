@@ -5,10 +5,19 @@ import { useState, useEffect } from "react";
 import Navbar from "../../components/Navbar";
 import styles from "../../style/casetype.module.css";
 import Swal from "sweetalert2";
+import { useRouter } from "next/navigation";
 
 import CaseTypeModal from "../../components/CaseTypeModal";
 import CaseSubtypeModal from "../../components/CaseSubtypeModal";
 import CaseSubtypeListModal from "../../components/CaseSubtypeListModal";
+
+import { apiFetch, BASE_URL } from "@/app/lib/apiClient";
+import {
+  clearSessionAndLogout,
+  showErrorSwal,
+  requireSession,
+  handleApiError,
+} from "@/app/lib/ErrorSwal";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -16,9 +25,6 @@ import {
   faEye,
   faTrash,
   faSquarePlus,
-  faUserTie,
-  faImage,
-  faMagnifyingGlass,
   faCaretDown,
 } from "@fortawesome/free-solid-svg-icons";
 
@@ -26,7 +32,6 @@ export default function CaseTypesPage() {
   const [caseTypes, setCaseTypes] = useState([]);
   const [caseSubtypesByType, setCaseSubtypesByType] = useState({});
 
-  const [openCasetypeId, setOpenCasetypeId] = useState(null);
   const [currentCasetypeId, setCurrentCasetypeId] = useState(null);
 
   // **---ประเภท
@@ -52,8 +57,7 @@ export default function CaseTypesPage() {
 
     priority: "0",
     caseSla: "0",
-    wfId: null, // wfId: subtype.wfId,wfId: st.wfId,
-
+    wfId: null,
     unitPropLists: [],
     userSkillList: [],
 
@@ -72,8 +76,6 @@ export default function CaseTypesPage() {
   const [showCasetypeModal, setShowCasetypeModal] = useState(false);
   const [showCaseSubTypeModal, setshowCaseSubTypeModal] = useState(false);
 
-  // const [showUpdateCaseType, setshowUpdateCaseType] = useState(false);
-
   const [modalType, setModalType] = useState("add");
   const [editedCaseTypeIds, setEditedCaseTypeIds] = useState([]);
 
@@ -85,6 +87,8 @@ export default function CaseTypesPage() {
     (caseTypePage - 1) * caseTypeRowsPerPage,
     caseTypePage * caseTypeRowsPerPage,
   );
+
+  const totalCaseTypePages = Math.ceil(caseTypes.length / caseTypeRowsPerPage);
 
   // จำกัดจำนวน 6 CaseSubType ต่อ 1 หน้า
   const [caseSubtypePage, setCaseSubtypePage] = useState({});
@@ -102,54 +106,12 @@ export default function CaseTypesPage() {
   const [showCaseSubtypeListModal, setShowCaseSubtypeListModal] =
     useState(false);
 
-  const getTokenOrLogout = () => {
-    const token = localStorage.getItem("accessToken");
-    if (!token) return null;
-
-    try {
-      const payload = JSON.parse(atob(token.split(".")[1]));
-      const exp = payload.exp * 1000;
-
-      if (Date.now() > exp) {
-        localStorage.removeItem("accessToken");
-        Swal.fire({
-          icon: "warning",
-          title: "Session หมดอายุ",
-          text: "กรุณาเข้าสู่ระบบใหม่",
-          confirmButtonText: "ตกลง",
-        }).then(() => {
-          window.location.href = "/login";
-        });
-
-        return null;
-      }
-      return token;
-    } catch {
-      return null;
-    }
-  };
+  const router = useRouter();
 
   // **---ประเภท
   const fetchCaseTypes = async () => {
-    const token = getTokenOrLogout();
-    if (!token) return;
-
     try {
-      const res = await fetch(
-        "https://welcome-service-stg.metthier.ai:65000/api/v1/casetypes",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            Accept: "application/json",
-          },
-        },
-      );
-
-      if (!res.ok) {
-        throw new Error(`HTTP ${res.status}`);
-      }
-
-      const result = await res.json();
+      const result = await apiFetch(`${BASE_URL}/casetypes`);
 
       const mappedCaseTypes = (result.data || [])
         .map((type) => ({
@@ -172,121 +134,92 @@ export default function CaseTypesPage() {
       setCaseTypes(mappedCaseTypes);
     } catch (err) {
       console.error("fetchCaseTypes error:", err);
+      handleApiError(err, "ไม่สามารถโหลดข้อมูลประเภทได้");
       setCaseTypes([]);
     }
   };
-  // **---ประเภทย่อย
+
+  // **---นับจำนวน ประเภทย่อย
   const fetchCountCaseSubtypes = async () => {
-    const token = getTokenOrLogout();
-    if (!token) return;
+    try {
+      const result = await apiFetch(`${BASE_URL}/casesubtypes`);
 
-    const res = await fetch(
-      "https://welcome-service-stg.metthier.ai:65000/api/v1/casesubtypes",
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          Accept: "application/json",
-        },
-      },
-    );
+      const countMap = {};
+      (result.data || []).forEach((st) => {
+        if (!countMap[st.typeId]) countMap[st.typeId] = 0;
+        countMap[st.typeId]++;
+      });
 
-    const result = await res.json();
+      setCaseTypes((prev) =>
+        prev.map((ct) => ({
+          ...ct,
+          subtypeCount: countMap[ct.idCasetype] || 0,
+        })),
+      );
+    } catch (err) {
+      console.error("fetchCountCaseSubtypes error:", err);
 
-    // นับจำนวน CaseSubtype ต่อ typeId
-    const countMap = {};
-    result.data.forEach((st) => {
-      if (!countMap[st.typeId]) {
-        countMap[st.typeId] = 0;
-      }
-      countMap[st.typeId]++;
-    });
-
-    // เอาจำนวนไปใส่ใน caseTypes
-    setCaseTypes((prev) =>
-      prev.map((ct) => ({
-        ...ct,
-        subtypeCount: countMap[ct.idCasetype] || 0,
-      })),
-    );
+      handleApiError(err, "ไม่สามารถโหลดข้อมูลประเภทได้");
+      showErrorSwal("ไม่สามารถโหลดจำนวนประเภทย่อยได้");
+    }
   };
 
-  const fetchCaseSubTypes = async (casetypeId) => {
-    const token = getTokenOrLogout();
-    if (!token) return;
+  const getCaseSubtypes = async () => {
+    try {
+      const result = await apiFetch(`${BASE_URL}/casesubtypes`);
 
-    const res = await fetch(
-      "https://welcome-service-stg.metthier.ai:65000/api/v1/casesubtypes",
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          Accept: "application/json",
-        },
-      },
-    );
-
-    const result = await res.json();
-
-    // const filtered = result.data
-    //   .filter((st) => st.typeId === casetypeId)
-    //   .map((st) => ({
-    const formatted = result.data
-      .filter((st) => st.typeId === casetypeId)
-      .map((st) => ({
+      return (result.data || []).map((st) => ({
         idCaseSubtype: st.sTypeId,
+        typeId: st.typeId,
         sTypeCode: st.sTypeCode,
         th: st.th,
         en: st.en,
-
         priority: String(st.priority ?? "0"),
         caseSla: String(st.caseSla ?? "0"),
         wfId: st.wfId ?? null,
-
         userSkillList: st.userSkillList || [],
         unitPropLists: st.unitPropLists || [],
-
         active: st.active,
         createdAt: st.createdAt,
         updatedAt: st.updatedAt,
-        createdBy: st.createdBy,
-        updatedBy: st.updatedBy,
-
         mDeviceType: st.mDeviceType,
         mDeviceTypeName: st.mDeviceTypeName,
         mWorkOrderType: st.mWorkOrderType,
       }));
+    } catch (err) {
+      console.error("getCaseSubtypes error:", err);
+      throw err;
+    }
+  };
 
-    setCaseSubtypesByType((prev) => ({
-      ...prev,
-      [casetypeId]: formatted, //filtered
-    }));
+  const loadCaseSubtypesByType = async (casetypeId, errorMessage) => {
+    try {
+      const allSubtypes = await getCaseSubtypes();
+
+      setCaseSubtypesByType((prev) => ({
+        ...prev,
+        [casetypeId]: allSubtypes
+          .filter((st) => st.typeId === casetypeId)
+          .sort((a, b) => {
+            if (!a.createdAt) return 1;
+            if (!b.createdAt) return -1;
+            return new Date(b.createdAt) - new Date(a.createdAt);
+          }),
+      }));
+    } catch (error) {
+      showErrorSwal(errorMessage || "ไม่สามารถโหลดข้อมูลประเภทย่อยได้");
+    }
   };
 
   useEffect(() => {
+    // if (!requireSession()) return;
+
     const loadData = async () => {
       await fetchCaseTypes();
       await fetchCountCaseSubtypes();
     };
     loadData();
   }, []);
-
-  const handleToggleCaseSubtypes = async (idCasetype) => {
-    // ถ้าคลิกอันเดิม → ปิด
-    if (openCasetypeId === idCasetype) {
-      setOpenCasetypeId(null);
-      return;
-    }
-
-    // เปิดได้แค่อันเดียว
-    setOpenCasetypeId(idCasetype);
-
-    // reset หน้า subtype ของทุก casetype
-    setCaseSubtypePage({
-      [idCasetype]: 1,
-    });
-
-    // ดึง subtype เฉพาะอันที่เปิด
-    await fetchCaseSubTypes(idCasetype);
-  };
 
   const handleCaseTypeChange = (e) => {
     setCaseTypeFormData({
@@ -295,10 +228,9 @@ export default function CaseTypesPage() {
     });
   };
 
-  // -------Casetype-------
+  // -------Casetype Modal-------
   const handleOpenCaseTypeModal = (type, casetype = null) => {
     setModalType(type);
-    // setshowUpdateCaseType(true);
     setShowCasetypeModal(false);
 
     setCaseTypeFormData({
@@ -353,16 +285,11 @@ export default function CaseTypesPage() {
       return;
     }
 
-    const token = getTokenOrLogout();
-    if (!token) return;
-
     const isEdit = modalType === "edit";
 
     const url = isEdit
-      ? `https://welcome-service-stg.metthier.ai:65000/api/v1/casetypes/${caseTypeFormData.idCasetype}`
-      : `https://welcome-service-stg.metthier.ai:65000/api/v1/casetypes/add`;
-
-    // const method = isEdit ? "PATCH" : "POST";
+      ? `${BASE_URL}/casetypes/${caseTypeFormData.idCasetype}`
+      : `${BASE_URL}/casetypes/add`;
 
     const payload = {
       th: caseTypeFormData.th,
@@ -370,48 +297,27 @@ export default function CaseTypesPage() {
       active: true,
     };
 
-    const res = await fetch(url, {
-      method: isEdit ? "PATCH" : "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(payload),
-    });
+    try {
+      await apiFetch(url, {
+        method: isEdit ? "PATCH" : "POST",
+        body: JSON.stringify(payload),
+      });
 
-    if (res.ok) {
       await fetchCaseTypes();
-
-      // setshowUpdateCaseType(true);
-
+      await fetchCountCaseSubtypes();
       setShowCasetypeModal(false);
-
-      const isAdd = modalType === "add";
 
       //**---แก้ไข Case Type--- **/
       Swal.fire({
         icon: "success",
         title: "สำเร็จ!",
-        text: "ข้อมูล ประเภท ถูกบันทึกเรียบร้อยแล้ว",
+        text: "ข้อมูลประเภทถูกบันทึกเรียบร้อยแล้ว",
         confirmButtonText: "ตกลง",
       });
-    } else {
-      try {
-        const errorText = await res.text();
-        console.error("❌ API Error:", errorText);
-        Swal.fire(
-          "เกิดข้อผิดพลาด",
-          errorText || "ไม่สามารถบันทึกข้อมูล ประเภท ได้",
-          "error",
-        );
-      } catch (err) {
-        Swal.fire(
-          "เกิดข้อผิดพลาด",
-          "เกิดข้อผิดพลาดจากระบบหรือข้อมูลไม่ถูกต้อง",
-          "error",
-        );
-        console.error("❌ JSON parse error:", err);
-      }
+    } catch (err) {
+      console.error("editCaseTypeSubmit error:", err);
+      handleApiError(err, "ไม่สามารถโหลดข้อมูลประเภทได้");
+      showErrorSwal("ไม่สามารถบันทึกข้อมูลประเภทได้");
     }
   };
 
@@ -419,7 +325,7 @@ export default function CaseTypesPage() {
   const DeleteCaseType = async (caseTypeId) => {
     const result = await Swal.fire({
       title: "คุณแน่ใจหรือไม่?",
-      text: "การลบข้อมูล ประเภท จะไม่สามารถย้อนกลับได้!",
+      text: "การลบข้อมูลประเภทจะไม่สามารถย้อนกลับได้!",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#dc3545",
@@ -430,78 +336,42 @@ export default function CaseTypesPage() {
     if (!result.isConfirmed) return;
 
     try {
-      const token = getTokenOrLogout();
-      if (!token) return;
+      await apiFetch(`${BASE_URL}/casetypes/${caseTypeId}`, {
+        method: "DELETE",
+      });
 
-      const res = await fetch(
-        `https://welcome-service-stg.metthier.ai:65000/api/v1/casetypes/${caseTypeId}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-
-      if (!res.ok) {
-        throw new Error("Delete CaseType failed");
-      }
-
-      await fetchCaseTypes(); // ดึง casetype ใหม่
+      await fetchCaseTypes();
+      await fetchCountCaseSubtypes();
 
       Swal.fire({
         icon: "success",
         title: "ลบแล้ว",
-        text: "ข้อมูล ประเภท ถูกลบเรียบร้อย",
+        text: "ข้อมูลประเภทถูกลบเรียบร้อย",
         confirmButtonText: "ตกลง",
       });
-    } catch (error) {
-      console.error("DeleteCaseType error:", error);
-      Swal.fire("เกิดข้อผิดพลาด", "ไม่สามารถลบข้อมูล ประเภท ได้", "error");
+    } catch (err) {
+      console.error("DeleteCaseType error:", err);
+      handleApiError(err, "ไม่สามารถโหลดข้อมูลประเภทได้");
+      showErrorSwal("ไม่สามารถลบข้อมูลประเภทได้");
     }
   };
 
   const refreshCaseSubtypes = async (casetypeId) => {
-    const token = getTokenOrLogout();
-    if (!token) return;
+    try {
+      console.log("_refreshCaseSubtypes CALLED_", casetypeId);
 
-    const res = await fetch(
-      "https://welcome-service-stg.metthier.ai:65000/api/v1/casesubtypes",
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          Accept: "application/json",
-        },
-      },
-    );
-    const data = await res.json();
-
-    setCaseSubtypesByType((prev) => ({
-      ...prev,
-      [casetypeId]: data.data
-        .filter((st) => st.typeId === casetypeId)
-        .map((st) => ({
-          idCaseSubtype: st.sTypeId,
-          sTypeCode: st.sTypeCode,
-          th: st.th,
-          en: st.en,
-
-          priority: st.priority,
-          caseSla: st.caseSla,
-          wfId: st.wfId,
-
-          userSkillList: st.userSkillList || [],
-          unitPropLists: st.unitPropLists || [],
-
-          active: st.active,
-          createdAt: st.createdAt,
-          updatedAt: st.updatedAt,
-
-          mDeviceType: st.mDeviceType,
-          mDeviceTypeName: st.mDeviceTypeName,
-          mWorkOrderType: st.mWorkOrderType,
-        })),
-    }));
+      const allSubtypes = await getCaseSubtypes();
+      setCaseSubtypesByType((prev) => ({
+        ...prev,
+        [casetypeId]: allSubtypes.filter((st) => st.typeId === casetypeId),
+      }));
+      return true;
+    } catch (err) {
+      console.log("❌ refreshCaseSubtypes CATCH", err);
+      handleApiError(err, "ไม่สามารถโหลดข้อมูลประเภทได้");
+      showErrorSwal("ไม่สามารถรีเฟรชข้อมูลประเภทย่อยได้");
+      return false;
+    }
   };
 
   const handleOpenCaseSubtypeModal = (type, casetypeId, subtype = null) => {
@@ -557,14 +427,9 @@ export default function CaseTypesPage() {
     });
   };
 
+  //** แก้ไข Case_Sub_Types, เพิ่ม Case_Types */
   const editCaseSubTypeSubmit = async (e) => {
     e.preventDefault();
-
-    const token = getTokenOrLogout();
-    if (!token) {
-      Swal.fire("ไม่พบ Token", "กรุณาเข้าสู่ระบบใหม่", "error");
-      return;
-    }
 
     // ----ตรวจสอบ ประเภทย่อย ว่า อันไหนว่าง  (รวม)----
     const isAllEmpty =
@@ -582,26 +447,20 @@ export default function CaseTypesPage() {
 
     // ----ถ้า ข้อมูลไม่ครบ ว่าง----
     if (isAllEmpty) {
-      Swal.fire("ข้อมูลไม่ครบ", "กรุณากรอกข้อมูลให้ครบ", "warning");
+      Swal.fire({
+        icon: "warning",
+        title: "ข้อมูลไม่ครบ",
+        text: "กรุณากรอกข้อมูลให้ครบ",
+        confirmButtonText: "ตกลง",
+      });
       return;
     }
 
     const isEdit = modalType === "edit";
 
     const url = isEdit
-      ? `https://welcome-service-stg.metthier.ai:65000/api/v1/casesubtypes/${caseSubtypeFormData.idCaseSubtype}`
-      : `https://welcome-service-stg.metthier.ai:65000/api/v1/casesubtypes/add`;
-
-    // ---- ถ้า รหัสประเภทย่อย ว่าง ----
-    if (!caseSubtypeFormData.sTypeCode?.trim()) {
-      Swal.fire({
-        icon: "warning",
-        title: "ข้อมูลไม่ครบ",
-        text: "กรุณากรอกรหัสประเภทย่อย",
-        confirmButtonText: "ตกลง",
-      });
-      return;
-    }
+      ? `${BASE_URL}/casesubtypes/${caseSubtypeFormData.idCaseSubtype}`
+      : `${BASE_URL}/casesubtypes/add`;
 
     // ----ถ้า ชื่อประเภทย่อยภาษาไทย ว่าง----
     if (!caseSubtypeFormData.th?.trim()) {
@@ -625,9 +484,25 @@ export default function CaseTypesPage() {
       return;
     }
 
+    // ---- ถ้า รหัสประเภทย่อย ว่าง ----
+    if (!caseSubtypeFormData.sTypeCode?.trim()) {
+      Swal.fire({
+        icon: "warning",
+        title: "ข้อมูลไม่ครบ",
+        text: "กรุณากรอกรหัสประเภทย่อย",
+        confirmButtonText: "ตกลง",
+      });
+      return;
+    }
+
     // ----ถ้า ระดับความสำคัญ ว่าง----
     if (!caseSubtypeFormData.priority && caseSubtypeFormData.priority !== "0") {
-      Swal.fire("ข้อมูลไม่ครบ", "กรุณาเลือกระดับความสำคัญ", "warning");
+      Swal.fire({
+        icon: "warning",
+        title: "ข้อมูลไม่ครบ",
+        text: "กรุณาเลือกระดับความสำคัญ  1 รายการ",
+        confirmButtonText: "ตกลง",
+      });
       return;
     }
 
@@ -636,11 +511,12 @@ export default function CaseTypesPage() {
       !caseSubtypeFormData.unitPropLists ||
       caseSubtypeFormData.unitPropLists.length === 0
     ) {
-      Swal.fire(
-        "ข้อมูลไม่ครบ",
-        "กรุณาเลือกคุณสมบัติอย่างน้อย 1 รายการ",
-        "warning",
-      );
+      Swal.fire({
+        icon: "warning",
+        title: "ข้อมูลไม่ครบ",
+        text: "กรุณาเลือกคุณสมบัติอย่างน้อย 1 รายการ",
+        confirmButtonText: "ตกลง",
+      });
       return;
     }
 
@@ -649,19 +525,34 @@ export default function CaseTypesPage() {
       !caseSubtypeFormData.userSkillList ||
       caseSubtypeFormData.userSkillList.length === 0
     ) {
-      Swal.fire("ข้อมูลไม่ครบ", "กรุณาเลือกทักษะอย่างน้อย 1 รายการ", "warning");
+      Swal.fire({
+        icon: "warning",
+        title: "ข้อมูลไม่ครบ",
+        text: "กรุณาเลือกทักษะอย่างน้อย 1 รายการ",
+        confirmButtonText: "ตกลง",
+      });
       return;
     }
 
     // ----ถ้า เวิร์กโฟลว์ ว่าง----
     if (!caseSubtypeFormData.wfId) {
-      Swal.fire("ข้อมูลไม่ครบ", "กรุณาเลือกเวิร์กโฟลว์ 1 รายการ", "warning");
+      Swal.fire({
+        icon: "warning",
+        title: "ข้อมูลไม่ครบ",
+        text: "กรุณาเลือกเวิร์กโฟลว์ 1 รายการ",
+        confirmButtonText: "ตกลง",
+      });
       return;
     }
 
     // ----ถ้า สถานะ ว่าง----
     if (caseSubtypeFormData.active === null) {
-      Swal.fire("ข้อมูลไม่ครบ", "กรุณาเลือกสถานะ", "warning");
+      Swal.fire({
+        icon: "warning",
+        title: "ข้อมูลไม่ครบ",
+        text: "กรุณาเลือกสถานะ 1 รายการ",
+        confirmButtonText: "ตกลง",
+      });
       return;
     }
 
@@ -696,46 +587,39 @@ export default function CaseTypesPage() {
     }
 
     try {
-      const res = await fetch(url, {
+      await apiFetch(url, {
         method: isEdit ? "PATCH" : "POST",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
         body: JSON.stringify(payload),
       });
 
-      if (res.ok) {
-        setshowCaseSubTypeModal(false);
-        await refreshCaseSubtypes(currentCasetypeId);
+      console.log("_BEFORE refreshCaseSubtypes_");
 
-        if (modalType === "add") {
-          setCaseTypes((prev) =>
-            prev.map((ct) =>
-              ct.idCasetype === currentCasetypeId
-                ? { ...ct, subtypeCount: ct.subtypeCount + 1 }
-                : ct,
-            ),
-          );
-        }
+      setshowCaseSubTypeModal(false);
 
-        Swal.fire({
-          icon: "success",
-          title: "สำเร็จ!",
-          text: "ข้อมูล ประเภทย่อย ถูกบันทึกเรียบร้อยแล้ว",
-          confirmButtonText: "ตกลง",
-        });
-      } else {
-        const errText = await res.text();
-        Swal.fire(
-          "เกิดข้อผิดพลาด",
-          errText || "ไม่สามารถบันทึกข้อมูล ประเภทย่อย ได้",
-          "error",
-        );
-      }
-    } catch (error) {
-      console.error("editCaseSubTypeSubmit error:", error);
-      Swal.fire("เกิดข้อผิดพลาด", "ไม่สามารถเชื่อมต่อระบบได้", "error");
+      const ok = await refreshCaseSubtypes(currentCasetypeId);
+      if (!ok) return;
+
+      //เพิ่ม ประเภทย่อย ใหม่--> เห็น ประเภทย่อย ใหม่ทันทีที่หน้า 1
+      setCaseSubtypePage((prev) => ({
+        ...prev,
+        [currentCasetypeId]: 1,
+      }));
+
+      //นับจำนวน ประเภทย่อย หลังเพิ่มประเภทย่อย
+      await fetchCountCaseSubtypes();
+
+      console.log("_AFTER refreshCaseSubtypes_");
+
+      Swal.fire({
+        icon: "success",
+        title: "สำเร็จ!",
+        text: "ข้อมูลประเภทย่อยถูกบันทึกเรียบร้อยแล้ว",
+        confirmButtonText: "ตกลง",
+      });
+    } catch (err) {
+      console.error("editCaseSubTypeSubmit error:", err);
+      handleApiError(err, "ไม่สามารถโหลดข้อมูลประเภทได้");
+      showErrorSwal("ไม่สามารถบันทึกข้อมูลประเภทย่อยได้");
     }
   };
 
@@ -743,7 +627,7 @@ export default function CaseTypesPage() {
   const DeleteCaseSubType = async (idCaseSubtype) => {
     const confirmResult = await Swal.fire({
       title: "คุณแน่ใจหรือไม่?",
-      text: "การลบข้อมูล ประเภทย่อย จะไม่สามารถย้อนกลับได้!",
+      text: "การลบข้อมูลประเภทย่อยจะไม่สามารถย้อนกลับได้!",
       icon: "warning",
       showCancelButton: true,
       confirmButtonText: "ยืนยัน",
@@ -753,40 +637,26 @@ export default function CaseTypesPage() {
     });
 
     if (!confirmResult.isConfirmed) return;
+
     try {
-      const token = getTokenOrLogout();
-      if (!token) return;
+      await apiFetch(`${BASE_URL}/casesubtypes/${idCaseSubtype}`, {
+        method: "DELETE",
+      });
 
-      const res = await fetch(
-        `https://welcome-service-stg.metthier.ai:65000/api/v1/casesubtypes/${idCaseSubtype}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-
+      await fetchCaseTypes();
+      await fetchCountCaseSubtypes();
       await refreshCaseSubtypes(currentCasetypeId);
-
-      // นับจำนวน ประเภทย่อย หลัง ลบประเภทย่อย
-      setCaseTypes((prev) =>
-        prev.map((ct) =>
-          ct.idCasetype === currentCasetypeId
-            ? { ...ct, subtypeCount: Math.max(ct.subtypeCount - 1, 0) }
-            : ct,
-        ),
-      );
 
       Swal.fire({
         icon: "success",
         title: "ลบแล้ว",
-        text: "ข้อมูล ประเภทย่อย ถูกลบเรียบร้อย",
+        text: "ข้อมูลประเภทย่อยถูกลบเรียบร้อย",
         confirmButtonText: "ตกลง",
       });
-    } catch (error) {
-      console.error("DeleteCaseSubType error:", error);
-      Swal.fire("เกิดข้อผิดพลาด", "ไม่สามารถลบข้อมูล ประเภทย่อย ได้", "error");
+    } catch (err) {
+      console.error("DeleteCaseSubType error:", err);
+      handleApiError(err, "ไม่สามารถโหลดข้อมูลประเภทได้");
+      showErrorSwal("ไม่สามารถลบข้อมูลประเภทย่อยได้");
     }
   };
 
@@ -798,9 +668,13 @@ export default function CaseTypesPage() {
         {/* ----- Header ----- */}
         <div className={styles.CaseTypeHeaderRow}>
           <div className={styles.CaseTypeheader}>การจัดการบริการ</div>
+          {/* ปุ่ม เพิ่ม CaseType */}
           <button
             className={styles.AddBtnCaseType}
-            onClick={() => handleOpenCaseTypeModal("add")}
+            onClick={() => {
+              if (!requireSession()) return;
+              handleOpenCaseTypeModal("add");
+            }}
           >
             <FontAwesomeIcon icon={faSquarePlus} /> สร้างประเภท
           </button>
@@ -814,7 +688,7 @@ export default function CaseTypesPage() {
               <div className={styles.CaseTypeTopRow}>
                 <div className={styles.CaseTypeNameBlock}>
                   <div className={styles.CaseTypeTH}>{ct.th}</div>
-                  <div className={styles.CaseTypeEN}>({ct.en})</div>
+                  <div className={styles.CaseTypeEN}>{ct.en}</div>
                   <div className={styles.CountSubCasetype}>
                     {ct.subtypeCount} ประเภทย่อย
                   </div>
@@ -828,42 +702,62 @@ export default function CaseTypesPage() {
                     </div>
                   )}
                 </div>
+              </div>
 
-                <div className={styles.CaseTypeButtons}>
+              {/* เส้นคั่น ระหว่าง ประเภท กับ ปุ่ม */}
+              <hr className={styles.CaseTypeDivider} />
+
+              {/* แถบปุ่มล่างซ้าย ปุ่มดู, แก้ไข, ลบ CaseType */}
+              <div className={styles.CaseTypeButtons}>
+                <div className={styles.LeftBtnActions}>
                   <button
                     className={styles.ViewBtnCaseType}
-                    onClick={() => handleOpenCaseTypeModal("view", ct)}
+                    onClick={() => {
+                      if (!requireSession()) return;
+                      handleOpenCaseTypeModal("view", ct);
+                    }}
                   >
                     <FontAwesomeIcon icon={faEye} />
                   </button>
 
                   <button
                     className={styles.EditBtnCaseType}
-                    onClick={() => handleOpenCaseTypeModal("edit", ct)}
+                    onClick={() => {
+                      if (!requireSession()) return;
+                      handleOpenCaseTypeModal("edit", ct);
+                    }}
                   >
                     <FontAwesomeIcon icon={faPencil} />
                   </button>
 
                   <button
                     className={styles.DeleteBtnCaseType}
-                    onClick={() => DeleteCaseType(ct.idCasetype)}
+                    onClick={() => {
+                      if (!requireSession()) return;
+                      DeleteCaseType(ct.idCasetype);
+                    }}
                   >
                     <FontAwesomeIcon icon={faTrash} />
                   </button>
-
-                  <button
-                    className={styles.AddBtnCaseType}
-                    onClick={async () => {
-                      setCurrentCasetypeId(ct.idCasetype);
-                      await fetchCaseSubTypes(ct.idCasetype);
-                      setShowCaseSubtypeListModal(true);
-                    }}
-                  >
-                    <FontAwesomeIcon icon={faCaretDown} /> ({ct.subtypeCount})
-                  </button>
                 </div>
-              </div>
 
+                {/* ปุ่มฝั่งขวา ดู ประเภทย่อย */}
+                <button
+                  className={styles.BtnCasesubType}
+                  onClick={async () => {
+                    if (!requireSession()) return;
+
+                    setCurrentCasetypeId(ct.idCasetype);
+                    await loadCaseSubtypesByType(
+                      ct.idCasetype,
+                      "ไม่สามารถดึงข้อมูลประเภทย่อยได้",
+                    );
+                    setShowCaseSubtypeListModal(true);
+                  }}
+                >
+                  <FontAwesomeIcon icon={faCaretDown} /> ({ct.subtypeCount})
+                </button>
+              </div>
               {/* ----- CaseSubtype List ----- */}
             </div>
           ))}
@@ -876,27 +770,20 @@ export default function CaseTypesPage() {
               onClick={() => setCaseTypePage((p) => Math.max(p - 1, 1))}
               disabled={caseTypePage === 1}
             >
-              {" "}
               กลับ
-            </button>{" "}
-            <span>หน้า {caseTypePage}</span>{" "}
+            </button>
+            <span className={styles.PageText}>
+              หน้า {caseTypePage} / {totalCaseTypePages}
+            </span>
             <button
               onClick={() =>
-                setCaseTypePage((p) =>
-                  p < Math.ceil(caseTypes.length / caseTypeRowsPerPage)
-                    ? p + 1
-                    : p,
-                )
+                setCaseTypePage((p) => (p < totalCaseTypePages ? p + 1 : p))
               }
-              disabled={
-                caseTypePage >=
-                Math.ceil(caseTypes.length / caseTypeRowsPerPage)
-              }
+              disabled={caseTypePage >= totalCaseTypePages}
             >
-              {" "}
-              ถัดไป{" "}
-            </button>{" "}
-          </div>{" "}
+              ถัดไป
+            </button>
+          </div>
         </div>
 
         {/* ----- Casetype Modal ----- */}
@@ -955,7 +842,13 @@ export default function CaseTypesPage() {
                 [currentCasetypeId]: (p[currentCasetypeId] || 1) + 1,
               }))
             }
-            onClose={() => setShowCaseSubtypeListModal(false)}
+            onClose={() => {
+              setShowCaseSubtypeListModal(false);
+              setCaseSubtypePage((prev) => ({
+                ...prev,
+                [currentCasetypeId]: 1,
+              }));
+            }}
           />
         )}
       </div>

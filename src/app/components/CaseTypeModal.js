@@ -28,6 +28,7 @@ export default function CaseTypeModal({
         className={styles.CaseTypeContent}
         onClick={(e) => e.stopPropagation()}
       >
+        {/* ปุ่ม x ออกจาก modalCasetype */}
         <button
           className={styles.CloseCTButtons}
           onClick={onClose}
@@ -49,7 +50,7 @@ export default function CaseTypeModal({
           {isView && (
             <div className={styles.viewCaseType}>
               <div className={styles.editRow}>
-                <label className={styles.editLabel}>ชื่อไทยประเภท:</label>
+                <label className={styles.editLabel}>ชื่อภาษาไทย:</label>
                 <input
                   type="text"
                   value={formData.th || "-"}
@@ -59,7 +60,7 @@ export default function CaseTypeModal({
               </div>
 
               <div className={styles.editRow}>
-                <label className={styles.editLabel}>ชื่ออังกฤษประเภท:</label>
+                <label className={styles.editLabel}>ชื่อภาษาอังกฤษ:</label>
                 <input
                   type="text"
                   value={formData.en || "-"}
@@ -112,21 +113,18 @@ export default function CaseTypeModal({
           {(isAdd || isEdit) && (
             <div className={styles.AddandEditCT}>
               <div className={styles.editRow}>
-                <label className={styles.editLabel}>ชื่อประเภทภาษาไทย:</label>
+                <label className={styles.editLabel}>ชื่อภาษาไทย:</label>
                 <input
                   type="text"
                   name="th"
                   value={formData.th}
                   onChange={handleChange}
                   className={styles.editInput}
-                  // disabled={type === "view"}
                 />
               </div>
 
               <div className={styles.editRow}>
-                <label className={styles.editLabel}>
-                  ชื่อประเภทภาษาอังกฤษ:
-                </label>
+                <label className={styles.editLabel}>ชื่อภาษาอังกฤษ:</label>
                 <input
                   type="text"
                   name="en"
@@ -178,14 +176,6 @@ export default function CaseTypeModal({
                 บันทึก
               </button>
             )}
-
-            {/* <button
-              className={styles.CloseCTButtons}
-              type="button"
-              onClick={onClose}
-            >
-              ปิด
-            </button> */}
           </div>
         </form>
       </div>

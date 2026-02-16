@@ -31,21 +31,31 @@ export default function CaseSubtypeListModal({
 }) {
   if (!show) return null;
 
+  // เรียงใหม่ก่อน (อันล่าสุดขึ้นก่อน)
+  const sortedSubtypes = [...subtypes].sort((a, b) => {
+    if (!a.createdAt) return 1;
+    if (!b.createdAt) return -1;
+    return new Date(b.createdAt) - new Date(a.createdAt);
+  });
+
   const totalPages = Math.ceil(subtypes.length / rowsPerPage);
   const startIndex = (currentPage - 1) * rowsPerPage;
-  const pagedSubtypes = subtypes.slice(startIndex, startIndex + rowsPerPage);
 
+  // slice จากตัวที่เรียงแล้ว
+  const pagedSubtypes = sortedSubtypes.slice(
+    startIndex,
+    startIndex + rowsPerPage,
+  );
   return (
     <div className={styles.CaseSubtypeListModal} onClick={onClose}>
       <div
         className={styles.CaseSubtypeListHeader}
         onClick={(e) => e.stopPropagation()}
       >
-        {/*------ Header CaseSubtype ------*/}
+        {/*------ชื่อประเภทภาษาไทย และ จำนวนประเภทย่อย------*/}
         <div className={styles.CSTinCTHeader}>
           <div className={styles.CasetypeHeader}>
             <div className={styles.CasetypeTH}>ประเภท: {casetype?.th}</div>
-
             <div className={styles.SubtypeRow}>
               <div className={styles.SubtypeCount}>
                 {casetype?.subtypeCount ?? 0} ประเภทย่อย
@@ -58,7 +68,7 @@ export default function CaseSubtypeListModal({
             <FontAwesomeIcon icon={faXmark} />
           </button>
 
-          {/*------ ปุ่ม เพิ่ม CaseSubtype ------*/}
+          {/*------ ปุ่มเพิ่ม CaseSubtype ------*/}
           <button
             className={styles.AddCaseSubtypeBtn}
             onClick={(e) => {
@@ -80,7 +90,33 @@ export default function CaseSubtypeListModal({
           <ul>
             {pagedSubtypes.map((cs) => (
               <li key={cs.idCaseSubtype}>
+                {/*----รายละเอียด CaseSubtype----*/}
                 <div className={styles.CaseSubtypeRow}>
+                  <div className={styles.CaseSubtypeTH}>
+                    ชื่อประเภทย่อย: {cs.th}
+                  </div>
+
+                  <div className={styles.cstpasswordCode}>
+                    รหัสประเภทย่อย: {cs.sTypeCode || "-"}
+                  </div>
+
+                  {/*---- ความสำคัญ ----*/}
+                  <div
+                    className={`${styles.priorityBox} ${
+                      getPriorityLabelShort(cs.priority)
+                        ? cs.priority === "0"
+                          ? styles.priorityCritical
+                          : styles.priorityHigh
+                        : styles.priorityEmpty
+                    }`}
+                  >
+                    {getPriorityLabelShort(cs.priority) || " "}
+                  </div>
+
+                  <div className={styles.cstStatus}>
+                    สถานะ: {cs.active ? "Active" : "Inactive"}
+                  </div>
+
                   {/* ปุ่ม ใน CaseSubtypeModal */}
                   <div className={styles.CaseSubtypeBtns}>
                     <div className={styles.CaseSubtypeActionRow}>
@@ -116,40 +152,6 @@ export default function CaseSubtypeListModal({
                         </button>
                       </div>
                     </div>
-
-                    {/*----รายละเอียด CaseSubtype----*/}
-                    <div className={styles.CaseSubtypeTH}>
-                      ชื่อประเภทย่อย: {cs.th}
-                    </div>
-
-                    {/* 
-                      <strong className={styles.CaseSubtypeTH}>
-                        ชื่อประเภทย่อย: {cs.en}
-                      </strong> 
-                    </div>
-                    </div>*/}
-                  </div>
-
-                  <div className={styles.cstpasswordCode}>
-                    รหัสประเภทย่อย: {cs.sTypeCode || "-"}
-                  </div>
-
-                  {/*---- ความสำคัญ ----*/}
-                  <div>
-                    {getPriorityLabelShort(cs.priority) && (
-                      <div
-                        className={`${styles.priorityBox} ${
-                          cs.priority === "0"
-                            ? styles.priorityCritical
-                            : styles.priorityHigh
-                        }`}
-                      >
-                        {getPriorityLabelShort(cs.priority)}
-                      </div>
-                    )}
-                  </div>
-                  <div className={styles.cstStatus}>
-                    สถานะ: {cs.active ? "Active" : "Inactive"}
                   </div>
                 </div>
               </li>
