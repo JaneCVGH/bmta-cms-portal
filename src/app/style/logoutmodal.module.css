@@ -1,0 +1,106 @@
+/* พื้นหลัง overlay */
+.LogoutModal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+/* กล่อง modal */
+.LogoutModalHeader {
+  background: #ffffff;
+  width: 380px;
+  padding: 24px 28px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  animation: fadeIn 0.2s ease;
+}
+
+/* หัวข้อ ออกจากระบบ*/
+.LogoutModalTitle {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #111;
+}
+
+/* ข้อความ */
+.LogoutModalText {
+  font-size: 15px;
+  color: #555;
+  margin-bottom: 24px;
+}
+
+/* กลุ่มปุ่ม */
+.LogoutModalActions {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.LogoutModalActions button {
+  min-width: 110px;   
+}
+
+.iconLogout {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  border: 2px solid #b7323f;
+  background-color: #fdecea; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 14px;
+  font-size: 36px;
+  color: #dc3545;
+  box-shadow: 0 0 0 4px rgba(220, 53, 69, 0.15);
+
+}
+
+/* ปุ่มยืนยัน */
+.btnConfirm {
+  padding: 10px 18px;
+  border-radius: 10px;
+  border: none;
+  background: #dc3545;
+  color: #fff;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.btnConfirm:hover {
+  background: #b92f3b;
+}
+
+/* ปุ่มยกเลิก */
+.btnCancel {
+  padding: 10px 18px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  background: #6c757d;
+  color: #ffffff;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.btnCancel:hover {
+  background: #e5e5e5;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

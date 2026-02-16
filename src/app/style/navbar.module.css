@@ -1,13 +1,15 @@
 .navbarList{
-    display: flex; /*จัดเรียงองค์ประกอบภายใน navbar เป็นแนวนอน*/
+    display: flex; 
     align-items: center;
     justify-content: space-between;
-    padding: 15px 10px;
+
+    padding: 15px 16px;
     background-color:#5930a4;
-    width: 100%;       /* เต็มความกว้างหน้าจอ */
-    /* max-width: 100%; ความกว้างเต็ม viewport width (หน้าจอ) */
-    height: auto; /* ความสูงปรับตามเนื้อหา */
-    box-sizing: border-box; /* ป้องกัน padding ทำให้ element ขยายเกินขอบจอ */
+
+    width: 100%;       
+    height: auto; 
+    border-radius: 0 0 16px 16px;
+    box-sizing: border-box; 
 }
 
 /* โลโก้อยู่ซ้าย */
@@ -26,7 +28,8 @@
 /* เมนูรวมทั้งหมด */
 .navLinks {
   display: flex;
-  gap: 20px; /* ระยะห่างระหว่างไอคอน */
+   flex-wrap: wrap;
+  gap: 20px; 
   list-style: none;
   padding: 0;
   margin: 0;
@@ -45,14 +48,25 @@
 }
 
 .navItem {
-    font-size: 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 8px;
+
+  white-space: nowrap;     
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  font-size: 18px;
+  padding: 6px 10px;
 }
 
-/* ✅ จุดสำคัญ: ปรับขนาด icon ด้วย class นี้ */
+/*ปรับขนาด icon*/
 .icon {
   margin-top: 0.3cm;
-  font-size: 22px;  /* ปรับขนาดไอคอนได้ที่นี่ */
-  color: #ffffff;      /* ปรับสีไอคอน */
+  font-size: 22px;  
+  color: #ffffff;      
   transition: transform 0.2s ease;
 }
 
@@ -63,12 +77,11 @@
   margin: 5px 0;
   cursor: pointer;
   font-size: 18px;
-  margin-right: 8px; /* เว้นห่างจากข้อความ */
+  margin-right: 8px; 
 }
 
-
 .btnLogout {
-  background-color: #f05353; /* สีแดง */
+  background-color: #f05353; 
   color: white;
   padding: 10px 20px;
   border: none;
@@ -78,11 +91,39 @@
   transition: background-color 0.3s ease;
 }
 
- /* .btn-logout:hover {
-  background-color: #8f0000; /* สีแดงเข้มเมื่อ hover */
-/*}  */
+ .btn-logout:hover {
+  background-color: #8f0000; 
+} 
 
 .LogOutIcon{
   font-size: 18px;
   margin-right: 8px;
+}
+
+.navItem,
+.btnLogout {
+  white-space: nowrap;
+}
+
+@media (max-width: 900px) {
+  .navbarList {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .navLinks {
+    flex-wrap: wrap;           
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .navItem {
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+
+  .btnLogout {
+    margin-top: 10px;
+    align-self: center;
+  }
 }

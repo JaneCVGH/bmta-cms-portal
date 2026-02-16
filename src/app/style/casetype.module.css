@@ -1,0 +1,279 @@
+/* src\app\style\casetype.module.css */
+
+.CaseTypeListheader {
+  min-height: 100vh;
+  padding: 2rem;
+  margin: auto;
+  background-color: rgb(227, 224, 206);
+}
+
+/*---- Header เช่น การจัดการบริการ ----*/
+.CaseTypeHeaderRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.8rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.CaseTypeheader {
+  font-size: 36px;
+  font-weight: bold;
+  margin: 0 auto;
+  text-align: center;
+  width: 100%;
+  color: #000;
+}
+
+/*----ปุ่ม เพิ่ม ประเภท----*/
+.AddBtnCaseType {
+  background-color: #2ead6b;
+  color: white;
+  border: none;
+  padding: 0.6rem 0.8rem;
+  font-size: 17px;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  margin-left: auto;
+  font-weight: bold;
+}
+
+.AddBtnCaseType:hover {
+  background-color: #14894c;
+}
+
+/* ---- List ของ CaseType (3 คอลัมน์) ---- */
+.CaseTypeList {
+  display: grid;
+  grid-template-columns: repeat(3, 420px);
+  justify-content: center;
+  grid-auto-rows: 1fr;
+  gap: 30px;
+}
+
+.CaseTypeColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ---- CaseType Card ----*/
+.CaseTypeBlock {
+  width: 420px;
+  height: 100%;
+  max-width: 420px;
+  min-width: 420px;
+
+  background-color: #ffffff;
+  border: 1px solid #a8a8a8;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  
+  overflow: hidden;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+.CaseTypeBlock:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+.CaseTypeTopRow {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: start;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.CaseTypeNameBlock {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.CaseTypeTH,
+.CaseTypeEN {
+  color: #000;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  max-width: 100%;
+}
+
+.CaseTypeTH {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.CaseTypeEN {
+  font-size: 15px;
+  font-weight: 400;
+}
+
+.CountSubCasetype {
+  font-size: 13.5px;
+  color: #0d6efd;
+}
+
+.UpdateDate {
+  font-size: 12px;
+  color: #999;
+}
+
+/* เส้นคั่น */
+.CaseTypeDivider {
+  margin: 26px 0 2px 0;
+  border: none;
+  border-top: 1px solid #ccc;
+}
+
+/* ---- CaseType Buttons ---- */
+.CaseTypeButtons {
+  justify-content: space-between;
+  display: flex;
+  align-items: center;
+  margin-top: 8px;
+
+  min-width: 0;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.LeftBtnActions {
+  display: flex;
+  gap: 8px;
+}
+
+.ViewBtnCaseType,
+.EditBtnCaseType,
+.DeleteBtnCaseType,
+.BtnCasesubType {
+  width: 40px;
+  height: 40px;
+
+  color: white;
+  border: none;
+  padding: 0;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 18px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+}
+
+.ViewBtnCaseType {
+  background-color: #379ddd;
+}
+.ViewBtnCaseType:hover {
+  background-color: #06639c;
+}
+
+.EditBtnCaseType {
+  background-color: #f4ba0b;
+}
+.EditBtnCaseType:hover {
+  background-color: #d47f00;
+}
+
+.DeleteBtnCaseType {
+  background-color: #e03c4c;
+}
+.DeleteBtnCaseType:hover {
+  background-color: rgb(156, 0, 0);
+}
+
+/*----ปุ่ม ดูประเภทย่อย ประเภท----*/
+.BtnCasesubType {
+  background-color: #2ead6b;
+  margin-left: auto;
+  font-weight: bold;
+  
+   height: 40px;          
+  padding: 0 30px;       
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+}
+.BtnCasesubType:hover {
+  background-color: #14894c;
+}
+
+/* ---- จำนวน casetype ต่อ 1 หน้า ---- */
+.PageBackground {
+  display: flex;
+  justify-content: center;
+  margin: 24px 0;
+  bottom: 0;
+  background-color: rgb(227, 224, 206);
+  padding: 8px 0;
+}
+
+.setPage {
+  margin-top: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+}
+
+/* ---- ปุ่ม กลับ, ถัดไป ---- */
+.setPage button {
+  min-width: 72px;
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  background-color: #ffffff;
+  color: #111827;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* ---- ปุ่ม กลับ, ถัดไป ---- */
+.setPage button:hover:not(:disabled) {
+  background-color: #2563eb;
+  border-color: #2563eb;
+  color: #ffffff;
+}
+
+/* ---- ปุ่ม กลับ, ถัดไป ---- */
+.setPage button:disabled {
+  background-color: #f3f4f6;
+  color: #9ca3af;
+  border-color: #e5e7eb;
+  cursor: not-allowed;
+}
+
+/* ---- หน้าที่..n... ---- */
+.PageText {
+  color: #000;
+  font-weight: bold;
+  font-size: 18px;
+}
+/* ---- หน้าจอขนาดกลาง เป็น 2 คอลัมน์ ---- */
+@media (max-width: 1200px) {
+  .CaseTypeList {
+    grid-template-columns: repeat(2, 420px);
+  }
+}
+
+/* ---- หน้าจอเล็ก เป็น 1 คอลัมน์ ---- */
+@media (max-width: 900px) {
+  .CaseTypeList {
+    grid-template-columns: 1fr;
+  }
+  .CaseTypeBlock {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+}
