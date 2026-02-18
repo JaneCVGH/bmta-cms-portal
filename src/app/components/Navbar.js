@@ -2,8 +2,8 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, useRef } from "react";
+import {  usePathname, useRouter } from "next/navigation";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -16,6 +16,7 @@ import {
   faCheck,
   faList,
   faCogs,
+  faUserCircle,
 } from "@fortawesome/free-solid-svg-icons";
 
 // import { hasPermission } from "../utils/checkPermission";
@@ -55,7 +56,7 @@ const menuConfig = [
     permission: "user.create",
     icon: faUsers,
   },
-  {
+  /*{
     name: "Service Type",
     path: "/pages/service-type",
     permission: "service.create",
@@ -66,18 +67,39 @@ const menuConfig = [
     path: "/pages/service-sub-type",
     permission: "service.create",
     icon: faCogs,
-  },
+  },*/
 ];
 
 export default function Navbar() {
   const router = useRouter();
   const [permissions, setPermissions] = useState([]);
   const [showLogout, setShowLogout] = useState(false);
+  const [showProfile, setShowProfile] = useState(false); 
+  const [user, setUser] = useState(null);
+  const profileRef = useRef(null);
+  const pathname = usePathname();
 
   // --------------โหลด permission จาก localStorage------------
   useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem("permissions") || "[]");
-    setPermissions(stored);
+    const storedPerms = JSON.parse(localStorage.getItem("permissions") || "[]");
+  setPermissions(storedPerms);
+
+  const storedUser = JSON.parse(localStorage.getItem("user_data") || "null");
+  setUser(storedUser);
+
+  const handleClickOutside = (event) => {
+    if (
+      profileRef.current &&
+      !profileRef.current.contains(event.target)
+    ) {
+      setShowProfile(false);
+    }
+  };
+
+  document.addEventListener("mousedown", handleClickOutside);
+  return () => {
+    document.removeEventListener("mousedown", handleClickOutside);
+  };
   }, []);
 
   // --------------Filter เมนูตาม permission---------------
@@ -113,23 +135,39 @@ export default function Navbar() {
     <nav className={styles.navbarList}>
       {/* LOGO */}
       <div className={styles.logo}>
-        <FontAwesomeIcon icon={faSun} className={styles.iconlogo} /> LOGO
+        TICKETING
       </div>
 
       <ul className={styles.navLinks}>
         {/* แสดงเมนูที่มีสิทธิ์ */}
-        {finalMenus.map((menu, index) => (
-          <li
-            key={index}
-            onClick={() => router.push(menu.path)}
-            className={styles.navItem}
-          >
-            <FontAwesomeIcon icon={menu.icon} className={styles.icon} />
-            {menu.name}
-          </li>
-        ))}
+        {finalMenus.map((menu, index) => {
+  const isActive = pathname === menu.path;
 
-        {/* Logout */}
+  return (
+    <li
+      key={index}
+      className={`${styles.navItem} ${isActive ? styles.active : ""}`}
+    >
+      <button
+        className={styles.navButton}
+        onClick={() => router.push(menu.path)}
+      >
+        <FontAwesomeIcon
+          icon={menu.icon}
+          className={`${styles.icon} ${isActive ? styles.activeIcon : ""}`}
+        />
+        <span
+          className={`${styles.navText} ${isActive ? styles.activeText : ""}`}
+        >
+          {menu.name}
+        </span>
+      </button>
+    </li>
+  );
+})}
+
+
+        {/* Logout 
         <li>
           <button
             className={styles.btnLogout}
@@ -141,9 +179,61 @@ export default function Navbar() {
             />
             ออกจากระบบ
           </button>
-        </li>
+        </li>*/}
+        
       </ul>
 
+      <div className={styles.profileWrapper} ref={profileRef}>
+  <div
+    className={styles.profileButton}
+    onClick={() => setShowProfile((prev) => !prev)}
+  >
+    {user?.photo ? (
+      <img
+        src={user.photo}
+        alt="profile"
+        className={styles.profileImage}
+      />
+    ) : (
+      <FontAwesomeIcon
+        icon={faUserCircle}
+        className={styles.profileIcon}
+      />
+    )}
+
+    <span className={styles.profileName}>
+      {user?.displayName || user?.username}
+    </span>
+  </div>
+
+  {showProfile && (
+    <div className={styles.profileDropdown}>
+      <div className={styles.profileInfo}>
+        <div className={styles.profileNameBig}>
+          {user?.displayName}
+        </div>
+        <div className={styles.profileEmail}>
+          {user?.email}
+        </div>
+      </div>
+
+      <div className={styles.dropdownDivider} />
+
+      <button
+        className={styles.btnLogout}
+        onClick={() => {
+          setShowProfile(false);
+          setShowLogout(true);
+        }}
+      >
+        <FontAwesomeIcon icon={faRightFromBracket} />
+        ออกจากระบบ
+      </button>
+    </div>
+  )}
+</div>
+
+      
       {/*  Logout Modal */}
       <LogoutModal
         show={showLogout}

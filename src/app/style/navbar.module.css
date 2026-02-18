@@ -19,6 +19,7 @@
     gap: 15px;
     font-size: 22px;
     font-weight: bold;
+    cursor: pointer;
 }
 
 .iconlogo{
@@ -33,6 +34,7 @@
   list-style: none;
   padding: 0;
   margin: 0;
+  margin-left: auto;
 }
 
 .subsetting{
@@ -60,14 +62,63 @@
 
   font-size: 18px;
   padding: 6px 10px;
+
+   cursor: pointer;
 }
+
+.navButton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  background: none;
+  border: none;
+  padding: 6px 10px;
+
+  color: #ffffff;
+  font-size: 18px;
+  cursor: pointer;
+
+  border-radius: 8px;
+}
+
+.navButton:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.navText {
+  pointer-events: none;
+}
+
+/* ===== Active menu ===== */
+.active {
+  background-color: #eef4ff; /* สีเดียวกับ hover */
+}
+
+.active .icon,
+.active .navText {
+  color: #3b3d43;
+}
+
+
+/*ทำให้ hover กับ active เหมือนกัน*/
+.navItem:hover {
+  background-color: #eef4ff;
+}
+
+.navItem:hover .icon,
+.navItem:hover .navText {
+  color: #3b3d43;
+}
+
 
 /*ปรับขนาด icon*/
 .icon {
-  margin-top: 0.3cm;
+  /*margin-top: 0.3cm;*/
   font-size: 22px;  
   color: #ffffff;      
   transition: transform 0.2s ease;
+  pointer-events: none;
 }
 
 /* .sunsetting-icon {
@@ -80,8 +131,78 @@
   margin-right: 8px; 
 }
 
+.profileWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-left: 16px;
+}
+/*ปุ่ม profile บน navbar*/
+.profileButton {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  color: #ffffff;
+  cursor: pointer;
+}
+/*รูปโปรไฟล์*/
+.profileImage {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #ffffff;
+}
+
+.profileIcon {
+  font-size: 36px;
+  color: #ffffff;
+}
+
+.profileName {
+  font-size: 16px;
+  font-weight: 500;
+}
+/*Dropdown profileNavbar*/
+.profileDropdown {
+  position: absolute;
+  top: 52px;
+  right: 0;
+  width: 240px;
+  background-color: #d8d9db;
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.35);
+  z-index: 999;
+  cursor: default;
+}
+/*ข้อมูลใน dropdown*/
+.profileInfo {
+  margin-bottom: 10px;
+}
+
+.profileNameBig {
+  color: #000000;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.profileEmail {
+  color: #3f4041;
+  font-size: 13px;
+}
+/*เส้นคั่น*/
+.dropdownDivider {
+  height: 1px;
+  background-color: #374151;
+  margin: 10px 0;
+}
+
+
+
 .btnLogout {
-  background-color: #f05353; 
+  background-color: #dc3545; 
   color: white;
   padding: 10px 20px;
   border: none;
@@ -89,6 +210,7 @@
   cursor: pointer;
   font-size: 18px;
   transition: background-color 0.3s ease;
+  cursor: pointer;
 }
 
  .btn-logout:hover {
