@@ -1,0 +1,353 @@
+/* src/app/style/employeeModal.module.css */
+
+/* Overlay */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+}
+
+/* Modal Box */
+.modalBox {
+  background-color: #ffffff;
+  border-radius: 14px;
+  padding: 28px 26px;
+  width: 650px;
+  max-width: 450px;
+  max-width: 200vh;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+  position: relative;
+  animation: slideDown 0.25s ease;
+}
+
+@keyframes slideDown {
+  from {
+    transform: translateY(-15px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+
+
+/* ===== VIEW MODE ===== */
+.viewGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.viewRow {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  align-items: center;
+  gap: 12px;
+}
+
+.viewLabel {
+  font-weight: 600;
+  color: #000;
+  font-size: 15px;
+}
+
+/* กล่องข้อมูล (เหมือน input แต่ readonly) */
+.viewValue {
+  padding: 10px 12px;
+  border: 1px solid #050505;
+  border-radius: 8px;
+  font-size: 15px;
+  background-color: #fafafa;
+  color: #000;
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+}
+
+/* ===== FORM MODE (ADD / EDIT) ===== */
+.formGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  
+  
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  align-items: center;
+  gap: 12px;
+}
+
+.inlineLabel {
+  font-weight: 600;
+  color: #000;
+  font-size: 15px;
+}
+
+/* Input / Select */
+.inputField,
+.selectField {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #000000;
+  border-radius: 8px;
+  font-size: 15px;
+  box-sizing: border-box;
+  background-color: #fff;      
+  color: #000;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.inputField:focus,
+.selectField:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+}
+
+/* ===== FOOTER ===== */
+/*.modalFooter {
+  margin-top: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}*/
+
+.modalFooter {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+/* Buttons */
+.saveBtn {
+  width: 100%;
+  height: 48px;
+  font-size: 16px;
+  /*font-weight: 600;*/
+  background-color: #3dd47c;
+  color: #000;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.25s ease;
+}
+
+.saveBtn:hover {
+  background-color: #00a344;
+}
+
+.closeBtn {
+  width: 100%;
+  height: 48px;
+  font-size: 16px;
+  background-color: #e0e0e0;
+  color: #000;
+  border: 1px solid #cfcfcf;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.25s ease;
+}
+
+.closeBtn:hover {
+  background-color: #bdbdbd;
+}
+
+
+
+
+
+.editBtn {
+  background-color: #3b82f6;
+  color: white;
+  padding: 8px 18px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+.deleteBtn {
+  background-color: #ef4444;
+  color: white;
+  padding: 8px 18px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+
+
+/* ================= VIEW NEW DESIGN ================= */
+
+.viewContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+/* ===== MODAL HEADER ===== */
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+
+  padding: 16px 20px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #ffffff, #ffffff);
+}
+
+/* หัวข้อ "ข้อมูลผู้ใช้" */
+.modalTitle {
+  font-size: 22px;
+  font-weight: 700;  
+  color: #000000;
+}
+
+/* ปุ่มกากบาท */
+.closeIcon {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: none;
+
+  background: rgb(232, 232, 232);
+  color: #000000;
+  font-size: 22px; 
+
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+}
+
+.closeIcon:hover {
+  background: rgba(182, 181, 181, 0.25);
+  transform: rotate(90deg);
+}
+
+
+
+/* ---------- Profile Header ---------- */
+.profileHeader {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #e4e9f2, #e4e9f2);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  color: #0f172a;
+}
+
+.avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6366f1, #a855f7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  font-weight: bold;
+}
+
+.profileName {
+  font-size: 20px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.profileEmail {
+  font-size: 14px;
+   color: #475569;
+}
+
+/* ----------กล่อง ข้อมูลส่วนบุคคล / หน่วยงาน ---------- */
+.section {
+  background: #e4e9f2;
+  border-radius: 18px;
+  padding: 22px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+}
+
+.sectionTitle {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: #1e293b;
+}
+
+/* ---------- Info Grid ---------- */
+.infoGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px 32px;
+}
+
+.infoItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.infoLabel {
+  font-size: 13px;
+  color: #64748b;
+}
+
+.infoValue {
+  font-size: 15px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+
+/* ================= FLOATING ACTIONS ================= */
+
+.floatingActions {
+  position: absolute;
+  right: 24px;
+  bottom: 24px;
+  display: flex;
+  gap: 12px;
+}
+
+.floatingEdit,
+.floatingDelete {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.35);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.floatingEdit {
+  background: linear-gradient(135deg, #3b82f6, #6366f1);
+}
+
+.floatingDelete {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+.floatingEdit:hover,
+.floatingDelete:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 26px rgba(0,0,0,0.45);
+}

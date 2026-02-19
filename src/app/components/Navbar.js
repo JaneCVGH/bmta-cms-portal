@@ -26,8 +26,8 @@ import LogoutModal from "./LogoutModal";
 // -------------เมนูที่เห็นได้ บน navbar----------------
 
 const menuConfig = [
-  { name: "Home", path: "/pages/home", permission: null, icon: faHome },
-  { name: "Employee", path: "/pages/employee", icon: faUsers },
+  //{ name: "Home", path: "/pages/home", permission: null, icon: faHome },
+  //{ name: "Employee", path: "/pages/employee", icon: faUsers },
   // { name: "Project", path: "/pages/project", icon: faFileLines },
 
   // {
@@ -52,7 +52,7 @@ const menuConfig = [
 
   {
     name: "User Management",
-    path: "/pages/user",
+    path: "/pages/UserManagement",
     permission: "user.create",
     icon: faUsers,
   },

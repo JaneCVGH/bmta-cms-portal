@@ -1,0 +1,482 @@
+/* container และพื้นหลัง */
+/* พื้นหลังของหน้า 
+body {
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(to right, hwb(221 75% 0%), #e9c7ff);
+  min-height: 100vh;
+  font-family: 'Segoe UI', sans-serif;
+}*/
+
+/********************************************/
+
+
+.container {
+  color: #000000;
+  padding: 20px;
+  font-family: 'Segoe UI', sans-serif;
+  min-height: 100vh;
+}
+
+/* หัวข้อหลัก */
+.title {
+  text-align: center;
+  font-size: 36px;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #000000;
+}
+
+
+/* ปุ่มเพิ่ม/แก้ไข ด้านบน */
+.edit {
+  margin-bottom: 15px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* ปุ่ม เพิ่ม (ใช้ไอคอนดินสอ) */
+.btnAdd {
+  background-color: #2ead6b;
+  color: white;
+  font-weight: bold;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.btnAdd:hover {
+  background-color: #14894c;
+}
+
+/* ปุ่มในแต่ละแถว */
+/* ปุ่มดู (ไอคอนดวงตา) สีเขียว */
+.viewBtn {
+  background-color: #379ddd;
+  color:#fff;
+  margin-right: 5px;
+  border: none;
+  border-radius: 6px;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.viewBtn:hover {
+  background-color: #06639c;
+}
+
+/* ปุ่มแก้ไข (ไอคอนไม้บรรทัด/ดินสอ) สีน้ำเงิน */
+.editBtn {
+  background-color: #f4ba0b;
+  color: white;
+  margin-right: 5px;
+  border: none;
+  border-radius: 6px;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.editBtn:hover {
+  background-color: #d47f00;
+}
+
+/* ปุ่มลบ (ไอคอนถังขยะ) สีแดง */
+.deleteBtn {
+  background-color: #e03c4c;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.deleteBtn:hover {
+  background-color: rgb(156, 0, 0);
+}
+
+/* ตาราง */
+.tableEmployee {
+  width: 100%;
+  /*border-collapse: collapse;*/
+  border-collapse: separate;
+  margin: 0 auto;
+  margin-top: 20px;
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+  height: 2cm;
+  border-spacing: 0 14px; /* ระยะห่างแต่ละแถว */
+}
+
+/* หัวตาราง  #31649 */
+.EmployeeThead {
+  background-color: #000000;
+  color: white;
+}
+
+/* คอลัมน์หัวตาราง, คอลัมน์ข้อมูล */
+.th,.td {
+  text-align: left;
+  padding: 12px 10px;
+  border-bottom: 1px solid #ddd;
+  font-size: 16px;
+
+}
+
+/* แถวข้อมูล */
+.tr:hover {
+  background-color: #f5f5f5;
+}
+
+.userCell {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.avatar {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #5b8cff, #8b5cf6);
+  color: #fff;
+  font-weight: 700;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.userInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.userName {
+  font-weight: 600;
+  color: #111827;
+}
+
+.userEmail {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+
+.employeeContainer {
+  background: #f5f7fb;
+  padding: 24px;
+}
+
+.tableEmployee tbody tr {
+  /*background: #ffffff;*/
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+  border-radius: 14px;
+  
+  border: 1px solid #111827;  /*เส้นตารางสีดำ */
+  
+  /*outline: 1px solid #000;   
+  outline-offset: -1px;
+  */
+}
+
+.tableEmployee tbody td {
+  /*border-top: 1px solid #000;*/
+  border-bottom: 1px solid #e5e7eb;
+  
+}
+
+.tableEmployee tbody tr:hover td {
+  /*border-bottom-color: #111827;*/
+  background-color: #e6e8eb;
+}
+
+/*กันไม่ให้แถวสุดท้ายมีเส้น
+.tableEmployee tbody tr:last-child td {
+  border-bottom: none;
+}
+*/
+
+.tableEmployee td:first-child {
+  border-top-left-radius: 14px;
+  border-bottom-left-radius: 14px;
+}
+
+.tableEmployee td:last-child {
+  border-top-right-radius: 14px;
+  border-bottom-right-radius: 14px;
+}
+
+
+
+/*หัวตาราง*/
+.tableEmployee thead th {
+  /*color: #6b7280;*/
+  color: #111827;
+  font-weight: 600;
+  text-align: left;
+  padding: 16px;
+  font-size: 14px;
+  
+  
+}
+
+.tableEmployee thead tr {
+  background: #f9fafb;
+  border-bottom: 2px solid #111827;
+  background-color: #e5e7eb;
+}
+
+/*เส้นตารางแนวตั้ง ระหว่างคอลัมน์
+.tableEmployee td {
+  padding: 16px;
+  border-right: 1px solid #111827;
+}
+
+.tableEmployee td:last-child {
+  border-right: none;
+}
+*/
+
+.statusActive {
+  background: #16a34a;
+  color: #fff;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.statusBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.statusIcon {
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.active {
+  /*background: #dcfce7;
+  color: #166534;*/
+  background-color: #16a34a;
+  color: #fff;
+}
+
+.inactive {
+  /*background: #fee2e2;
+  color: #991b1b;*/
+  background-color: #ef1d16;
+  color: #fff;
+}
+
+
+
+/* ================= USER CARD GRID ================= */
+
+.userGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+  margin-top: 30px;
+}
+
+.userCard {
+  background: linear-gradient(180deg, #f5f3ff, #ede9fe);
+  color: #1f2937;
+  border: 1px solid #ddd6fe;
+   /*background: linear-gradient(180deg, #f8fafc, #eef2f7);
+  color: #111827;
+  border: 1px solid #e5e7eb;*/
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+}
+
+.avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  /*background: linear-gradient(135deg, #6366f1, #9333ea);*/
+  background: linear-gradient(135deg, #6366f1, #9333ea);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 12px;
+}
+
+.userInfo {
+  margin-bottom: 12px;
+}
+
+.userName {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.userEmail {
+  font-size: 14px;
+  opacity: 0.85;
+  margin-top: 2px;
+}
+
+.userRole {
+  margin-top: 6px;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.userStatus {
+  margin-top: 10px;
+}
+
+.activeBadge {
+  background-color: #16a34a;
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+}
+
+.cardDivider {
+  border: none;
+  border-top: 1px solid #ae9cf4;
+  margin: 16px 0;
+}
+
+.cardActions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-start;
+}
+/* =================END USER CARD GRID ================= */
+
+
+/* --------Row per page = 5 แสดงรายชื่อพนักงานหน้าละ 5 คน-------- */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 8rem;
+  
+}
+
+.pagination button {
+  padding: 6px 12px;
+  background-color: #1f7cff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.pagination button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.pagination span {
+  font-weight: bold;
+  font-size: 24px;
+}
+
+/*-----------สลับการ์ด-ตาราง---------*/
+.viewToggle {
+  display: flex;
+  background: #1e293b;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.toggleBtn {
+  width: 44px;
+  height: 44px;
+  border: none;
+  background: transparent;
+  color: #94a3b8;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.toggleBtn:hover {
+  background: rgba(255,255,255,0.05);
+}
+
+.toggleBtn.active {
+  background: #4f46e5;
+  color: #fff;
+}
+
+.leftTools {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+/* --------searchEmployee-------- */
+.topBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+/* กล่องครอบรวมทั้งหมด */
+
+/* .searchEmployee {
+  display: flex;
+   justify-content: flex-end;
+  margin-bottom: 20px; 
+} */
+
+
+/* กล่องครอบ input + ไอคอน */
+.searchBox {
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  border: 1.5px solid #ccc;
+  border-radius: 8px;
+  padding: 8px 12px;
+  width: 300px;
+}
+
+/* ไอคอนค้นหา */
+.searchIcon {
+  color: #000;
+  font-weight: bold;
+  margin-right: 8px;
+  font-size: 18px;
+}
+
+/* input */
+.searchInput {
+  border: none;
+  outline: none;
+  font-size: 16px;
+  flex: 1;
+  background-color: transparent;
+  color: #000;
+}
+
+/* สีของ placeholder */
+.searchInput::placeholder {
+  color: #aaa;
+  font-weight: normal;
+}
+

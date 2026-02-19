@@ -14,6 +14,7 @@ import Swal from "sweetalert2";
 
 // CSS
 import styles from "../../style/login.module.css";
+import { saveToCache } from "../../utils/localCache";
 
 // ================== Component ==================
 export default function Login() {
@@ -131,7 +132,10 @@ export default function Login() {
         // **เก็บ token และข้อมูล user ใน localStorage**
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("refreshToken", refreshToken);
-
+        //เก็บ userlist
+        const expiresIn = 15 * 60 * 1000;
+        const expireAt = Date.now() + expiresIn;
+        localStorage.setItem("token_expire_at", expireAt.toString());
         // ข้อมูล user ใน localStorage
         localStorage.setItem("user_data", JSON.stringify(data.data.user));
         localStorage.setItem("user_id", user.id.toString());
@@ -165,6 +169,25 @@ export default function Login() {
           "permissions",
           JSON.stringify(user.permission?.cms || []),
         );
+
+        // โหลด user list ครั้งแรกแล้วเก็บ cache
+      try {
+        const userListRes = await fetch(
+          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/users`,
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          },
+        );
+
+        const userListData = await userListRes.json();
+        saveToCache("user_list", userListData);
+        console.log("Cached user_list");
+      } catch (err) {
+        console.log("โหลด user list ไม่สำเร็จ", err);
+      }
+
 
         // ----------เข้าสู่ระบบสำเร็จ----------
         Swal.fire({

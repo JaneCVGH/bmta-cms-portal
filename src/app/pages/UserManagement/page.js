@@ -1,12 +1,11 @@
-
-<p>test</p>//pages/Employee/page
+//pages/UserManagement/page.js
 "use client"
 
 //ใช้ useEffect() เพื่อรันโค้ดเมื่อ component ถูกโหลด
 import React, { useState, useEffect } from "react";
 //import { v4 as uuidv4 } from 'uuid';  ใช้สำหรับสร้าง UUID
 import Swal from 'sweetalert2'; // สำหรับ popup เตือน
-import EmployeeModal from '../../components/EmployeeModal';
+import EmployeeModal from '../../components/UserModal';
 //import { fetchWithCache } from "../../utils/apiCache";
 import { getOrFetch } from "../../utils/localCache";
 
@@ -26,7 +25,7 @@ import {
     faGrip,
 } from "@fortawesome/free-solid-svg-icons";
 
-import styles from "../../style/employee.module.css"
+import styles from "../../style/user.module.css"
 import Navbar from "../../components/Navbar";
 
 
@@ -100,7 +99,7 @@ export default function EmployeePage() {
   }
 
   //  token หมดอายุ
-  if (res.status === 401) {
+  {/*if (res.status === 401) {
   console.warn("401 Unauthorized:", url);
   
     Swal.fire({
@@ -112,14 +111,24 @@ export default function EmployeePage() {
     localStorage.removeItem("accessToken"); //
     window.location.href = "../pages/login"; // บังคับกลับ login
   });
-
-
-    return {
+  return {
       ok: false,
       unauthorized: true,
       message: "Session expired",
     };
-  }
+  }*/}
+
+    if (res.status === 401) {
+  console.warn("401 Unauthorized:", url);
+
+  return {
+    ok: false,
+    unauthorized: true,
+    message: "Unauthorized",
+  };
+}
+
+    
 
   let data = null;
   try {
@@ -281,32 +290,32 @@ useEffect(() => {
   }
 };*/
       
-      const fetchUsers = async (forceRefresh = false) => {
+      const fetchUsers = async () => {
   const token = localStorage.getItem("accessToken");
   if (!token) return;
 
   const cacheKey = "user_list";
 
   try {
-    const result = await getOrFetch(
-      cacheKey,
-      `${API_V1}/users`,
-      token,
-      forceRefresh // ถ้า true จะบังคับโหลดจาก API
-    );
+    const res = await apiRequest(`${API_V1}/users`, {
+  method: "GET",
+});
 
-    const all = result?.data || result || [];
+if (!res.ok) return;
 
-    console.log("Users loaded:", all);
+const all = res.data?.data || [];
 
-    setAllUsers(all);
-    setDisplayUsers(all);
-    setPage(1);
+console.log("Users loaded:", all);
+
+setAllUsers(all);
+setDisplayUsers(all);
+setPage(1);
 
   } catch (err) {
     console.error("Error loading users:", err);
   }
 };
+
 
 
 
@@ -758,7 +767,17 @@ if (uuidFields.includes(key)) {
     });
 
     console.log("CREATE payload:", payload);
-    await createUser(payload);
+
+    const res = await createUser(payload).catch(err => {
+  if (err.message?.includes("Unauthorized")) {
+    Swal.fire("ไม่มีสิทธิ์", "คุณไม่มีสิทธิ์เพิ่มผู้ใช้", "error");
+    return null;
+  }
+  throw err;
+});
+
+if (!res) return;
+
 
       Swal.fire({
         icon: "success",
