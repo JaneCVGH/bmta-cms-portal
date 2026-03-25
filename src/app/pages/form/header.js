@@ -76,11 +76,14 @@ const Header = ({
 
   return (
     <div>
-      <Row className="align-items-center mb-2">
-        <Col xs="auto" className={`${styles.titleLabel} ${styles.fontEN}`}>
+      <Row className="g-0 align-items-center mb-1">
+        <Col
+          xs="auto"
+          className={`pe-1 ps-0 ${styles.titleLabel} ${styles.fontEN}`}
+        >
           ประเภทคำร้อง <span className="text-danger">*</span> :{" "}
         </Col>
-        <Col xs={4}>
+        <Col xs="auto" className="ps-1 pe-0">
           {isPrint ? (
             ReturnLabelSubtype(formSelect)
           ) : (
@@ -90,7 +93,9 @@ const Header = ({
               onChange={onFormChange}
               disabled={update}
             >
-              <option className={styles.titleLabelEn} value="">เลือกประเภทคำร้อง</option>
+              <option className={styles.titleLabelEn} value="">
+                เลือกประเภทคำร้อง
+              </option>
               {/* {casewithsub.data.map((child, index) => ( */}
               {uniqueTypes.map((child, index) => (
                 <option
@@ -107,7 +112,7 @@ const Header = ({
         <Col xs="auto" className={`${styles.titleLabel} ${styles.fontTH}`}>
           แจ้งช่องทาง<span className="text-danger">*</span> :{" "}
         </Col>
-        <Col xs={4}>
+        <Col xs="auto" className="ps-1 pe-0">
           {isPrint ? (
             ReturnLabelContact(JsonData.method)
           ) : (
@@ -137,7 +142,7 @@ const Header = ({
           <Col xs="auto" className={`${styles.titleLabel} ${styles.fontTH}`}>
             พื้นที่รับผิดชอบ <span className="text-danger">*</span> :{" "}
           </Col>
-          <Col xs={6}>
+          <Col xs="auto" className="ps-1 pe-0">
             {isPrint ? (
               ReturnLabel(JsonData.Area)
             ) : (

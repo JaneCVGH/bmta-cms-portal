@@ -1,4 +1,3 @@
-
 //src\app\pages\form\renderForm.js
 import { useCallback } from "react";
 import Form from "react-bootstrap/Form";
@@ -6,14 +5,34 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import styles from "../../style/form.module.css";
 import "bootstrap/dist/css/bootstrap.min.css";
+
+const getDisplayValue = (val) => {
+  if (val == null) return "";
+
+  if (typeof val === "object") {
+    if (val.name) return val.name;
+    if (val.label) return val.label;
+    if (val.value) return val.value;
+
+    // 🔥 กัน object ซ้อน
+    if (typeof val.label === "object") return getDisplayValue(val.label);
+    if (typeof val.value === "object") return getDisplayValue(val.value);
+    if (typeof val.data === "object") return getDisplayValue(val.data);
+
+    return "";
+  }
+
+  return val;
+};
+
 const renderField = (field, onChange, isPrint, viewMode) => {
   // ===== NORMAL FIELD =====
   if (field.type !== "InputGroup") {
     return (
-      <Row key={field.id}>
+      <Row key={field.id} className="g-0 align-items-center">
         {field.showLabel && (
           // <Col md={3}>
-          <Col xs="auto" className="pe-1">
+          <Col xs="auto" className="pe-1 ps-0">
             <Form.Label className={`${styles.titleLabel} ${styles.fontTH}`}>
               {field.label}
             </Form.Label>
@@ -21,7 +40,7 @@ const renderField = (field, onChange, isPrint, viewMode) => {
         )}
 
         {/* <Col className={styles.noMinWidth}> */}
-        <Col className={`${styles.noMinWidth} ps-1`}>
+        <Col className={`${styles.noMinWidth} ps-1 pe-0`}>
           {/* TEXT INPUT */}
           {field.type === "textInput" &&
             (isPrint ? (
@@ -29,7 +48,8 @@ const renderField = (field, onChange, isPrint, viewMode) => {
             ) : (
               <Form.Control
                 className={`${styles.titleLabel} ${styles.fontTH} form-control-sm mb-2 ${styles.inputCompact}`}
-                value={field.value}
+                // value={field.value}
+                value={getDisplayValue(field.value)}
                 disabled={viewMode}
                 onChange={(e) => onChange(field.id, e.target.value)}
               />
@@ -43,7 +63,8 @@ const renderField = (field, onChange, isPrint, viewMode) => {
               <Form.Control
                 as="textarea"
                 className={`${styles.titleLabel} ${styles.fontTH} form-control-sm mb-2`}
-                value={field.value}
+                // value={field.value}
+                value={getDisplayValue(field.value)}
                 disabled={viewMode}
                 onChange={(e) => onChange(field.id, e.target.value)}
               />
@@ -56,7 +77,8 @@ const renderField = (field, onChange, isPrint, viewMode) => {
             ) : (
               <Form.Select
                 className={`${styles.titleLabel} ${styles.fontTH} form-select-sm mb-2`}
-                value={field.value}
+                // value={field.value}
+                value={getDisplayValue(field.value)}
                 disabled={viewMode}
                 onChange={(e) => onChange(field.id, e.target.value)}
               >
@@ -77,7 +99,8 @@ const renderField = (field, onChange, isPrint, viewMode) => {
               <Form.Control
                 type="date"
                 className={`${styles.titleLabel} ${styles.fontEN} form-control-sm mb-2`}
-                value={field.value}
+                // value={field.value}
+                value={getDisplayValue(field.value)}
                 disabled={viewMode}
                 onChange={(e) => onChange(field.id, e.target.value)}
               />
@@ -91,7 +114,7 @@ const renderField = (field, onChange, isPrint, viewMode) => {
   const colSize = 12 / (field.GroupColSpan || 1);
 
   return (
-    <Row key={field.id}>
+    <Row key={field.id} className="g-0 align-items-center">
       {field.showLabel && (
         <Form.Label
           className={`${styles.titleLabel} ${styles.fontTH} text-center`}
@@ -115,14 +138,16 @@ const renderField = (field, onChange, isPrint, viewMode) => {
 
           {isPrint ? (
             field.id === "11f096ed-96c9-463b-8903-842e518a2c97" ? (
-              `(${printText(child.value, true)})`
+              // `(${printText(child.value, true)})`
+              <span>{getDisplayValue(child.value)}</span>
             ) : (
               printText(child.value, true)
             )
           ) : (
             <Form.Control
               className={`${styles.titleLabel} ${styles.fontTH} form-control-sm mb-2 ${styles.fullWidth}`}
-              value={child.value}
+              // value={child.value}
+              value={getDisplayValue(child.value)}
               disabled={viewMode}
               onChange={(e) => onChange(child.id, e.target.value)}
             />
@@ -133,20 +158,39 @@ const renderField = (field, onChange, isPrint, viewMode) => {
   );
 };
 
-const printText = (value, maxWidth) => (
-  <div
-    className={`
-      ${styles.titleLabel}
-      ${styles.fontTH}
-      form-control-sm
-      mb-2
-      ${styles.printText}
-      ${maxWidth ? styles.printTextFull : ""}
-    `}
-  >
-    {value || " "}
-  </div>
-);
+// const printText = (value, maxWidth) => (
+//   <div
+//     className={`
+//       ${styles.titleLabel}
+//       ${styles.fontTH}
+//       form-control-sm
+//       mb-2
+//       ${styles.printText}
+//       ${maxWidth ? styles.printTextFull : ""}
+//     `}
+//   >
+//     {value || " "}
+//   </div>
+// );
+
+const printText = (value, maxWidth) => {
+  const displayValue = getDisplayValue(value);
+
+  return (
+    <div
+      className={`
+        ${styles.titleLabel}
+        ${styles.fontTH}
+        form-control-sm
+        mb-2
+        ${styles.printText}
+        ${maxWidth ? styles.printTextFull : ""}
+      `}
+    >
+      {displayValue || " "}
+    </div>
+  );
+};
 
 const DynamicFormRenderer = ({
   formFieldJson,
