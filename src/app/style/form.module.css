@@ -22,14 +22,14 @@
 .title {
   display: flex;
   align-items: center;
-    font-family: "NotoSansThai", sans-serif;
-    color: black;
+  font-family: "NotoSansThai", sans-serif;
+  color: black;
 }
 
 .titleLabel {
   font-size: 12px;
-      color: black;
-      margin-right: 16px;
+  color: black;
+  margin-right: 6px;
 }
 
 .fontEN {
@@ -91,7 +91,7 @@
 
 /* ใช้กับ dialogClassName */
 .modalA4 {
-  max-width: 210mm !important;
+  max-width: 180mm !important;
   width: 210mm !important;
 }
 
@@ -104,15 +104,23 @@
 
 /* body scroll */
 .modalA4 :global(.modal-body) {
-  overflow-y: auto;
-  max-height: calc(297mm - 120px);
+  overflow-y: auto !important;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  max-height: calc(100vh - 120px); 
+  scroll-behavior: smooth;
 }
 
 @media print {
   .modal-a4 {
     width: 210mm;
-    max-width: 210mm;
+    max-width: 180mm;
   }
+}
+
+.inputCompact {
+  max-width: 280px;
 }
 
 /* ===== layout utils ===== */
@@ -171,20 +179,20 @@
 
 /* ===== ปุ่ม CreateCase ===== */
 .btnCreateCase {
-  background-color: #2563eb ;
+  background-color: #2ead6b;
 }
 
 .btnCreateCase:hover {
-  background-color: #1d4ed8 ;
+  background-color: #14894c;
 }
 
 /* ===== ปุ่ม UpdateCase ===== */
 .btnUpdateCase {
-  background-color: #2563eb ; 
+  background-color: #f2b707;
 }
 
 .btnUpdateCase:hover {
-  background-color: #1d4ed8 ;
+  background-color: #d47f00;
 }
 
 /* ===== ปุ่ม ส่งออก และ ไม่อนุมัติ ===== */
@@ -215,4 +223,11 @@
 
 .btnDispatch:hover {
   background-color: #21618c;
+}
+
+.formContainer {
+  /* border-top: 1px solid #d1d1d1; */
+  padding: 8px;
+  margin-top: 50px;   
+  margin-bottom: 12px;
 }

@@ -1,3 +1,4 @@
+
 //src\app\pages\form\renderForm.js
 import { useCallback } from "react";
 import Form from "react-bootstrap/Form";
@@ -11,21 +12,23 @@ const renderField = (field, onChange, isPrint, viewMode) => {
     return (
       <Row key={field.id}>
         {field.showLabel && (
-          <Col md={3}>
+          // <Col md={3}>
+          <Col xs="auto" className="pe-1">
             <Form.Label className={`${styles.titleLabel} ${styles.fontTH}`}>
               {field.label}
             </Form.Label>
           </Col>
         )}
 
-        <Col className={styles.noMinWidth}>
+        {/* <Col className={styles.noMinWidth}> */}
+        <Col className={`${styles.noMinWidth} ps-1`}>
           {/* TEXT INPUT */}
           {field.type === "textInput" &&
             (isPrint ? (
               printText(field.value)
             ) : (
               <Form.Control
-                className={`${styles.titleLabel} ${styles.fontTH} form-control-sm mb-2`}
+                className={`${styles.titleLabel} ${styles.fontTH} form-control-sm mb-2 ${styles.inputCompact}`}
                 value={field.value}
                 disabled={viewMode}
                 onChange={(e) => onChange(field.id, e.target.value)}
