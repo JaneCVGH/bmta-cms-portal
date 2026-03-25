@@ -4,7 +4,7 @@
   min-height: 100vh;
   padding: 2rem;
   margin: auto;
-  background-color: rgb(227, 224, 206);
+  background-color: #e3e3e7;
 }
 
 /*---- Header เช่น การจัดการบริการ ----*/
@@ -192,11 +192,11 @@
 
 /*----ปุ่ม ดูประเภทย่อย ประเภท----*/
 .BtnCasesubType {
-  background-color: #2ead6b;
+  background-color: #0c5dd5;/*#2ead6b   #14894c */
   margin-left: auto;
   font-weight: bold;
   
-   height: 40px;          
+  height: 40px;          
   padding: 0 30px;       
   display: flex;
   align-items: center;
@@ -204,7 +204,7 @@
 
 }
 .BtnCasesubType:hover {
-  background-color: #14894c;
+  background-color: #023279;
 }
 
 /* ---- จำนวน casetype ต่อ 1 หน้า ---- */
@@ -213,7 +213,7 @@
   justify-content: center;
   margin: 24px 0;
   bottom: 0;
-  background-color: rgb(227, 224, 206);
+  background-color: #e3e3e7;
   padding: 8px 0;
 }
 
@@ -233,7 +233,7 @@
   border: 1px solid #d1d5db;
   background-color: #ffffff;
   color: #111827;
-  font-size: 14px;
+  font-size: 16px;
   cursor: pointer;
   transition: all 0.2s ease;
 }
@@ -243,12 +243,14 @@
   background-color: #2563eb;
   border-color: #2563eb;
   color: #ffffff;
+  font-size: 16px;
 }
 
 /* ---- ปุ่ม กลับ, ถัดไป ---- */
 .setPage button:disabled {
   background-color: #f3f4f6;
   color: #9ca3af;
+  font-size: 16px;
   border-color: #e5e7eb;
   cursor: not-allowed;
 }

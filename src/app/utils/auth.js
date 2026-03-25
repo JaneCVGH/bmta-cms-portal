@@ -1,3 +1,5 @@
+// src\app\utils\auth.js
+
 export async function getValidAccessToken() {
   const accessToken = localStorage.getItem("access_token");
   const refreshToken = localStorage.getItem("refresh_token");
@@ -27,7 +29,10 @@ export async function getValidAccessToken() {
     const data = await response.json();
 
     if (response.ok && data.access_token) {
-      const expiresIn = 15 * 60 * 1000; // 15 นาที
+      // ใช้ค่า expires_in จาก backend (หน่วยวินาที)
+      const expiresIn = data.expires_in
+        ? data.expires_in * 1000
+        : 2 * 60 * 60 * 1000; // fallback 2 ชั่วโมง
       const newExpireAt = Date.now() + expiresIn;
 
       localStorage.setItem("access_token", data.access_token);
