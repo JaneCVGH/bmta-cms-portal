@@ -99,7 +99,7 @@ export default function EmployeePage() {
   }
 
   //  token หมดอายุ
-  {/*if (res.status === 401) {
+  /*if (res.status === 401) {
   console.warn("401 Unauthorized:", url);
   
     Swal.fire({
@@ -116,7 +116,7 @@ export default function EmployeePage() {
       unauthorized: true,
       message: "Session expired",
     };
-  }*/}
+  }*/
 
     if (res.status === 401) {
   console.warn("401 Unauthorized:", url);
@@ -141,7 +141,7 @@ export default function EmployeePage() {
     ok: res.ok,
     status: res.status,
     data,
-    message: data?.msg || data?.desc || null,
+    message: data?.msg || data?.desc || "เกิดข้อผิดพลาด",
   };
 };
 
@@ -646,7 +646,10 @@ const handleDeleteFromModal = async (userId) => {
   );
 
   if (!res.ok) {
-    throw new Error(res.message || "Create user failed");
+   // ส่ง Error object ออกไปเพื่อให้ catch ใน handleSubmit ทำงาน
+    const error = new Error(res.message || "สร้างผู้ใช้ไม่สำเร็จ");
+    error.status = res.status;
+    throw error;
   }
 
   return res.data;
@@ -752,7 +755,13 @@ if (uuidFields.includes(key)) {
       const orgId = getOrgIdFromToken();
 
       if (!orgId) {
-        Swal.fire("ผิดพลาด", "ไม่พบ orgId", "error");
+        Swal.fire({
+  icon: "error",
+  title: "ผิดพลาด",
+  text: "ไม่พบ orgId",
+  confirmButtonText: "ตกลง"
+});
+
         return;
       }
 
@@ -768,21 +777,22 @@ if (uuidFields.includes(key)) {
 
     console.log("CREATE payload:", payload);
 
-    const res = await createUser(payload).catch(err => {
-  if (err.message?.includes("Unauthorized")) {
-    Swal.fire("ไม่มีสิทธิ์", "คุณไม่มีสิทธิ์เพิ่มผู้ใช้", "error");
-    return null;
-  }
-  throw err;
-});
+    const resData = await createUser(payload).catch(err => {
+          if (err.status === 401 || err.message.includes("Unauthorized")) {
+            Swal.fire("Session หมดอายุ", "คุณไม่มีสิทธิ์สร้างผู้ใช้ หรือ Session หมดอายุแล้ว", "error");
+            return null;
+          }
+          throw err; // ส่ง error อื่นๆ (เช่น duplicate key) ไปที่ catch ใหญ่ด้านล่าง
+        });
 
-if (!res) return;
+    if (!resData) return;
 
 
       Swal.fire({
         icon: "success",
         title: "สำเร็จ!",
-        text: "เพิ่มผู้ใช้ใหม่เรียบร้อยแล้ว"
+        text: "เพิ่มผู้ใช้ใหม่เรียบร้อยแล้ว",
+        confirmButtonText: "ตกลง"
       });
     }
 
@@ -808,23 +818,36 @@ if (!res) return;
       Swal.fire({
         icon: "success",
         title: "สำเร็จ!",
-        text: "แก้ไขข้อมูลผู้ใช้เรียบร้อยแล้ว"
+        text: "แก้ไขข้อมูลผู้ใช้เรียบร้อยแล้ว",
+        confirmButtonText: "ตกลง"
       });
     }
-
+    // ถ้าทำงานสำเร็จถึงตรงนี้ ให้ปิด Modal และ Refresh ข้อมูล
     setShowModal(false);
     await fetchUsers(true); // true = โหลดจาก API
     
 
   } catch (err) {
-     setShowModal(false);
-    Swal.fire(
-      "ผิดพลาด",
-      err.message || "ไม่สามารถบันทึกข้อมูลได้",
-      "error"
-    );
-  }
-};
+      // 3. ส่วนสำคัญ: เช็ค Error "Username ซ้ำ" (SQL 23505)
+      const errorMsg = err.message || "";
+      if (errorMsg.includes("duplicate key") || errorMsg.includes("23505")) {
+        Swal.fire({
+          icon: "warning",
+          title: "ข้อมูลซ้ำในระบบ",
+          text: "Username หรือ รหัสพนักงานนี้ ถูกใช้งานไปแล้ว กรุณาตรวจสอบและเปลี่ยนใหม่",
+          confirmButtonText: "ตกลง",
+          confirmButtonColor: "#f8bb86"
+
+        });
+        // *** ไม่เรียก setShowModal(false) เพื่อให้หน้าต่าง Modal ค้างไว้ให้แก้ไข ***
+      } else {
+        // Error อื่นๆ ทั่วไป
+        setShowModal(false); // ปิด Modal เฉพาะเคสที่แก้ไขไม่ได้จริงๆ
+        Swal.fire("ผิดพลาด", errorMsg || "ไม่สามารถบันทึกข้อมูลได้", "error");
+        
+      }
+    }
+  };
 
 
   /*อาจจะไม่มี function */
@@ -861,7 +884,12 @@ if (!res) return;
     if (!res.ok) {
       throw new Error(res.message || "Delete failed");
     }
-    Swal.fire('ลบแล้ว!', 'ข้อมูลผู้ใช้ถูกลบเรียบร้อยแล้ว', 'success');
+    Swal.fire({
+  icon: "success",
+  title: "ลบแล้ว!",
+  text: "ข้อมูลผู้ใช้ถูกลบเรียบร้อยแล้ว",
+  confirmButtonText: "ตกลง"
+});
     // โหลดข้อมูลใหม่หลังลบ
     fetchUsers(true);
 
