@@ -1,181 +1,200 @@
+//src\app\pages\form\renderForm.js
 import { useCallback } from "react";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import styles from "../../style/form.module.css";
-import 'bootstrap/dist/css/bootstrap.min.css';
-const renderField = (field, onChange, isPrint) => {
-    // ===== NORMAL FIELD =====
-    if (field.type !== "InputGroup") {
-        return (
-            <Row key={field.id}>
-                {field.showLabel && (
-                    <Col md={3}>
-                        <Form.Label className={`${styles.titleLabel} ${styles.fontTH}`}>
-                            {field.label}
-                        </Form.Label>
-                    </Col>
-                )}
-
-                <Col>
-                    {/* TEXT INPUT */}
-                    {field.type === "textInput" &&
-                        (isPrint ? (
-                            printText(field.value)
-                        ) : (
-                            <Form.Control
-                                className={`${styles.titleLabel} ${styles.fontTH} form-control-sm mb-2`}
-                                value={field.value}
-                                onChange={(e) => onChange(field.id, e.target.value)}
-                            />
-                        ))}
-
-                    {/* TEXT AREA */}
-                    {field.type === "textAreaInput" &&
-                        (isPrint ? (
-                            printText(field.value)
-                        ) : (
-                            <Form.Control
-                                as="textarea"
-                                className={`${styles.titleLabel} ${styles.fontTH} form-control-sm mb-2`}
-                                value={field.value}
-                                onChange={(e) => onChange(field.id, e.target.value)}
-                            />
-                        ))}
-
-                    {/* SELECT */}
-                    {field.type === "select" &&
-                        (isPrint ? (
-                            printText(field.value)
-                        ) : (
-                            <Form.Select
-                                className={`${styles.titleLabel} ${styles.fontTH} form-select-sm mb-2`}
-                                value={field.value}
-                                onChange={(e) => onChange(field.id, e.target.value)}
-                            >
-                                <option value="">-- Select --</option>
-                                {field.options?.map((opt) => (
-                                    <option key={opt} value={opt}>
-                                        {opt}
-                                    </option>
-                                ))}
-                            </Form.Select>
-                        ))}
-
-                    {/* DATE */}
-                    {field.type === "dateInput" &&
-                        (isPrint ? (
-                            printText(field.value)
-                        ) : (
-                            <Form.Control
-                                type="date"
-                                className={`${styles.titleLabel} ${styles.fontEN} form-control-sm mb-2`}
-                                value={field.value}
-                                onChange={(e) => onChange(field.id, e.target.value)}
-                            />
-                        ))}
-                </Col>
-            </Row>
-        );
-    }
-
-    // ===== INPUT GROUP =====
-    const colSize = 12 / (field.GroupColSpan || 1);
-    
+import "bootstrap/dist/css/bootstrap.min.css";
+const renderField = (field, onChange, isPrint, viewMode) => {
+  // ===== NORMAL FIELD =====
+  if (field.type !== "InputGroup") {
     return (
-        <Row key={field.id}>
-            {field.showLabel && (
-                <Form.Label className={`${styles.titleLabel} ${styles.fontTH} text-center`}>
-                    <b>{field.label}</b>
-                </Form.Label>
-            )}
+      <Row key={field.id}>
+        {field.showLabel && (
+          <Col md={3}>
+            <Form.Label className={`${styles.titleLabel} ${styles.fontTH}`}>
+              {field.label}
+            </Form.Label>
+          </Col>
+        )}
 
-            {field.value.map((child) => (
-                <Col
-                    key={child.id}
-                    xs={colSize}
-                    md={colSize}
-                    className="d-flex align-items-center gap-2"
-                >
-                    {child.showLabel && (
-                        <Form.Label className={`${styles.titleLabel} ${styles.fontTH}`}>
-                            {child.label}
-                        </Form.Label>
-                    )}
-
-{isPrint ? (
-  field.id === "11f096ed-96c9-463b-8903-842e518a2c97"
-    ? `(${printText(child.value, "150px")})`
-    : printText(child.value, "150px")
-) : (
-  <Form.Control
-    className={`${styles.titleLabel} ${styles.fontTH} form-control-sm mb-2`}
-    value={child.value}
-    onChange={(e) => onChange(child.id, e.target.value)}
-    style={{ maxWidth: "150px" }}
-  />
-)}
-
-                </Col>
+        <Col className={styles.noMinWidth}>
+          {/* TEXT INPUT */}
+          {field.type === "textInput" &&
+            (isPrint ? (
+              printText(field.value)
+            ) : (
+              <Form.Control
+                className={`${styles.titleLabel} ${styles.fontTH} form-control-sm mb-2`}
+                value={field.value}
+                disabled={viewMode}
+                onChange={(e) => onChange(field.id, e.target.value)}
+              />
             ))}
-        </Row>
+
+          {/* TEXT AREA */}
+          {field.type === "textAreaInput" &&
+            (isPrint ? (
+              printText(field.value)
+            ) : (
+              <Form.Control
+                as="textarea"
+                className={`${styles.titleLabel} ${styles.fontTH} form-control-sm mb-2`}
+                value={field.value}
+                disabled={viewMode}
+                onChange={(e) => onChange(field.id, e.target.value)}
+              />
+            ))}
+
+          {/* SELECT */}
+          {field.type === "select" &&
+            (isPrint ? (
+              printText(field.value)
+            ) : (
+              <Form.Select
+                className={`${styles.titleLabel} ${styles.fontTH} form-select-sm mb-2`}
+                value={field.value}
+                disabled={viewMode}
+                onChange={(e) => onChange(field.id, e.target.value)}
+              >
+                <option value="">-- Select --</option>
+                {field.options?.map((opt) => (
+                  <option key={opt} value={opt}>
+                    {opt}
+                  </option>
+                ))}
+              </Form.Select>
+            ))}
+
+          {/* DATE */}
+          {field.type === "dateInput" &&
+            (isPrint ? (
+              printText(field.value)
+            ) : (
+              <Form.Control
+                type="date"
+                className={`${styles.titleLabel} ${styles.fontEN} form-control-sm mb-2`}
+                value={field.value}
+                disabled={viewMode}
+                onChange={(e) => onChange(field.id, e.target.value)}
+              />
+            ))}
+        </Col>
+      </Row>
     );
+  }
+
+  // ===== INPUT GROUP =====
+  const colSize = 12 / (field.GroupColSpan || 1);
+
+  return (
+    <Row key={field.id}>
+      {field.showLabel && (
+        <Form.Label
+          className={`${styles.titleLabel} ${styles.fontTH} text-center`}
+        >
+          <b>{field.label}</b>
+        </Form.Label>
+      )}
+
+      {field.value.map((child) => (
+        <Col
+          key={child.id}
+          xs={12}
+          md={colSize}
+          className={styles.inputGroupCol}
+        >
+          {child.showLabel && (
+            <Form.Label className={`${styles.titleLabel} ${styles.fontTH}`}>
+              {child.label}
+            </Form.Label>
+          )}
+
+          {isPrint ? (
+            field.id === "11f096ed-96c9-463b-8903-842e518a2c97" ? (
+              `(${printText(child.value, true)})`
+            ) : (
+              printText(child.value, true)
+            )
+          ) : (
+            <Form.Control
+              className={`${styles.titleLabel} ${styles.fontTH} form-control-sm mb-2 ${styles.fullWidth}`}
+              value={child.value}
+              disabled={viewMode}
+              onChange={(e) => onChange(child.id, e.target.value)}
+            />
+          )}
+        </Col>
+      ))}
+    </Row>
+  );
 };
 
 const printText = (value, maxWidth) => (
-    <div
-        className={`${styles.titleLabel} ${styles.fontTH} form-control-sm mb-2`}
-        style={{
-            // minHeight: "20px",
-            padding: "2px 4px",
-            maxWidth,
-            whiteSpace: "pre-wrap",
-        }}
-    >
-        {value || " "}
-    </div>
+  <div
+    className={`
+      ${styles.titleLabel}
+      ${styles.fontTH}
+      form-control-sm
+      mb-2
+      ${styles.printText}
+      ${maxWidth ? styles.printTextFull : ""}
+    `}
+  >
+    {value || " "}
+  </div>
 );
 
+const DynamicFormRenderer = ({
+  formFieldJson,
+  setisEdit,
+  setFormFields,
+  isPrint,
+  viewMode,
+}) => {
+  const safeFields = Array.isArray(formFieldJson) ? formFieldJson : [];
 
-const DynamicFormRenderer = ({ formFieldJson, setisEdit,setFormFields,isPrint }) => {
+  const handleChange = useCallback(
+    (id, value) => {
+      setisEdit(true);
+      setFormFields((prev) => updateFieldValue(prev, id, value));
+    },
+    [setFormFields],
+  );
 
-    const handleChange = useCallback((id, value) => {
-        setisEdit(true)
-        setFormFields((prev) =>
-            updateFieldValue(prev, id, value)
-        );
-    }, []);
+  const updateFieldValue = (fields, id, value) => {
+    if (!Array.isArray(fields)) return [];
 
-    const updateFieldValue = (fields, id, value) => {
-        return fields.map((field) => {
-            // normal field
-            if (field.id === id) {
-                return { ...field, value };
-            }
+    return fields.map((field) => {
+      // normal field
+      if (field.id === id) {
+        return { ...field, value };
+      }
 
-            // InputGroup (children)
-            if (field.type === "InputGroup" && Array.isArray(field.value)) {
-                return {
-                    ...field,
-                    value: field.value.map((child) =>
-                        child.id === id ? { ...child, value } : child
-                    ),
-                };
-            }
+      // InputGroup (children)
+      if (field.type === "InputGroup" && Array.isArray(field.value)) {
+        return {
+          ...field,
+          value: field.value.map((child) =>
+            child.id === id ? { ...child, value } : child,
+          ),
+        };
+      }
 
-            return field;
-        });
-    };
+      return field;
+    });
+  };
 
   return (
-    <div style={{ padding:"5px"}}>
-        {formFieldJson.map((field) =>
-           renderField(field, handleChange, isPrint)
-        )}
-
+    <div className={styles.formContainer}>
+      {safeFields.map((field) =>
+        renderField(field, handleChange, isPrint, viewMode),
+      )}
+      {/* {formFieldJson.map((field) =>
+        renderField(field, handleChange, isPrint, viewMode),
+      )} */}
     </div>
   );
 };
 
 export default DynamicFormRenderer;
-

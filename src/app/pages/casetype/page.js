@@ -690,7 +690,7 @@ export default function CaseTypesPage() {
                   <div className={styles.CaseTypeTH}>{ct.th}</div>
                   <div className={styles.CaseTypeEN}>{ct.en}</div>
                   <div className={styles.CountSubCasetype}>
-                    {ct.subtypeCount} ประเภทย่อย
+                    ({ct.subtypeCount} ประเภทย่อย)
                   </div>
 
                   {editedCaseTypeIds.includes(ct.idCasetype) && (

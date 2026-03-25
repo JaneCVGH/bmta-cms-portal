@@ -1,13 +1,14 @@
+/* style\form.module.css */
 @font-face {
   font-family: "NotoSansThai";
-  src: url("../../fonts/NotoSansThai-Regular.ttf") format("truetype");
+  src: url("/fonts/NotoSansThai-Regular.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
 }
 
 @font-face {
   font-family: "Inter";
-  src: url("../../fonts/Inter-Regular.ttf") format("truetype");
+  src: url("/fonts/Inter-Bold.ttf") format("truetype"); 
   font-weight: 700;
   font-style: normal;
 }
@@ -45,4 +46,173 @@
   width: 210mm;
   padding: 5px;
   /* width: 100%; */
+}
+
+/* ===== FIX A4 CONTAINER ===== */
+.a4-paper {
+  width: 100%;
+  max-width: 210mm;
+  min-height: 297mm;
+  padding: 20mm;
+  margin: auto;
+  background: #fff;
+
+  box-sizing: border-box;  
+  overflow-x: hidden;       
+}
+
+.a4-paper .row {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+/* ===== FIX INPUT ทุกตัว ===== */
+.a4-paper input,
+.a4-paper textarea,
+.a4-paper select,
+.a4-paper .form-control,
+.a4-paper .form-select {
+  width: 100% !important;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.a4Paper {
+  width: 100%;
+  max-width: 210mm;
+  min-height: 297mm;
+  padding: 20mm;
+  margin: auto;
+  background: #fff;
+
+  box-sizing: border-box;
+  overflow-x: hidden;
+}
+
+/* ใช้กับ dialogClassName */
+.modalA4 {
+  max-width: 210mm !important;
+  width: 210mm !important;
+}
+
+/* ตัวกล่อง modal */
+.modalA4 :global(.modal-content) {
+  height: 297mm;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* body scroll */
+.modalA4 :global(.modal-body) {
+  overflow-y: auto;
+  max-height: calc(297mm - 120px);
+}
+
+@media print {
+  .modal-a4 {
+    width: 210mm;
+    max-width: 210mm;
+  }
+}
+
+/* ===== layout utils ===== */
+.noMinWidth {
+  min-width: 0;
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+/* ===== container ===== */
+.formContainer {
+  padding: 5px;
+}
+
+/* ===== print text ===== */
+.printText {
+  padding: 2px 4px;
+  white-space: pre-wrap;
+}
+
+.printTextFull {
+  max-width: 100%;
+}
+
+/* ===== input group ===== */
+.inputGroupCol {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+/* ===== ปุ่ม BUTTON BASE ===== */
+.btnSavePDF,
+.btnCreateCase,
+.btnUpdateCase{
+  font-size: 18px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: none;
+  color: #fff !important;
+  margin-right: 8px;
+  transition: all 0.2s ease;
+}
+
+/* ===== ปุ่ม Save PDF ===== */
+.btnSavePDF {
+  background-color: #379ddd ;
+}
+
+.btnSavePDF:hover {
+  background-color: #06639c ;
+}
+
+/* ===== ปุ่ม CreateCase ===== */
+.btnCreateCase {
+  background-color: #2563eb ;
+}
+
+.btnCreateCase:hover {
+  background-color: #1d4ed8 ;
+}
+
+/* ===== ปุ่ม UpdateCase ===== */
+.btnUpdateCase {
+  background-color: #2563eb ; 
+}
+
+.btnUpdateCase:hover {
+  background-color: #1d4ed8 ;
+}
+
+/* ===== ปุ่ม ส่งออก และ ไม่อนุมัติ ===== */
+.btnReject,
+.btnDispatch {
+  font-size: 18px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: none;
+  color: #fff;
+  margin-right: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+
+.btnReject {
+  background-color: #e74c3c; 
+}
+
+.btnReject:hover {
+  background-color: #c0392b;
+}
+
+.btnDispatch {
+  background-color: #3498db; 
+}
+
+.btnDispatch:hover {
+  background-color: #21618c;
 }

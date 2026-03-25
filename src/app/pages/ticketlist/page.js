@@ -1,18 +1,17 @@
-// frontend\src\app\pages\ticketlist\page.js
+//src\app\pages\ticketlist\page.js
 
 "use client";
 
-import React, { useState, useEffect } from "react";
-//import Swal from "sweetalert2";  สำหรับ popup เตือน
+import React, { useState, useEffect, useRef } from "react";
+// import Swal from "sweetalert2";
 import TicketListModal from "../../components/TicketListModal";
-
+import ModalForm from "../form/formEditModal";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faEye,
+  faPencil,
   faSquarePlus,
   faMagnifyingGlass,
-  faPenToSquare,
-  faCircleCheck,
 } from "@fortawesome/free-solid-svg-icons";
 
 import {
@@ -26,13 +25,22 @@ import { useRouter, useSearchParams } from "next/navigation";
 import styles from "../../style/ticketlist.module.css";
 import Navbar from "../../components/Navbar";
 
-export default function TicketListPage() {
-  // const normalize = (v) => String(v).trim().toLowerCase();
+import {
+  getPriorityTh,
+  requireSession,
+  handleApiError,
+  fireSwal,
+  showSuccessSwal,
+  showWarningSwal,
+  showQuestionSwal,
+} from "@/app/lib/ErrorSwal";
 
+import { apiFetch, BASE_URL } from "@/app/lib/apiClient";
+
+export default function TicketListPage() {
   const searchParams = useSearchParams();
   const normalize = (v) => String(v).trim().toLowerCase();
   const router = useRouter();
-
   const [tickets, setTickets] = useState([]);
   const [totalTickets, setTotalTickets] = useState(0);
 
@@ -41,149 +49,153 @@ export default function TicketListPage() {
   const [selectedTicket, setSelectedTicket] = useState(null);
 
   const [page, setPage] = useState(1);
-  const rowsPerPage = 8;
 
-  const [searchTerm, setSearchTerm] = useState("");
+  // จำนวน ticketlist ต่อ 1 หน้า
+  const rowsPerPage = 10;
+  // จำนวน ticketlist ทั้งหมด
+  const totalPages = Math.ceil(totalTickets / rowsPerPage);
+
   const [caseTypeMap, setCaseTypeMap] = useState({});
-
   const [show, setShow] = useState(false);
-  const [caseId, setcaseId] = useState("CASE-001");
+  const [caseId, setcaseId] = useState(null);
   const mobileNo = searchParams.get("mobileNo");
   const method = searchParams.get("method");
-  // const username = searchParams.get("username");
   const agentName = searchParams.get("agentName");
-  const [formFields, setFormFields] = useState(null);
-  const [formResponse, setformResponse] = useState(null);
+
+  const [formState, setFormState] = useState({
+    fields: null,
+    response: null,
+    caseData: null,
+    jsonData: {},
+    formSelect: "",
+  });
+
   const [isDefault, setisDefault] = useState(true);
   const [casewithsub, setcasewithsub] = useState(null);
   const [username, setusername] = useState(searchParams.get("username"));
-  const [JsonData, setJsonData] = useState({});
-  const [Area, setArea] = useState(null);
-  const [formSelect, setformSelect] = useState("");
-  const [FormBycaseIdRes, setFormBycaseIdRes] = useState(null);
-  const [loading, setLoading] = useState(true);
 
-  // const [areaMap, setAreaMap] = useState({
-  //   countries: {},
-  //   provinces: {},
-  //   districts: {},
-  // });
-
+  const latestCaseIdRef = useRef(null);
   const [areaList, setAreaList] = useState([]);
+  const [statusMap, setStatusMap] = useState({});
+
+  const [viewMode, setViewMode] = useState(false);
+  const [isCreateMode, setIsCreateMode] = useState(false);
+
+  // ค้นหา หมายเลขใบสั่งงาน, สถานะ
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedStatus, setSelectedStatus] = useState("");
+
+  useEffect(() => {
+    fetchCaseTypes();
+    fetchStatus();
+    fetchAreas();
+    getDefaultData();
+  }, []);
 
   useEffect(() => {
     fetchTickets();
-    fetchCaseTypes();
-    fetchAreas();
+  }, [page, selectedStatus, searchTerm]);
 
-    const init = async () => {
-      try {
-        await fetchTickets();
-        await fetchCaseTypes();
-        await fetchAreas();
+  useEffect(() => {
+    if (!requireSession()) return;
+  }, []);
 
-        if (isDefault) {
-          await getArea();
-          await getDefaultData();
-          setisDefault(false);
-        }
-      } finally {
-        setLoading(false);
-      }
+  //สถานะ
+  const getStatusTh = (statusId) => {
+    return statusMap[statusId] || statusId;
+  };
+
+  //สถานะ
+  const getStatusClass = (statusId) => {
+    const map = {
+      S000: styles.statusDraft,
+      S001: styles.statusNew,
+      S003: styles.statusDispatch,
+      S004: styles.statusAck,
+      S015: styles.statusProgress,
+      S016: styles.statusDone,
+      S007: styles.statusClosed,
+      S014: styles.statusCancel,
     };
 
-    init();
-  }, [page, searchTerm]);
+    return map[statusId] || styles.statusDefault;
+  };
 
-  const safeJson = async (res) => {
-    const text = await res.text();
-    if (!text) return null;
+  const fetchStatus = async () => {
     try {
-      return JSON.parse(text);
-    } catch {
-      return null;
+      const data = await apiFetch(`${BASE_URL}/case_status?start=0&length=100`);
+
+      if (!data || !Array.isArray(data.data)) return;
+      const map = {};
+      data.data.forEach((row) => {
+        map[row.statusId] = row.th;
+      });
+
+      console.log("STATUS MAP:", map);
+
+      setStatusMap(map);
+    } catch (error) {
+      handleApiError(error, "โหลดสถานะไม่สำเร็จ");
     }
+  };
+
+  const getPriorityClass = (priority) => {
+    const p = Number(priority);
+
+    if (p === 0) return styles.priorityCritical;
+    if (p >= 1 && p <= 3) return styles.priorityHigh;
+    if (p >= 4 && p <= 6) return styles.priorityMedium;
+    if (p >= 7 && p <= 9) return styles.priorityLow;
+
+    return "";
   };
 
   //fetchTickets – ดึงข้อมูลคำร้องจาก API
   const fetchTickets = async () => {
-    try {
-      const token = localStorage.getItem("accessToken");
-      if (!token) return;
+    if (!requireSession()) return;
 
+    try {
+      console.log(" FETCH TICKETS...");
       const start = (page - 1) * rowsPerPage;
 
+      // const params = new URLSearchParams({
+      //   start: start.toString(),
+      //   length: rowsPerPage.toString(),
+      // });
+
       const params = new URLSearchParams({
-        // page: page.toString(),
-        // limit: rowsPerPage.toString(),
         start: start.toString(),
         length: rowsPerPage.toString(),
-        // search: searchTerm,
+        ...(selectedStatus && { statusId: selectedStatus }),
+        ...(searchTerm && { keyword: searchTerm }),
       });
 
-      const res = await fetch(
-        "https://welcome-service-stg.metthier.ai:65000/api/v1/case?" +
-          params.toString(),
-        {
-          // method: "GET",
-          headers: {
-            // Accept: "application/json",
+      console.log("SEARCH TERM:", searchTerm);
+      console.log("PARAMS:", params.toString());
 
-            method: "GET",
-            credentials: "include",
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json",
-
-              Authorization: `Bearer ${token}`,
-            },
-          },
-        },
-      );
-
-      console.log(token);
-
-      if (!res.ok) {
-        console.error("fetchTickets status:", res.status);
-        return;
-      }
-
-      const data = await safeJson(res);
-      console.log("CASE LIST RESPONSE:", data);
+      const data = await apiFetch(`${BASE_URL}/case?${params.toString()}`);
 
       const list = Array.isArray(data?.data) ? data.data : [];
+
+      // จำนวนรายการ ticketlist ทั้งหมด
       const total =
-        typeof data?.totalRecords === "number"
-          ? data.totalRecords
-          : typeof data?.recordsTotal === "number"
-            ? data.recordsTotal
+        typeof data?.totalFiltered === "number"
+          ? data.totalFiltered
+          : typeof data?.totalRecords === "number"
+            ? data.totalRecords
             : 0;
 
       setTickets(list.map(sanitizeCase));
       setTotalTickets(total);
     } catch (err) {
-      console.error("Error fetching tickets:", err);
+      handleApiError(err, "โหลดรายการคำร้องไม่สำเร็จ");
     }
   };
 
   const fetchCaseTypes = async () => {
     try {
-      const token = localStorage.getItem("accessToken");
-      if (!token) return;
-
-      const res = await fetch(
-        "https://welcome-service-stg.metthier.ai:65000/api/v1/casetypes_with_subtype",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-
-      const result = await safeJson(res);
-      if (!result || !Array.isArray(result.data)) {
-        return;
-      }
+      const result = await apiFetch(`${BASE_URL}/casetypes_with_subtype`);
+      if (!Array.isArray(result?.data)) return;
 
       // แปลงข้อมูลเป็น map
       const map = {};
@@ -200,424 +212,673 @@ export default function TicketListPage() {
         }
 
         // ใส่ subtype
-        map[typeKey].subTypes[subKey] = row.subTypeTh;
+        map[typeKey].subTypes[subKey] = {
+          code: row.sTypeCode,
+          name: row.subTypeTh, //  row.subTypeTh;
+        };
       });
 
       console.log("CASE TYPE MAP (FINAL):", map);
       setCaseTypeMap(map);
     } catch (error) {
-      console.error("fetchCaseTypes error:", error);
+      handleApiError(error, "โหลดประเภทคำร้องไม่สำเร็จ");
     }
   };
 
   const fetchAreas = async () => {
     try {
-      // console.log("AREA: start fetching");
-      const token = localStorage.getItem("accessToken");
-      if (!token) return;
-
-      const res = await fetch(
-        "https://welcome-service-stg.metthier.ai:65000/api/v1/area/country_province_districts",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
+      const result = await apiFetch(
+        `${BASE_URL}/area/country_province_districts`,
       );
-
-      const result = await safeJson(res);
       if (!result || !Array.isArray(result.data)) return;
 
       console.log("AREA LIST:", result.data);
       // setAreaMap(map);
       setAreaList(result.data);
     } catch (err) {
-      console.error("fetchAreas error:", err);
+      handleApiError(err, "โหลดพื้นที่ไม่สำเร็จ");
     }
   };
 
-  const handleOpenModal = async (ticket) => {
-    // สำหรับ "add" หรือ ticket เป็น null
-    // setModalType(type);
-    setShowModal(true);
-    setSelectedTicket(null);
+  const handleOpenModal = async () => {
+    router.push("/pages/form");
+  };
 
-    if (!ticket) return;
+  const getCaseTypeTh = (typeId) => {
+    return caseTypeMap[normalize(typeId)]?.th ?? typeId;
+  };
 
-    console.log("FETCH DETAIL CASE:", ticket.caseId);
+  // sTypeCode และ casetype ในคอลัมน์ หัวข้อ
+  const getCaseTypeWithCode = (typeId, sTypeId) => {
+    const type = caseTypeMap[normalize(typeId)];
+    const sub = type?.subTypes?.[normalize(sTypeId)];
 
-    const token = localStorage.getItem("accessToken");
-    if (!token) return;
+    if (!type) return typeId;
+
+    return sub ? `${sub.code} - ${type.th}` : type.th;
+  };
+
+  const getCaseSubTypeTh = (typeId, sTypeId) => {
+    const sub = caseTypeMap[normalize(typeId)]?.subTypes?.[normalize(sTypeId)];
+    return sub?.name || "-"; // return `${sub.name}`;
+  };
+
+  const getCaseDetail = (ticket) => {
+    const fields = ticket?.formData?.formFieldJson;
+
+    if (!Array.isArray(fields)) return "-";
+
+    const detailField = fields.find(
+      (f) => f.label?.includes("รายละเอียด") || f.label?.includes("ทักษะ"),
+    );
+
+    return detailField?.value || "-";
+  };
+
+  const onFormChange = async (e) => {
+    const value = e.target.value;
+    console.log("caseSubType ที่ส่ง:", value);
+
+    if (!value || value === "เลือกประเภทคำร้อง") {
+      setFormState((prev) => ({
+        ...prev,
+        formSelect: "",
+        fields: [],
+        response: null,
+      }));
+      return;
+    }
+
+    setFormState((prev) => ({
+      ...prev,
+      formSelect: value,
+      fields: [],
+      response: null,
+    }));
 
     try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/case/${ticket.caseId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-
-      if (!res.ok) {
-        setSelectedTicket({
-          ...ticket,
-          // countryId: ticket.countryId ?? null,
-          // provId: ticket.provId ?? null,
-          // distId: ticket.distId ?? null,
-          _fallback: true,
-        });
-        return;
-      }
-
-      const detail = await res.json();
-
-      // console.log("CASE DETAIL:", detail.data);
-
-      setSelectedTicket({
-        ...ticket,
-        ...detail.data,
+      const data = await apiFetch(`${BASE_URL}/forms/casesubtype`, {
+        method: "POST",
+        body: JSON.stringify({
+          caseSubType: value,
+        }),
       });
-    } catch (err) {
-      // console.error("Network or JSON error", err);
-      setSelectedTicket({
-        error: true,
-        message: "เกิดข้อผิดพลาดในการเชื่อมต่อ",
+
+      setFormState((prev) => ({
+        ...prev,
+        fields: Array.isArray(data?.data?.formFieldJson)
+          ? data.data.formFieldJson
+          : [],
+        response: data.data,
+      }));
+    } catch (error) {
+      handleApiError(error, "โหลดข้อมูลไม่สำเร็จ");
+    }
+  };
+
+  const onDataChange = (property, value) => {
+    console.log(property, value);
+
+    setFormState((prev) => ({
+      ...prev,
+      jsonData: {
+        ...prev.jsonData,
+        [property]: value,
+      },
+    }));
+  };
+
+  const getDefaultData = async () => {
+    try {
+      console.log("API: casetypes_with_subtype");
+
+      const data = await apiFetch(`${BASE_URL}/casetypes_with_subtype`);
+      setcasewithsub(data);
+    } catch (error) {
+      console.error("Login error:", error);
+    }
+  };
+
+  //ถ้า value = placeholder → ให้ถือว่า “ยังไม่ได้เลือก”
+  const isInvalidSelect = (value, placeholderList = []) => {
+    if (!value) return true;
+
+    const v = String(value).trim();
+    return placeholderList.includes(v);
+  };
+
+  //  ตรวจสอบ การกรอกแบบฟอร์ม Updatecase และ CreateCase
+  const validateForm = () => {
+    let errors = [];
+    // เช็คว่า "ไม่กรอกอะไรเลย"
+
+    const { formSelect, jsonData, fields } = formState;
+
+    const isTypeEmpty = isInvalidSelect(formSelect, ["", "เลือกประเภทคำร้อง"]);
+    const isMethodEmpty = isInvalidSelect(jsonData.method, [
+      "",
+      "เลือกแจ้งช่องทาง",
+    ]);
+    const isAreaEmpty = isInvalidSelect(jsonData.Area, [
+      "",
+      "เลือกพื้นที่รับผิดชอบ",
+    ]);
+
+    const isEmpty = (v) => !v || String(v).trim() === "";
+
+    if ([formSelect, jsonData.method, jsonData.Area].every(isEmpty)) {
+      // -------CASE 1: ไม่กรอกอะไรเลย-------
+      showWarningSwal(
+        "กรอกข้อมูลไม่ครบ",
+        "กรุณาเลือก ประเภทคำร้อง / ช่องทาง / พื้นที่",
+      );
+      return false;
+    }
+
+    // -------CASE 2: ไม่กรอก ประเภทคำร้อง-------
+    if (isTypeEmpty) {
+      showWarningSwal("กรุณาเลือกประเภทคำร้อง");
+      return false;
+    }
+
+    // -------CASE 3: ไม่กรอก แจ้งช่องทาง-------
+    if (isMethodEmpty) {
+      showWarningSwal("กรุณาเลือกแจ้งช่องทาง");
+      return false;
+    }
+
+    // -------CASE 4: ไม่กรอก พื้นที่รับผิดชอบ-------
+    if (isAreaEmpty) {
+      showWarningSwal("กรุณาเลือกพื้นที่");
+      return false;
+    }
+
+    if (Array.isArray(fields)) {
+      fields.forEach((field) => {
+        if (field.required && !String(field.value || "").trim()) {
+          errors.push(field.label);
+        }
+
+        if (field.type === "InputGroup") {
+          field.value?.forEach((child) => {
+            if (child.required && !String(child.value || "").trim()) {
+              errors.push(child.label);
+            }
+          });
+        }
       });
     }
 
-    const handleOpenModal = async () => {
-      router.push("/pages/form");
-    };
-
-    const getCaseTypeTh = (typeId) =>
-      caseTypeMap[normalize(typeId)]?.th ?? typeId;
-
-    const getCaseSubTypeTh = (typeId, sTypeId) =>
-      caseTypeMap[normalize(typeId)]?.subTypes?.[normalize(sTypeId)] ?? sTypeId;
-
-    const onFormChange = async (e) => {
-      var value = e.target.value;
-      setformSelect(value);
-      setFormFields(null);
-      const token = localStorage.getItem("accessToken");
-      try {
-        console.log("ส่ง request ไปยัง API:");
-        const response = await fetch(
-          "https://welcome-service-stg.metthier.ai:65000/api/v1/forms/casesubtype",
-          // `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/auth/login`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`, // ✅ correct
-            },
-            body: JSON.stringify({
-              caseSubType: value,
-            }),
-          },
-        );
-
-        // console.log("Response status:", response.status);
-        const data = await response.json();
-        console.log("✅ API Response:", data);
-        // console.log("Response data:", data);
-        if (response.ok) {
-          setformResponse(data.data);
-          setFormFields(data.data.formFieldJson);
-        }
-      } catch (error) {
-        console.error("Login error:", error);
-      }
-
-      console.log(e.target.value);
-    };
-
-    const onDataChange = (property, value) => {
-      console.log(property, value);
-      const selectedArea = Area.find((item) => item.id === value);
-
-      console.log(selectedArea);
-      setJsonData((prev) => ({
-        ...prev,
-        [property]: value,
-      }));
-    };
-
-    const getDefaultData = async () => {
-      const token = localStorage.getItem("accessToken");
-      if (!token) {
-        console.error("No access token found");
-        return;
-      }
-      try {
-        console.log("API: casetypes_with_subtype");
-        const response = await fetch(
-          "https://welcome-service-stg.metthier.ai:65000/api/v1/casetypes_with_subtype",
-          // `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/auth/login`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`, // ✅ correct
-            },
-          },
-        );
-
-        const data = await response.json();
-        console.log("✅ API Response:", data);
-        if (response.ok) {
-          setcasewithsub(data);
-        }
-      } catch (error) {
-        console.error("Login error:", error);
-      }
-    };
-
-    const UpdateCase = async () => {
-      const token = localStorage.getItem("accessToken");
-      if (username != null || username != "") {
-        setusername(localStorage.getItem("username"));
-      }
-      const selectedArea = Area.find((item) => item.id === JsonData.Area);
-      Swal.fire({
-        html: `<span class="${styles.fontTH}">อัพเดทเหตุ?</span>`,
-        // text: "You won't be able to revert this!",
-        icon: "question",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: `<span class="${styles.fontTH}">ยืนยัน</span>`,
-        cancelButtonText: `<span class="${styles.fontTH}">ยกเลิก</span>`,
-      }).then(async (result) => {
-        if (result.isConfirmed) {
-          try {
-            let formData = { ...formResponse };
-            let json = { ...FormBycaseIdRes };
-            ((json.countryId = selectedArea.countryId),
-              (json.distId = selectedArea.distId),
-              (json.formData = formData),
-              (json.provId = selectedArea.provId),
-              (json.source = JsonData.method),
-              console.log("REQUEST JSON:", json));
-
-            const response = await fetch(
-              `https://welcome-service-stg.metthier.ai:65000/api/v1/case/${caseId}`,
-              {
-                method: "PATCH",
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify(json),
-              },
-            );
-
-            const data = await response.json();
-            console.log("✅ API Response:", data);
-
-            if (response.ok) {
-              Swal.fire({
-                title: "Success",
-                icon: "success",
-                draggable: true,
-                timer: 1500,
-                showConfirmButton: false,
-              });
-              setShow(false);
-              setFormFields(null);
-              setformResponse(null);
-              setisDefault(true);
-              setJsonData(null);
-              // setcasewithsub(null)
-              // setArea(null)
-              setformSelect(null);
-            }
-          } catch (error) {
-            console.error("API error:", error);
-          }
-        }
+    if (errors.length > 0) {
+      fireSwal({
+        icon: "warning",
+        title: "กรอกข้อมูลไม่ครบ",
+        html: `กรุณากรอก:<br>${errors.join("<br>")}`,
       });
-    };
+      return false;
+    }
 
-    const getFormBycaseId = async (caseId) => {
-      const token = localStorage.getItem("accessToken");
-      if (!token) {
-        console.error("No access token found");
-        return;
-      }
-      try {
-        console.log("API: getFormBycaseId");
-        const response = await fetch(
-          `https://welcome-service-stg.metthier.ai:65000/api/v1/dispatch/${caseId}/SOP`,
-          // `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/auth/login`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          },
-        );
+    return true;
+  };
 
-        const data = await response.json();
-        console.log("✅ API Response:", data);
-        if (response.ok) {
-          setFormFields(data.data.formAnswer.formFieldJson);
-          setFormBycaseIdRes(data.data);
-          const selectedArea = Area.find(
-            (item) =>
-              item.countryId === data.data.countryId &&
-              item.distId === data.data.distId &&
-              item.provId === data.data.provId,
-          );
-          setJsonData({
-            Area: selectedArea.id,
-            method: data.data.source,
-          });
-          setformSelect(data.data.caseSTypeId);
-        }
-      } catch (error) {
-        console.error("Login error:", error);
-      }
-    };
+  // ------- สร้างคำร้อง CreateCase --------
+  const CreateCase = async () => {
+    if (!validateForm()) return;
+    const { formSelect, jsonData, fields, response } = formState;
 
-    const getArea = async () => {
-      const token = localStorage.getItem("accessToken");
-      if (!token) {
-        console.error("No access token found");
-        return;
-      }
-      try {
-        console.log("API: GetArea");
-        const response = await fetch(
-          "https://welcome-service-stg.metthier.ai:65000/api/v1/area/country_province_districts",
-          // `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/auth/login`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          },
-        );
+    const username = localStorage.getItem("username");
+    // const selectedArea = areaList?.find((item) => item.id === JsonData.Area);
+    const selectedArea = areaList?.find((item) => item.id === jsonData.Area);
 
-        const data = await response.json();
-        console.log("✅ API Response:", data);
-        if (response.ok) {
-          setArea(data.data);
-        }
-      } catch (error) {
-        console.error("Login error:", error);
-      }
-    };
+    if (!selectedArea) {
+      showWarningSwal("กรุณาเลือกพื้นที่");
+      return;
+    }
 
-    const handleClose = () => {
+    const result = await showQuestionSwal({
+      title: "เปิดเหตุ?",
+    });
+
+    if (!result.isConfirmed) return;
+    try {
+      let formData = { ...(response || {}) };
+      formData.formFieldJson = fields;
+
+      const item = casewithsub?.data?.find((c) => c.sTypeId === formSelect);
+      console.log("formSelect:", formSelect);
+      console.log("matched item:", item);
+
+      const json = {
+        arrivedDate: null,
+        assignUser: "",
+        attachments: [],
+        caseDetail: "",
+        caseDuration: 0,
+        caseId: "",
+        caseLat: "",
+        caseLocAddr: "",
+        caseLocAddrDecs: "",
+        caseLon: "",
+        caseSTypeId: formSelect, //caseSTypeId: null,
+        caseTypeId: item?.typeId, //caseTypeId: formSelect,
+        caseVersion: "publish",
+        closedDate: null,
+        commandedDate: null,
+        countryId: selectedArea.countryId,
+        createdDate: new Date().toISOString(),
+        deviceId: "",
+        distId: selectedArea.distId,
+        extReceive: "",
+        formData: formData,
+        nodeId: formData.nextNodeId,
+        phoneNo: "",
+        phoneNoHide: true,
+        priority: 0,
+        provId: selectedArea.provId,
+        receivedDate: null,
+        referCaseId: "",
+        resDetail: "",
+        resId: null,
+        scheduleDate: null,
+        scheduleFlag: false,
+        source: jsonData.method || "1", // source: JsonData.method || "1",
+        startedDate: new Date().toISOString(),
+        statusId: "S001",
+        userarrive: "",
+        userclose: "",
+        usercommand: "",
+        usercreate: username,
+        userreceive: "",
+        versions: formData.versions,
+        wfId: formData.wfId,
+      };
+
+      console.log("REQUEST JSON:", json);
+
+      const data = await apiFetch(`${BASE_URL}/case/add`, {
+        method: "POST",
+        body: JSON.stringify(json),
+      });
+
+      console.log("✅ API Response:", data);
+
+      showSuccessSwal("บันทึกคำร้องสำเร็จ");
+
+      fetchTickets();
       setShow(false);
-      setcaseId(null);
-    };
+    } catch (error) {
+      handleApiError(error, "สร้างคำร้องไม่สำเร็จ");
+    }
+  };
 
-    const handleShow = async (caseId) => {
-      setcaseId(caseId);
-      setformSelect(caseId);
-      await getFormBycaseId(caseId);
-      setShow(true);
-    };
+  //-----แก้ไข คำร้อง-----
+  const UpdateCase = async () => {
+    if (!validateForm()) return;
+    const { jsonData, fields, response, caseData } = formState;
 
-    // if (isDefault) return null;
+    const selectedArea = areaList.find((item) => item.id === jsonData.Area);
 
-    return (
-      <>
-        <Navbar />
-        <div className={styles.TicketListPage}>
-          <div className={styles.container}>
-            <h2 className={styles.title}>รายการคำร้องขอ</h2>
+    if (!selectedArea) {
+      showWarningSwal("กรุณาเลือกพื้นที่");
+      return;
+    }
 
-            {/* searchBox */}
-            <div className={styles.topBar}>
-              <div className={styles.searchTicketList}>
-                <form className={styles.formSearch}>
-                  <div className={styles.searchBox}>
+    const result = await showQuestionSwal({
+      title: "อัพเดทเหตุ?",
+    });
+
+    if (!result.isConfirmed) return;
+
+    try {
+      const json = structuredClone(caseData);
+
+      const formData = {
+        ...response,
+        formFieldJson: fields,
+      };
+
+      console.log("response:", response);
+      console.log("caseData:", caseData);
+      console.log("fields:", fields);
+
+      // update fields
+      json.countryId = selectedArea?.countryId || "";
+      json.provId = selectedArea?.provId || "";
+      json.distId = selectedArea?.distId || "";
+      // json.source = JsonData?.method || "1";
+      json.source = jsonData?.method || "1";
+
+      // ใส่ formData ที่แก้แล้ว
+      json.formData = formData;
+
+      console.log("formFields before send:", fields);
+      console.log("REQUEST JSON:", json);
+
+      const data = await apiFetch(`${BASE_URL}/case/${caseId}`, {
+        method: "PATCH",
+        body: JSON.stringify(json),
+      });
+
+      console.log("✅ UPDATE RESPONSE:", data);
+
+      showSuccessSwal("บันทึกสำเร็จ");
+
+      fetchTickets();
+      setShow(false);
+    } catch (error) {
+      handleApiError(error, "อัปเดตคำร้องไม่สำเร็จ");
+    }
+  };
+
+  // update status ของ ปุ่ม "ส่งออก" และ "ไม่อนุมัติ"
+  const updateStatus = async (caseId, newStatusId) => {
+    const { caseData } = formState;
+    if (!caseData) return;
+
+    try {
+      const src = caseData; // const src = FormBycaseIdRes;
+
+      console.log("nodeId:", src.currentStage?.nodeId);
+      console.log("currentStage:", src.currentStage);
+
+      const json = {
+        id: src.id,
+        caseId: src.caseId,
+        caseTypeId: src.caseTypeId,
+        caseSTypeId: src.caseSTypeId,
+
+        statusId: newStatusId, // เปลี่ยน status
+
+        countryId: src.countryId,
+        provId: src.provId,
+        distId: src.distId,
+
+        formData: src.formData || src.formAnswer,
+
+        nodeId: src.currentStage?.nodeId,
+        versions: src.versions,
+        wfId: src.wfId,
+
+        source: src.source || "1",
+
+        updatedBy: localStorage.getItem("username"),
+      };
+
+      console.log("UPDATE STATUS:", json);
+
+      const data = await apiFetch(`${BASE_URL}/case/${caseId}`, {
+        method: "PATCH",
+        body: JSON.stringify(json),
+      });
+
+      showSuccessSwal("อัปเดตสถานะสำเร็จ");
+
+      fetchTickets();
+      setShow(false);
+    } catch (err) {
+      handleApiError(err, "อัปเดตสถานะไม่สำเร็จ");
+    }
+  };
+
+  //-----veie แสดง แบบฟอร์มคำร้อง-----
+  const getFormBycaseId = async (caseId) => {
+    latestCaseIdRef.current = caseId;
+
+    try {
+      console.log("API: getFormBycaseId");
+
+      const data = await apiFetch(`${BASE_URL}/dispatch/${caseId}/SOP`);
+      console.log("✅ API Response:", data);
+      if (!data) {
+        console.log("ไม่มี form สำหรับ case นี้");
+        return;
+      }
+      // กัน response เก่าทับของใหม่
+      if (latestCaseIdRef.current !== caseId) {
+        console.log("SKIP OLD RESPONSE:", caseId);
+        return;
+      }
+
+      // กัน data ว่าง
+      const formData = data.data?.formData || data.data?.formAnswer || {};
+
+      // const selectedArea = Area?.find(
+      const selectedArea = areaList.find(
+        (item) =>
+          String(item.countryId) === String(data.data.countryId) &&
+          String(item.provId) === String(data.data.provId) &&
+          String(item.distId) === String(data.data.distId),
+      );
+
+      setFormState((prev) => ({
+        ...prev,
+        response: formData,
+        fields: Array.isArray(formData.formFieldJson)
+          ? formData.formFieldJson
+          : [],
+        caseData: data.data,
+        jsonData: {
+          Area: selectedArea?.id || "",
+          method: String(data.data.source || "1"),
+        },
+        formSelect: data.data.caseSTypeId,
+      }));
+    } catch (error) {
+      console.error("getFormBycaseId error:", error);
+    }
+  };
+
+  const handleClose = () => {
+    setShow(false);
+    setcaseId(null);
+    setViewMode(false);
+    setIsCreateMode(false);
+  };
+
+  const handleShow = async (caseId) => {
+    console.log("OPEN CASE:", caseId);
+
+    // ✅ reset state ก่อน
+    setFormState({
+      fields: null,
+      response: null,
+      caseData: null,
+      jsonData: {},
+      formSelect: "",
+    });
+
+    setcaseId(caseId);
+
+    if (areaList.length === 0) {
+      await fetchAreas();
+    }
+
+    if (!casewithsub) {
+      await getDefaultData();
+    }
+
+    setShow(true);
+    await getFormBycaseId(caseId);
+  };
+
+  const filteredTickets = searchTerm
+    ? tickets.filter((t) =>
+        t.caseId?.toLowerCase().includes(searchTerm.toLowerCase()),
+      )
+    : tickets;
+
+  return (
+    <>
+      <Navbar />
+      <div className={styles.TicketListPage}>
+        <div className={styles.container}>
+          <h2 className={styles.title}>รายการคำร้องขอ</h2>
+
+          {/* searchBox */}
+          <div className={styles.topBar}>
+            <div className={styles.searchTicketList}>
+              <form className={styles.formSearch}>
+                <div className={styles.searchBox}>
+                  {/* input + icon */}
+                  <div className={styles.SearchBoxInpt}>
                     <FontAwesomeIcon
                       icon={faMagnifyingGlass}
                       className={styles.searchIcon}
                     />
+
                     <input
                       type="text"
-                      placeholder="|ค้นหา รหัส / ชื่อ / นามสกุล"
+                      placeholder="|ค้นหา หมายเลขใบสั่งงาน"
                       value={searchTerm}
                       onChange={(e) => {
-                        setSearchTerm(e.target.value);
+                        setPage(1);
+                        setSearchTerm(e.target.value.trim());
                       }}
                       className={styles.searchInput}
                     />
                   </div>
-                </form>
-              </div>
 
-              <div className={styles.edit}>
-                <button
-                  className={styles.btnAdd}
-                  onClick={() => handleOpenModal("add")}
-                >
-                  <FontAwesomeIcon icon={faSquarePlus} /> เพิ่มคำร้องใหม่
-                </button>
-              </div>
+                  <select
+                    value={selectedStatus}
+                    onChange={(e) => {
+                      setSelectedStatus(e.target.value);
+                      setPage(1);
+                    }}
+                    className={styles.searchSelect}
+                  >
+                    <option value="">ทุกสถานะ</option>
+
+                    {Object.entries(statusMap).map(([statusId, statusName]) => (
+                      <option key={statusId} value={statusId}>
+                        {statusName}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </form>
             </div>
 
+            {/*------ปุ่มสร้างคำร้อง------*/}
+            <div className={styles.AddTicket}>
+              <button
+                className={styles.AddBtnTicket}
+                onClick={async () => {
+                  setViewMode(false);
+                  setIsCreateMode(true);
+
+                  // reset state (สำคัญมาก)
+                  setFormState({
+                    fields: null,
+                    response: null,
+                    caseData: null,
+                    jsonData: {},
+                    formSelect: "",
+                  });
+
+                  if (areaList.length === 0) {
+                    await fetchAreas();
+                  }
+
+                  if (!casewithsub) {
+                    await getDefaultData();
+                  }
+                  setShow(true);
+                }}
+              >
+                <FontAwesomeIcon icon={faSquarePlus} /> สร้างคำร้อง
+              </button>
+            </div>
+          </div>
+
+          <div className={styles.tableWrapper}>
             <table className={styles.tableTicketList}>
+              {/*------หัวข้อ column------*/}
               <thead className={styles.TicketListThead}>
                 <tr>
-                  <th className={styles.th}>รหัสคำร้อง</th>
+                  <th className={styles.th}>หมายเลขใบสั่งงาน</th>
                   <th className={styles.th}>หัวข้อ</th>
-                  <th className={styles.th}>รายละเอียดคำร้อง</th>
+                  <th className={styles.th}>รายละเอียด</th>
                   <th className={styles.th}>สถานะ</th>
-                  <th className={styles.th}>วันที่ส่งคำร้อง</th>
-                  <th className={styles.th}>วันที่สิ้นสุดคำร้อง</th>
-                  <th className={styles.th}>ดูเพิ่มเติม</th>
+                  <th className={styles.th}>ความสำคัญ</th>
+                  <th className={styles.th}>สร้างโดย</th>
+                  <th className={styles.th}>วันที่สร้าง</th>
+                  <th className={styles.th}>การดำเนินการ</th>
                 </tr>
               </thead>
 
               <tbody>
-                {tickets.map((ticket, index) => (
+                {/* {tickets.map((ticket, index) => (*/}
+                {filteredTickets.map((ticket, index) => (
                   <tr key={index} className={styles.trTicketList}>
                     <td>{ticket.caseId}</td>
-                    <td>{getCaseTypeTh(ticket.caseTypeId)}</td>
-                    <td>
-                      {getCaseSubTypeTh(ticket.caseTypeId, ticket.caseSTypeId)}
-                    </td>
-                    <td>{ticket.statusId}</td>
-                    <td>{safeDate(ticket.startedDate)}</td>
-                    <td>{safeDate(ticket.createdAt)}</td>
-                    {/* <td>{formatArea(areaMap.provinces, ticket.provId)}</td> */}
 
                     <td>
+                      {getCaseTypeWithCode(
+                        ticket.caseTypeId,
+                        ticket.caseSTypeId,
+                      )}
+                    </td>
+
+                    <td>
+                      {getCaseDetail(ticket) !== "-"
+                        ? getCaseDetail(ticket)
+                        : getCaseSubTypeTh(
+                            ticket.caseTypeId,
+                            ticket.caseSTypeId,
+                          )}
+                    </td>
+
+                    <td>
+                      <span
+                        className={`${styles.statusBadge} ${getStatusClass(ticket.statusId)}`}
+                      >
+                        {getStatusTh(ticket.statusId)}
+                      </span>
+                    </td>
+
+                    <td>
+                      <span
+                        className={`${styles.priorityBadge} ${getPriorityClass(
+                          ticket.priority,
+                        )}`}
+                      >
+                        {getPriorityTh(ticket.priority)}
+                      </span>
+                    </td>
+                    <td>{ticket.createdBy}</td>
+                    <td>{safeDate(ticket.createdAt)}</td>
+
+                    {/*------ปุ่ม ดู และ แก้ไข คำร้อง------*/}
+                    <td>
                       <button
-                        className={styles.viewBtn}
-                        onClick={() => handleOpenModal(ticket)}
+                        className={styles.ViewBtnTicket}
+                        onClick={() => {
+                          setViewMode(true);
+                          setIsCreateMode(false);
+                          handleShow(ticket.caseId);
+                        }}
                       >
                         <FontAwesomeIcon icon={faEye} />
                       </button>
 
                       <button
-                        className={styles.viewBtn}
-                        onClick={() => handleShow(ticket.caseId)}
+                        className={styles.EditBtnTicket}
+                        onClick={() => {
+                          setViewMode(false);
+                          setIsCreateMode(false);
+                          handleShow(ticket.caseId);
+                        }}
                       >
-                        <FontAwesomeIcon icon={faPenToSquare} />
+                        <FontAwesomeIcon icon={faPencil} />
                       </button>
-
-                      {/* <button
-                      className={styles.viewBtn}
-                      onClick={() => handleShow(ticket.caseId)}
-                    >
-                      <FontAwesomeIcon icon={faCircleCheck} />
-                    </button> */}
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
+          </div>
 
+          <div className={styles.PageBackground}>
             <div className={styles.setPage}>
               <button
                 onClick={() => setPage((p) => Math.max(p - 1, 1))}
@@ -625,7 +886,11 @@ export default function TicketListPage() {
               >
                 กลับ
               </button>
-              <span> หน้า {page}</span>
+
+              <span className={styles.PageText}>
+                หน้าที่ {page}/{totalPages}
+              </span>
+
               <button
                 onClick={() => setPage((p) => p + 1)}
                 disabled={page >= Math.ceil(totalTickets / rowsPerPage)}
@@ -635,40 +900,50 @@ export default function TicketListPage() {
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Modal แยกไฟล์ */}
-        {showModal &&
-          // Object.keys(areaMap.countries).length > 0 && (
-          areaList.length > 0 && (
-            <TicketListModal
-              // type={modalType}
-              show={showModal}
-              onClose={() => setShowModal(false)}
-              ticketData={selectedTicket}
-              areaList={areaList}
-              getCaseTypeTh={getCaseTypeTh}
-              getCaseSubTypeTh={getCaseSubTypeTh}
-            />
-          )}
+      {/* Modal แยกไฟล์ */}
+      {showModal && areaList.length > 0 && (
+        <TicketListModal
+          show={showModal}
+          onClose={() => setShowModal(false)}
+          ticketData={selectedTicket}
+          areaList={areaList}
+          getCaseTypeTh={getCaseTypeTh}
+          getCaseSubTypeTh={getCaseSubTypeTh}
+        />
+      )}
 
-        {formFields != null && (
-          <ModalForm
-            formFieldJson={formFields}
-            setFormFields={setFormFields}
-            handleClose={handleClose}
-            show={show}
-            caseId={caseId}
-            UpdateCase={UpdateCase}
-            casewithsub={casewithsub}
-            formSelect={formSelect}
-            onFormChange={onFormChange}
-            onDataChange={onDataChange}
-            JsonData={JsonData}
-            Area={Area}
-            update={true}
-          />
-        )}
-      </>
-    );
-  };
+      {show && (
+        <ModalForm
+          formFieldJson={formState.fields}
+          formSelect={formState.formSelect}
+          JsonData={formState.jsonData}
+          handleClose={handleClose}
+          show={show}
+          caseId={caseId}
+          UpdateCase={UpdateCase}
+          casewithsub={casewithsub}
+          onFormChange={onFormChange}
+          onDataChange={onDataChange}
+          Area={areaList} // Area={Area}
+          update={true}
+          viewMode={viewMode}
+          CreateCase={CreateCase}
+          isCreateMode={isCreateMode}
+          updateStatus={updateStatus}
+          statusId={formState.caseData?.statusId}
+          // statusId={FormBycaseIdRes?.statusId}
+
+          setFormFields={(updater) =>
+            setFormState((prev) => ({
+              ...prev,
+              fields:
+                typeof updater === "function" ? updater(prev.fields) : updater,
+            }))
+          }
+        />
+      )}
+    </>
+  );
 }

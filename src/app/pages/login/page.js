@@ -125,17 +125,15 @@ export default function Login() {
         const accessToken = data.data.accessToken;
         const refreshToken = data.data.refreshToken;
 
-        // const expiresIn = 15 * 60 * 1000; // 15 นาที
-        // const expireAt = Date.now() + expiresIn;
-        // localStorage.setItem("token_expire_at", expireAt.toString()); // เก็บเวลา Expire
- 
         // **เก็บ token และข้อมูล user ใน localStorage**
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("refreshToken", refreshToken);
-        //เก็บ userlist
-        const expiresIn = 15 * 60 * 1000;
+
+        // ตั้งเวลา token หมดอายุเป็น 2 ชั่วโมง
+        const expiresIn = 2 * 60 * 60 * 1000; // 2 ชั่วโมง
         const expireAt = Date.now() + expiresIn;
-        localStorage.setItem("token_expire_at", expireAt.toString());
+        localStorage.setItem("token_expire_at", expireAt.toString()); // เก็บเวลา Expire
+
         // ข้อมูล user ใน localStorage
         localStorage.setItem("user_data", JSON.stringify(data.data.user));
         localStorage.setItem("user_id", user.id.toString());
@@ -171,23 +169,22 @@ export default function Login() {
         );
 
         // โหลด user list ครั้งแรกแล้วเก็บ cache
-      try {
-        const userListRes = await fetch(
-          `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/users`,
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
+        try {
+          const userListRes = await fetch(
+            `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/v1/users`,
+            {
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+              },
             },
-          },
-        );
+          );
 
-        const userListData = await userListRes.json();
-        saveToCache("user_list", userListData);
-        console.log("Cached user_list");
-      } catch (err) {
-        console.log("โหลด user list ไม่สำเร็จ", err);
-      }
-
+          const userListData = await userListRes.json();
+          saveToCache("user_list", userListData);
+          console.log("Cached user_list");
+        } catch (err) {
+          console.log("โหลด user list ไม่สำเร็จ", err);
+        }
 
         // ----------เข้าสู่ระบบสำเร็จ----------
         Swal.fire({

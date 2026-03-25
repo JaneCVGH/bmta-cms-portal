@@ -1,4 +1,5 @@
 // src/app/lib/apiClient.js
+import { clearSessionAndLogout } from "./ErrorSwal";
 
 // API ของหน้า casetype/page.js
 export const BASE_URL = "https://welcome-service-stg.metthier.ai:65000/api/v1";
@@ -18,7 +19,9 @@ export const getToken = () => {
 // เก็บ token ของ casetype
 export const apiFetch = async (url, options = {}) => {
   const token = getToken();
+
   if (!token) {
+    clearSessionAndLogout("Session หมดอายุ");
     throw new Error("NO_TOKEN");
   }
 
@@ -38,14 +41,21 @@ export const apiFetch = async (url, options = {}) => {
   }
 
   if (res.status === 401) {
+    clearSessionAndLogout("Session หมดอายุ");
     throw new Error("UNAUTHORIZED");
   }
-
   if (!res.ok) {
-    throw new Error(`HTTP_${res.status}`);
+    if (res.status === 500) {
+      return null;
+    }
+    let message = `HTTP_${res.status}`;
+    try {
+      const errData = await res.json();
+      message = errData?.message || message;
+    } catch {}
+    throw new Error(message);
   }
 
   if (res.status === 204) return null;
   return res.json();
 };
-
