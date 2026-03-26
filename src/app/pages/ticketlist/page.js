@@ -158,23 +158,18 @@ export default function TicketListPage() {
       console.log(" FETCH TICKETS...");
       const start = (page - 1) * rowsPerPage;
 
-      // const params = new URLSearchParams({
-      //   start: start.toString(),
-      //   length: rowsPerPage.toString(),
-      // });
-
       const params = new URLSearchParams({
         start: start.toString(),
         length: rowsPerPage.toString(),
         ...(selectedStatus && { statusId: selectedStatus }),
-        ...(searchTerm && { keyword: searchTerm }),
+        ...(searchTerm && { caseId: searchTerm }),
       });
 
       console.log("SEARCH TERM:", searchTerm);
       console.log("PARAMS:", params.toString());
 
       const data = await apiFetch(`${BASE_URL}/case?${params.toString()}`);
-
+      console.log("API RESPONSE:", data);
       const list = Array.isArray(data?.data) ? data.data : [];
 
       // จำนวนรายการ ticketlist ทั้งหมด
@@ -627,27 +622,45 @@ export default function TicketListPage() {
     try {
       console.log("API: getFormBycaseId");
 
-      const data = await apiFetch(`${BASE_URL}/dispatch/${caseId}/SOP`);
-      console.log("✅ API Response:", data);
-      if (!data) {
-        console.log("ไม่มี form สำหรับ case นี้");
-        return;
-      }
+      let data = await apiFetch(`${BASE_URL}/dispatch/${caseId}/SOP`);
+console.log("✅ API Response:", data);
+
+        if (!data || !data.data) {
+      console.log("ไม่มี form สำหรับ case นี้");
+      return;
+    }
+
+      // const data = await apiFetch(`${BASE_URL}/dispatch/${caseId}/SOP`);
+      // console.log("✅ API Response:", data);
+      // if (!data) {
+      //   console.log("ไม่มี form สำหรับ case นี้");
+      //   return;
+      // }
+
       // กัน response เก่าทับของใหม่
       if (latestCaseIdRef.current !== caseId) {
         console.log("SKIP OLD RESPONSE:", caseId);
         return;
       }
 
+      const caseData = data.data;
+
       // กัน data ว่าง
-      const formData = data.data?.formData || data.data?.formAnswer || {};
+      // const formData = data.data?.formData || data.data?.formAnswer || {};
+          const formData =
+      caseData.formData ||
+      caseData.formAnswer ||
+      { formFieldJson: [] };
+
+       console.log("FORM DATA:", formData);
+    console.log("CASE DATA:", caseData);
 
       // const selectedArea = Area?.find(
       const selectedArea = areaList.find(
         (item) =>
-          String(item.countryId) === String(data.data.countryId) &&
-          String(item.provId) === String(data.data.provId) &&
-          String(item.distId) === String(data.data.distId),
+          String(item.countryId) === String(caseData.countryId) &&
+        String(item.provId) === String(caseData.provId) &&
+        String(item.distId) === String(caseData.distId)
       );
 
       setFormState((prev) => ({
@@ -846,7 +859,7 @@ export default function TicketListPage() {
                       </span>
                     </td>
                     <td>{ticket.createdBy}</td>
-                    <td>{safeDate(ticket.createdAt)}</td>
+                    <td>{safeDate(ticket.createdAt || ticket.createdDate)}</td>
 
                     {/*------ปุ่ม ดู และ แก้ไข คำร้อง------*/}
                     <td>

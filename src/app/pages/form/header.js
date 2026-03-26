@@ -44,7 +44,7 @@ const Header = ({
 
     if (!selected) return "-";
 
-    return selected.th || "-";
+    return selected.th || selected.subTypeTh || "-"; // return selected.th || "-";
   };
 
   console.log("formSelect:", formSelect);
