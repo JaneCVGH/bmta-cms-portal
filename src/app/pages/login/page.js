@@ -193,7 +193,7 @@ export default function Login() {
           text: `ยินดีต้อนรับ ${user.username || ""}`,
           confirmButtonText: "ตกลง",
         }).then(() => {
-          router.push("../../pages/home");
+          router.push("../../pages/Dashboard");
         });
       } else {
         const messageMap = {

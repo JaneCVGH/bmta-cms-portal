@@ -95,14 +95,10 @@ export default function EmployeePage() {
       };
     }
 
-<<<<<<< HEAD
+
   //  token หมดอายุ
   /*if (res.status === 401) {
-=======
-    //  token หมดอายุ
-    {
-      /*if (res.status === 401) {
->>>>>>> 01eeeed83ffe2e87e2e1204c0bc20ba13c357493
+
   console.warn("401 Unauthorized:", url);
   
     Swal.fire({
@@ -120,10 +116,9 @@ export default function EmployeePage() {
       message: "Session expired",
     };
   }*/
-<<<<<<< HEAD
-=======
-    }
->>>>>>> 01eeeed83ffe2e87e2e1204c0bc20ba13c357493
+
+    
+
 
     if (res.status === 401) {
       console.warn("401 Unauthorized:", url);
@@ -150,23 +145,8 @@ export default function EmployeePage() {
     };
   };
 
-<<<<<<< HEAD
+
     
-
-  let data = null;
-  try {
-    data = await res.json();
-  } catch {
-    // บาง endpoint อาจไม่มี body
-  }
-
-  return {
-    ok: res.ok,
-    status: res.status,
-    data,
-    message: data?.msg || data?.desc || "เกิดข้อผิดพลาด",
-  };
-};
 
  
 // เรียก API FastAPI
@@ -174,13 +154,7 @@ export default function EmployeePage() {
 //     .then((data) => setEmployees(data))
 //     .catch((err) => console.error(err));
 // }, []);
-=======
-  // เรียก API FastAPI
-  //     .then((res) => res.json())
-  //     .then((data) => setEmployees(data))
-  //     .catch((err) => console.error(err));
-  // }, []);
->>>>>>> 01eeeed83ffe2e87e2e1204c0bc20ba13c357493
+
   const router = useRouter();
 
   const [allUsers, setAllUsers] = useState([]);
@@ -628,11 +602,6 @@ export default function EmployeePage() {
       },
     );
 
-    if (!res.ok) {
-      throw new Error(res.message || "Create user failed");
-    }
-<<<<<<< HEAD
-  );
 
   if (!res.ok) {
    // ส่ง Error object ออกไปเพื่อให้ catch ใน handleSubmit ทำงาน
@@ -643,11 +612,8 @@ export default function EmployeePage() {
 
   return res.data;
 };
-=======
->>>>>>> 01eeeed83ffe2e87e2e1204c0bc20ba13c357493
 
-    return res.data;
-  };
+   
 
   const updateUser = async (userId, payload) => {
     const res = await apiRequest(
@@ -741,17 +707,7 @@ export default function EmployeePage() {
       if (modalType === "add") {
         const orgId = getOrgIdFromToken();
 
-<<<<<<< HEAD
-      if (!orgId) {
-        Swal.fire({
-  icon: "error",
-  title: "ผิดพลาด",
-  text: "ไม่พบ orgId",
-  confirmButtonText: "ตกลง"
-});
 
-        return;
-=======
         if (!orgId) {
           Swal.fire("ผิดพลาด", "ไม่พบ orgId", "error");
           return;
@@ -772,7 +728,7 @@ export default function EmployeePage() {
 
         const res = await createUser(payload).catch((err) => {
           if (err.message?.includes("Unauthorized")) {
-            Swal.fire("ไม่มีสิทธิ์", "คุณไม่มีสิทธิ์เพิ่มผู้ใช้", "error");
+            Swal.fire( "เกิดข้อผิดพลาด","ไม่สามารถเพิ่มผู้ใช้ได้", "error");
             return null;
           }
           throw err;
@@ -784,40 +740,12 @@ export default function EmployeePage() {
           icon: "success",
           title: "สำเร็จ!",
           text: "เพิ่มผู้ใช้ใหม่เรียบร้อยแล้ว",
+          confirmButtonText: "ตกลง"
         });
->>>>>>> 01eeeed83ffe2e87e2e1204c0bc20ba13c357493
+
       }
 
-      // ================= EDIT =================
-      if (modalType === "edit") {
-        //const userId = formData?.id;
-        //const userId = String(formData.id || "").trim();
-        //const userId = selectedUser?.id;
-        const userId = Number(selectedUser?.id);
-
-        if (!Number.isInteger(userId)) {
-          throw new Error("Invalid user id");
-        }
-
-<<<<<<< HEAD
-    const resData = await createUser(payload).catch(err => {
-          if (err.status === 401 || err.message.includes("Unauthorized")) {
-            Swal.fire("Session หมดอายุ", "คุณไม่มีสิทธิ์สร้างผู้ใช้ หรือ Session หมดอายุแล้ว", "error");
-            return null;
-          }
-          throw err; // ส่ง error อื่นๆ (เช่น duplicate key) ไปที่ catch ใหญ่ด้านล่าง
-        });
-
-    if (!resData) return;
-
-
-      Swal.fire({
-        icon: "success",
-        title: "สำเร็จ!",
-        text: "เพิ่มผู้ใช้ใหม่เรียบร้อยแล้ว",
-        confirmButtonText: "ตกลง"
-      });
-    }
+      
 
     // ================= EDIT =================
     if (modalType === "edit") {
@@ -872,29 +800,7 @@ export default function EmployeePage() {
     }
   };
 
-=======
-        const payload = buildSafePayload(formData, {
-          mode: "edit",
-          dateFields: ["birthDate", "startDate", "endDate"],
-        });
 
-        console.log("EDIT payload:", payload);
-        await updateUser(userId, payload);
-        Swal.fire({
-          icon: "success",
-          title: "สำเร็จ!",
-          text: "แก้ไขข้อมูลผู้ใช้เรียบร้อยแล้ว",
-        });
-      }
-
-      setShowModal(false);
-      await fetchUsers(true); // true = โหลดจาก API
-    } catch (err) {
-      setShowModal(false);
-      Swal.fire("ผิดพลาด", err.message || "ไม่สามารถบันทึกข้อมูลได้", "error");
-    }
-  };
->>>>>>> 01eeeed83ffe2e87e2e1204c0bc20ba13c357493
 
   /*อาจจะไม่มี function */
   //   const generateUserId = () => {
@@ -925,11 +831,9 @@ export default function EmployeePage() {
       if (!res.ok) {
         throw new Error(res.message || "Delete failed");
       }
-<<<<<<< HEAD
-    );
-    if (!res.ok) {
-      throw new Error(res.message || "Delete failed");
-    }
+
+    
+  
     Swal.fire({
   icon: "success",
   title: "ลบแล้ว!",
@@ -938,11 +842,7 @@ export default function EmployeePage() {
 });
     // โหลดข้อมูลใหม่หลังลบ
     fetchUsers(true);
-=======
-      Swal.fire("ลบแล้ว!", "ข้อมูลผู้ใช้ถูกลบเรียบร้อยแล้ว", "success");
-      // โหลดข้อมูลใหม่หลังลบ
-      fetchUsers(true);
->>>>>>> 01eeeed83ffe2e87e2e1204c0bc20ba13c357493
+
 
       //fetchUserCount();
     } catch (err) {

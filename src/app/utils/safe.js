@@ -38,7 +38,7 @@ export const sanitizeCase = (c) => ({
     // caseSTypeId: c.caseSTypeId ?? null,
 
     startedDate: c.startedDate ?? null,
-    createdAt: c.createdAt ?? null,
+    createdAt: c.createdAt || c.createdDate || null,
 
     countryId: c.countryId ?? null,
     provId: c.provId ?? null,

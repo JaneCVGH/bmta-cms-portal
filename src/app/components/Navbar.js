@@ -37,6 +37,12 @@ const menuConfig = [
   //   icon: faCheck,
   // },
   {
+    name: "Dashboard",
+    path: "/pages/Dashboard",
+    permission: "case.view_history",
+    icon: faHome,
+  },
+  {
     name: "Ticket Lists",
     path: "/pages/ticketlist",
     permission: "case.view_history",

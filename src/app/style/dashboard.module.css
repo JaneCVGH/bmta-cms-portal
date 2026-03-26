@@ -1,0 +1,342 @@
+/* ================== MAIN LAYOUT ================== */
+
+.dashboard {
+  padding: 24px;
+  background: #e5e7eb;
+  min-height: 100vh;
+  color: #0b1220;
+}
+
+.headerRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+  font-size: 26px;
+}
+
+.panel {
+  background: #dbdde4;
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 16px;
+}
+
+
+/* ================== CARDS ================== */
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.card {
+  background: #111827;
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.card span {
+  font-size: 13px;
+  color: #9ca3af;
+}
+
+.card strong {
+  font-size: 28px;
+  color: #22c55e;
+}
+
+
+/* ================== BAR CHART ================== */
+
+.barChart {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;   /* กระจายเต็ม */
+  height: 260px;
+  margin-top: 20px;
+  width: 100%;
+}
+
+.barCol {
+  flex: 1;                          /* แต่ละเดือนกว้างเท่ากัน */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stack {
+  display: flex;
+  flex-direction: column-reverse;   /* stacked bar */
+  justify-content: flex-start;
+  align-items: center;
+  height: 220px;
+  width: 100%;
+}
+
+.bar {
+  width: 36px;
+  /*border-radius: 4px 4px 0 0;*/
+  transition: 0.2s;
+}
+
+.bar:hover {
+  opacity: 0.8;
+}
+
+.month {
+  font-size: 12px;
+  margin-top: 6px;
+  color: #292a2c;
+}
+
+.statusDraft {
+  background-color: #eeeeee;
+}
+
+.statusNew {
+  background-color: #1565c0;
+}
+
+.statusDispatch {
+  background-color: #4527a0;
+}
+
+.statusAck {
+  background-color: #ad1457;
+}
+
+.statusProgress {
+  background-color: #e65100;
+}
+
+.statusDone {
+  background-color: #00695c;
+}
+
+.statusClosed {
+  background-color: #1b5e20;
+}
+
+.statusCancel {
+  background-color: #b71c1c;
+}
+
+
+/* ================== TOOLTIP ================== */
+
+.tooltip {
+  position: fixed;
+  background: #bfc9e1;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  pointer-events: none;
+
+  transform: translate(-65%, -50%); /* ขยับซ้าย + จัดกลาง */
+  white-space: nowrap;
+  /*position: fixed;   
+  background: #bfc9e1;
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  pointer-events: none;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+
+  transform: translate(-50%, -120%); /* กึ่งกลาง + ลอยขึ้น  
+  */
+
+}
+
+
+/* ================== LEGEND ================== */
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+
+/* ================== SLA ================== */
+
+.slapanel {
+  background: #dbdde4;
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 16px;
+}
+
+.slaChart {
+  display: flex;
+  height: 28px;
+  margin-top: 14px;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.slaPass {
+  background: #22c55e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+
+.slaFail {
+  background: #ef4444;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+
+.slaText {
+  margin-top: 12px;
+  font-size: 14px;
+}
+
+
+/* ================== OPTIONAL (FOR FUTURE) ================== */
+
+.grid {
+  display: grid;
+  grid-template-columns: 3fr 1.2fr;
+  gap: 16px;
+}
+
+.side {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.donutWrap {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.donut {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  position: relative;
+}
+
+/*สถานะ วงกลม*/
+.center {
+  position: absolute;
+  inset: 30px;
+  background: #111827;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+}
+
+.center b {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.toggle button {
+  background: #1f2933;
+  border: none;
+  color: #9ca3af;
+  padding: 6px 12px;
+  margin-left: 6px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.toggle .active {
+  background: #22c55e;
+  color: #022c22;
+}
+
+
+
+
+.statusBoxWrap {
+  /*margin-top: 16px;*/
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* เสร็จสิ้น */
+.statusBoxDone {
+  background: #22c55e;
+  border-radius: 12px;
+  padding: 16px;
+  color: white;
+}
+
+.statusBoxDone b {
+  font-size: 28px;
+}
+
+/* กำลังดำเนินการ */
+.statusBoxProgress {
+  background: #3b82f6;
+  border-radius: 12px;
+  padding: 16px;
+  color: white;
+}
+
+.statusBoxDone b,
+.statusBoxProgress b {
+  font-size: 28px;
+}
+
+/* layout ซ้าย-ขวา */
+.overviewRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+/* ฝั่งซ้าย */
+.overviewLeft {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+}
+
+/* จัด legend ให้อยู่กลาง */
+.overviewLeft .legend {
+  justify-content: center;
+}
+
+/* ฝั่งขวา */
+.overviewRight {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+  min-width: 220px;
+}
+

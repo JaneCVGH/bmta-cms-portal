@@ -1,10 +1,11 @@
 //src\app\pages\form\formEditModal.js
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import Header from "./header";
-import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
+// import html2canvas from "html2canvas";
+// import jsPDF from "jspdf";
+
 import RenderForm from "./renderForm";
 import { downloadPDF } from "@/app/utils/pdf";
 import { showQuestionSwal } from "@/app/lib/ErrorSwal";
@@ -45,6 +46,18 @@ const DynamicFormRenderer = ({
   const [isEdit, setisEdit] = useState(false);
   const printRef = useRef(null);
 
+  useEffect(() => {
+    if (show) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [show]);
+
   // S014 = ยกเลิก, S007 = ปิดงาน
   const isLocked = ["S007", "S014"].includes(statusId);
 
@@ -79,11 +92,12 @@ const DynamicFormRenderer = ({
       onHide={handleClose}
       dialogClassName={styles.modalA4}
       centered
+      scrollable={true} 
     >
       <Modal.Header closeButton>
         <Modal.Title>
           {/* {caseId} */}
-          {isCreateMode ? "สร้างคำร้อง" : `แก้ไขคำร้อง ${caseId}`}
+          {isCreateMode ? "สร้างคำร้อง" : `${caseId}`}
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
@@ -101,7 +115,7 @@ const DynamicFormRenderer = ({
                   // variant="success"
                   className={styles.btnCreateCase}
                 >
-                  บันทึกคำร้อง
+                  สร้างคำร้อง
                 </button>
               ) : (
                 <button
@@ -110,7 +124,7 @@ const DynamicFormRenderer = ({
                   // variant="warning"
                   className={styles.btnUpdateCase}
                 >
-                  บันทึกคำร้อง
+                  แก้ไขคำร้อง
                 </button>
               )}
             </>
