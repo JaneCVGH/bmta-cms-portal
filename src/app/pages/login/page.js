@@ -7,7 +7,13 @@ import Link from "next/link";
 
 // FontAwesome
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faLock, faUser, faBuilding } from "@fortawesome/free-solid-svg-icons";
+import {
+  faLock,
+  faUser,
+  faBuilding,
+  faEye,
+  faEyeSlash,
+} from "@fortawesome/free-solid-svg-icons";
 
 // SweetAlert2
 import Swal from "sweetalert2";
@@ -20,8 +26,10 @@ import { saveToCache } from "../../utils/localCache";
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [organization, setOrganization] = useState("");
+  const [organization, setOrganization] = useState("BMA");
   const [isLoading, setIsLoading] = useState(false);
+  const [isPasswordFocused, setIsPasswordFocused] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const router = useRouter();
 
@@ -80,6 +88,7 @@ export default function Login() {
 
     // ---------- องค์กร ว่าง----------
     if (organization.trim().toUpperCase() !== "BMA") {
+      //  if (organization !== "SiamDL") {
       Swal.fire({
         icon: "warning",
         title: "องค์กรไม่ถูกต้อง",
@@ -103,7 +112,7 @@ export default function Login() {
           body: JSON.stringify({
             username,
             password,
-            organization,
+            organization: "BMA",
           }),
         },
       );
@@ -244,20 +253,33 @@ export default function Login() {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               disabled={isLoading}
-              autoComplete="new-username"
+              name="fake-username"
+              autoComplete="new-password"
             />
           </div>
 
           <div className={styles.inputContainer}>
             <FontAwesomeIcon icon={faLock} className={styles.IconInput} />
             <input
-              type="password"
+              type={showPassword ? "text" : "password"}
               placeholder="รหัสผ่าน"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               disabled={isLoading}
+              name="fake-username"
               autoComplete="new-password"
+              onFocus={() => setIsPasswordFocused(true)}
+              onBlur={() => setIsPasswordFocused(false)}
             />
+
+            {isPasswordFocused && (
+              <FontAwesomeIcon
+                icon={showPassword ? faEyeSlash : faEye}
+                className={styles.eyeIcon}
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => setShowPassword(!showPassword)}
+              />
+            )}
           </div>
 
           <div className={styles.inputContainer}>
@@ -271,11 +293,11 @@ export default function Login() {
             />
           </div>
 
-          <div className={styles.ChangePassword}>
+          {/* <div className={styles.ChangePassword}>
             <Link href="/pages/changpassword" className={styles.ForgotPassword}>
               เปลี่ยนรหัสผ่าน ?
             </Link>
-          </div>
+          </div> */}
 
           <div className={styles.buttonCentered}>
             <button
@@ -286,7 +308,7 @@ export default function Login() {
               เข้าสู่ระบบ
             </button>
           </div>
-
+          {/* 
           <div className={styles.buttonCentered}>
             <button
               type="button"
@@ -295,7 +317,7 @@ export default function Login() {
             >
               ลงทะเบียน
             </button>
-          </div>
+          </div> */}
         </form>
       </div>
     </div>

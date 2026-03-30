@@ -103,7 +103,7 @@
   border-radius: 8px;
   cursor: pointer;
   width: 100%;
-  margin-top: 1rem;
+  margin-top: 3rem;
 }
 
 .btnLogin:hover {
@@ -136,4 +136,32 @@
 /* Icon */
 .IconInput{
   color: #000;
+}
+
+.eyeIcon {
+  position: absolute;
+  right: 12px;
+  cursor: pointer;
+  color: #666;
+}
+
+.inputContainer {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.inputContainer input::-ms-reveal,
+.inputContainer input::-ms-clear {
+  display: none;
+}
+
+.inputContainer input::-webkit-credentials-auto-fill-button {
+  display: none !important;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.inputContainer input::-webkit-textfield-decoration-container {
+  display: none;
 }

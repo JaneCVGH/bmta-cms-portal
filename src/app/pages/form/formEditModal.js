@@ -82,7 +82,8 @@ const DynamicFormRenderer = ({
 
     if (!result.isConfirmed) return;
 
-    updateStatus(caseId, "S003");
+    //S003 สั่งงานผู้ปฏิบัติงาน
+    updateStatus(caseId, "S007");
   };
 
   console.log(formFieldJson);
@@ -170,7 +171,7 @@ const DynamicFormRenderer = ({
               disabled={isLocked}
               className={styles.btnDispatch}
             >
-              ส่งออก
+              ปิดงาน
             </button>
           </>
         )}
