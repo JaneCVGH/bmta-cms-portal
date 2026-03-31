@@ -136,8 +136,8 @@
   height: 48px;
   font-size: 16px;
   /*font-weight: 600;*/
-  background-color: #3dd47c;
-  color: #000;
+   background: #2563eb;
+  color: #fff;
   border: none;
   border-radius: 8px;
   cursor: pointer;
@@ -145,7 +145,7 @@
 }
 
 .saveBtn:hover {
-  background-color: #00a344;
+   background: #1d4ed8;
 }
 
 .closeBtn {
@@ -169,13 +169,16 @@
 
 
 .editBtn {
-  background-color: #3b82f6;
+  background-color: #f4ba0b;
   color: white;
   padding: 8px 18px;
   border-radius: 6px;
   border: none;
   cursor: pointer;
 }
+.editBtn:hover {
+  background-color: #d47f00;
+} 
 
 .deleteBtn {
   background-color: #ef4444;

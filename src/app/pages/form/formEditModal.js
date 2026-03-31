@@ -115,7 +115,7 @@ const DynamicFormRenderer = ({
                   // variant="success"
                   className={styles.btnCreateCase}
                 >
-                  สร้างคำร้อง
+                  สร้างใบสั่งงาน
                 </button>
               ) : (
                 <button
@@ -124,7 +124,7 @@ const DynamicFormRenderer = ({
                   // variant="warning"
                   className={styles.btnUpdateCase}
                 >
-                  แก้ไขคำร้อง
+                  แก้ไขใบสั่งงาน
                 </button>
               )}
             </>
