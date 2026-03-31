@@ -61,6 +61,7 @@ const DynamicFormRenderer = ({
   // S014 = ยกเลิก, S007 = ปิดงาน
   const isLocked = ["S007", "S014"].includes(statusId);
 
+  // S014 = ยกเลิก
   const handleReject = async () => {
     if (isLocked) return;
 
@@ -73,17 +74,30 @@ const DynamicFormRenderer = ({
     updateStatus(caseId, "S014");
   };
 
+  //S007 = ปิดงาน
   const handleDispatch = async () => {
     if (isLocked) return;
     const result = await showQuestionSwal({
-      title: "ยืนยันส่งออก?",
-      text: "รายการนี้จะดำเนินการในขั้นตอนถัดไป",
+      title: "ปิดงานคำร้อง",
+      text: "รายการนี้เสร็จสิ้นการดำเนินการ",
+    });
+
+    if (!result.isConfirmed) return;
+    updateStatus(caseId, "S007");
+  };
+
+  // S015กำลังดำเนินงาน
+  const handleProcessing = async () => {
+    if (isLocked) return;
+
+    const result = await showQuestionSwal({
+      title: "ยืนยันดำเนินการ?",
+      text: "รายการนี้จะเปลี่ยนสถานะเป็นกำลังดำเนินงาน",
     });
 
     if (!result.isConfirmed) return;
 
-    //S003 สั่งงานผู้ปฏิบัติงาน
-    updateStatus(caseId, "S007");
+    updateStatus(caseId, "S015");
   };
 
   console.log(formFieldJson);
@@ -93,7 +107,7 @@ const DynamicFormRenderer = ({
       onHide={handleClose}
       dialogClassName={styles.modalA4}
       centered
-      scrollable={true} 
+      scrollable={true}
     >
       <Modal.Header closeButton>
         <Modal.Title>
@@ -156,23 +170,52 @@ const DynamicFormRenderer = ({
       </Modal.Body>
 
       <Modal.Footer>
+        {/* Create Mode = ไม่ต้องมีปุ่ม */}
         {!isCreateMode && (
           <>
-            <button
-              onClick={handleReject}
-              disabled={isLocked}
-              className={styles.btnReject}
-            >
-              ไม่อนุมัติ
-            </button>
+            {/* S001 = สร้างเหตุใหม่ */}
+            {statusId === "S001" && (
+              <>
+                <button
+                  onClick={handleReject}
+                  disabled={isLocked}
+                  className={styles.btnReject}
+                >
+                  ไม่อนุมัติ
+                </button>
 
-            <button
-              onClick={handleDispatch}
-              disabled={isLocked}
-              className={styles.btnDispatch}
-            >
-              ปิดงาน
-            </button>
+                <button
+                  onClick={handleProcessing}
+                  disabled={isLocked}
+                  className={styles.btnDispatch}
+                >
+                  กำลังดำเนินงาน
+                </button>
+              </>
+            )}
+
+            {/* S015 = กำลังดำเนินงาน */}
+            {statusId === "S015" && (
+              <>
+                <button
+                  onClick={handleReject}
+                  disabled={isLocked}
+                  className={styles.btnReject}
+                >
+                  ยกเลิกงาน
+                </button>
+
+                <button
+                  onClick={handleDispatch}
+                  disabled={isLocked}
+                  className={styles.btnDispatch}
+                >
+                  ปิดงาน
+                </button>
+              </>
+            )}
+
+            {/* S007 = ปิดงาน → ไม่แสดงปุ่มอะไร */}
           </>
         )}
       </Modal.Footer>
