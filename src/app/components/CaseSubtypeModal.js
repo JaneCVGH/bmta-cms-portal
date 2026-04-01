@@ -210,7 +210,9 @@ export default function CaseSubtypeModal({
                 </div>
 
                 <div className={styles.editRow}>
-                  <label className={styles.editLabel}>ชื่อภาษาไทย:</label>
+                  <label className={styles.editLabel}>
+                    ชื่อภาษาไทย:<span className={styles.required}> *</span>
+                  </label>
                   <input
                     ref={thRef}
                     name="th"
@@ -221,7 +223,9 @@ export default function CaseSubtypeModal({
                 </div>
 
                 <div className={styles.editRow}>
-                  <label className={styles.editLabel}>ชื่อภาษาอังกฤษ:</label>
+                  <label className={styles.editLabel}>
+                    ชื่อภาษาอังกฤษ:<span className={styles.required}> *</span>
+                  </label>
                   <input
                     ref={enRef}
                     name="en"
@@ -232,7 +236,9 @@ export default function CaseSubtypeModal({
                 </div>
 
                 <div className={styles.editRow}>
-                  <label className={styles.editLabel}>รหัสประเภทย่อย:</label>
+                  <label className={styles.editLabel}>
+                    รหัสประเภทย่อย:<span className={styles.required}> *</span>
+                  </label>
                   <input
                     ref={sTypeCodeRef}
                     name="sTypeCode"
@@ -244,7 +250,9 @@ export default function CaseSubtypeModal({
 
                 {/* ความสำคัญ 3-9 ไม่ขึ้นอะไร 2,1 คือความสำคัญสูง 0 คือความสำคัญวิกฤต */}
                 <div className={styles.editRow}>
-                  <label className={styles.editLabel}>ความสำคัญ:</label>
+                  <label className={styles.editLabel}>
+                    ความสำคัญ:<span className={styles.required}> *</span>
+                  </label>
 
                   <div className={styles.selectWrapper}>
                     <Select
@@ -271,7 +279,9 @@ export default function CaseSubtypeModal({
                 </div>
 
                 <div className={styles.editRow}>
-                  <label className={styles.editLabel}>คุณสมบัติ:</label>
+                  <label className={styles.editLabel}>
+                    คุณสมบัติ:<span className={styles.required}> *</span>
+                  </label>
                   <div className={styles.selectWrapper}>
                     <CreatableSelect
                       className={styles.reactSelect}
@@ -305,7 +315,9 @@ export default function CaseSubtypeModal({
                 </div>
 
                 <div className={styles.editRow}>
-                  <label className={styles.editLabel}>ทักษะ:</label>
+                  <label className={styles.editLabel}>
+                    ทักษะ:<span className={styles.required}> *</span>
+                  </label>
                   <div className={styles.selectWrapper}>
                     <CreatableSelect
                       className={styles.reactSelect}
@@ -337,7 +349,9 @@ export default function CaseSubtypeModal({
                 </div>
 
                 <div className={styles.editRow}>
-                  <label className={styles.editLabel}>เวิร์กโฟลว์:</label>
+                  <label className={styles.editLabel}>
+                    เวิร์กโฟลว์:<span className={styles.required}> *</span>
+                  </label>
 
                   <div className={styles.selectWrapper}>
                     <Select
@@ -416,7 +430,9 @@ export default function CaseSubtypeModal({
 
                 {/* ===== สถานะ ===== */}
                 <div className={styles.editRow}>
-                  <label className={styles.editLabel}>สถานะ:</label>
+                  <label className={styles.editLabel}>
+                    สถานะ:<span className={styles.required}> *</span>
+                  </label>
 
                   <div className={styles.selectWrapper}>
                     <Select

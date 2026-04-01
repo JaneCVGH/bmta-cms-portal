@@ -20,6 +20,17 @@ const defaultFieldLabels = {
   birthDate: "วันเกิด",
 };
 
+const requiredFields = [
+  "empId",
+  "firstName",
+  "lastName",
+  "username",
+  "email",
+  "mobileNo",
+  "deptId",
+  "roleId"
+];
+
 // ===== fields ที่ใช้เฉพาะ VIEW (ตาม UI ใหม่) =====
 const viewProfileFields = {
   fullName: (data) =>
@@ -35,8 +46,8 @@ const personalInfoFields = [
   { label: "อีเมล", key: "email" },
   { label: "เบอร์มือถือ", key: "mobileNo" },
   { label: "วันเกิด", key: "birthDate" },
-  // { label: "เลขบัตรประชาชน", key: "citizenId" }, //  backend ยังไม่มี 
-  // { label: "เพศ", key: "gender" },               //  backend ยังไม่มี 
+  // { label: "เลขบัตรประชาชน", key: "citizenId" }, //  backend ยังไม่มี
+  // { label: "เพศ", key: "gender" },               //  backend ยังไม่มี
 ];
 
 // ข้อมูลหน่วยงาน
@@ -48,9 +59,6 @@ const organizationFields = [
   { label: "สถานะ", key: "active", type: "status" },
 ];
 
-
-
-
 export default function EmployeeModal({
   show,
   type,
@@ -59,49 +67,45 @@ export default function EmployeeModal({
   handleSubmit,
   onClose,
   fieldLabels,
-  onEdit,     
+  onEdit,
   onDelete,
   roles,
   roleMap,
   departments,
-  deptMap, 
-  commands,   
+  deptMap,
+  commands,
   stations,
 }) {
   if (!show) return null;
 
   const labels = fieldLabels || defaultFieldLabels;
 
-  
-
   return (
     <div className={styles.modalOverlay}>
       <div className={styles.modalBox}>
-        
         {/* Header */}
 
-        
         <div className={styles.modalHeader}>
-  <h2 className={styles.modalTitle}>
-    {type === "view"
-      ? "ข้อมูลผู้ใช้"
-      : type === "edit"
-      ? "แก้ไขข้อมูล"
-      : "สร้างผู้ใช้"}
-  </h2>
+          <h2 className={styles.modalTitle}>
+            {type === "view"
+              ? "ข้อมูลผู้ใช้"
+              : type === "edit"
+                ? "แก้ไขข้อมูล"
+                : "สร้างผู้ใช้"}
+          </h2>
 
-  <button
-    className={styles.closeIcon}
-    onClick={onClose}
-    aria-label="close"
-  >
-    ✕
-  </button>
-</div>
+          <button
+            className={styles.closeIcon}
+            onClick={onClose}
+            aria-label="close"
+          >
+            ✕
+          </button>
+        </div>
 
         {/* Body */}
         {/* <div className={styles.modalBody}>*/}
-          {/* ===== OLD VIEW MODE (TABLE STYLE) ===== */}
+        {/* ===== OLD VIEW MODE (TABLE STYLE) ===== */}
         {/*
           {type === "view" ? (
             <div className={styles.viewGrid}>
@@ -123,77 +127,72 @@ export default function EmployeeModal({
             </div>
           ) : (
            */}
-           <div className={styles.modalBody}>
-            {type === "view" ? (
-              <div className={styles.viewContainer}>
-
-                {/* ================== PROFILE HEADER ================== */}
-                <div className={styles.profileHeader}>
-                  <div className={styles.avatar}>
-                    {viewProfileFields.fullName(formData)
-                      .split(" ")
-                      .map(w => w[0])
-                      .join("")
-                      .slice(0, 2)
-                      .toUpperCase()}
-                  </div>
-
-                  <div className={styles.profileInfo}>
-                    <div className={styles.profileName}>
-                      {viewProfileFields.fullName(formData)}
-                    </div>
-                    <div className={styles.profileEmail}>
-                      {formData.email || "-"}
-                    </div>
-                  </div>
+        <div className={styles.modalBody}>
+          {type === "view" ? (
+            <div className={styles.viewContainer}>
+              {/* ================== PROFILE HEADER ================== */}
+              <div className={styles.profileHeader}>
+                <div className={styles.avatar}>
+                  {viewProfileFields
+                    .fullName(formData)
+                    .split(" ")
+                    .map((w) => w[0])
+                    .join("")
+                    .slice(0, 2)
+                    .toUpperCase()}
                 </div>
 
-                {/* ================== PERSONAL INFO  ================== */}
-                <div className={styles.section}>
-                  <h3 className={styles.sectionTitle}>ข้อมูลส่วนบุคคล</h3>
-
-                  <div className={styles.infoGrid}>
-                    {personalInfoFields.map(({ label, key }) => (
-                      <div key={key} className={styles.infoItem}>
-                        <span className={styles.infoLabel}>{label}</span>
-                        <span className={styles.infoValue}>
-                          {formData[key] || "ไม่มี"}
-                        </span>
-                      </div>
-                    ))}
+                <div className={styles.profileInfo}>
+                  <div className={styles.profileName}>
+                    {viewProfileFields.fullName(formData)}
+                  </div>
+                  <div className={styles.profileEmail}>
+                    {formData.email || "-"}
                   </div>
                 </div>
+              </div>
 
-                {/* ================== ORGANIZATION INFO  ================== */}
-                <div className={styles.section}>
-                  <h3 className={styles.sectionTitle}>ข้อมูลหน่วยงาน</h3>
+              {/* ================== PERSONAL INFO  ================== */}
+              <div className={styles.section}>
+                <h3 className={styles.sectionTitle}>ข้อมูลส่วนบุคคล</h3>
 
-                  <div className={styles.infoGrid}>
-                    {organizationFields.map(({ label, key, type }) => (
-                      <div key={key} className={styles.infoItem}>
-                        <span className={styles.infoLabel}>{label}</span>
-                        <span className={styles.infoValue}>
-                          {type === "status"
-                            ? formData.active
-                              ? "ใช้งาน"
-                              : "ไม่ใช้งาน"
-                            : key === "roleId"
+                <div className={styles.infoGrid}>
+                  {personalInfoFields.map(({ label, key }) => (
+                    <div key={key} className={styles.infoItem}>
+                      <span className={styles.infoLabel}>{label}</span>
+                      <span className={styles.infoValue}>
+                        {formData[key] || "ไม่มี"}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* ================== ORGANIZATION INFO  ================== */}
+              <div className={styles.section}>
+                <h3 className={styles.sectionTitle}>ข้อมูลหน่วยงาน</h3>
+
+                <div className={styles.infoGrid}>
+                  {organizationFields.map(({ label, key, type }) => (
+                    <div key={key} className={styles.infoItem}>
+                      <span className={styles.infoLabel}>{label}</span>
+                      <span className={styles.infoValue}>
+                        {type === "status"
+                          ? formData.active
+                            ? "ใช้งาน"
+                            : "ไม่ใช้งาน"
+                          : key === "roleId"
                             ? roleMap?.[formData.roleId] || "-"
                             : key === "deptId"
-                            ? deptMap?.[formData.deptId] || "-"
-                            : formData[key] || "-"}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
+                              ? deptMap?.[formData.deptId] || "-"
+                              : formData[key] || "-"}
+                      </span>
+                    </div>
+                  ))}
                 </div>
-
-
               </div>
-            ) : (
-    
-
-
+            </div>
+          ) : (
             /* ===== ADD / EDIT MODE ===== */
             <form className={styles.formGrid} onSubmit={handleSubmit}>
               {/* hidden id (ใช้ตอน edit) */}
@@ -207,13 +206,19 @@ export default function EmployeeModal({
                 "email",
                 "mobileNo",
                 "deptId",
-                "commId",   
+                "commId",
                 "stnId",
                 //"roleId"
               ].map((field) => (
                 <div key={field} className={styles.formRow}>
-                  <label>{labels[field]}</label>
-                  
+                  {/* <label>{labels[field]}</label> */}
+                  <label>
+                    {labels[field]}
+                    {requiredFields.includes(field) && (
+                      <span className={styles.required}> *</span>
+                    )}
+                  </label>
+
                   {field === "deptId" ? (
                     <select
                       name="deptId"
@@ -222,89 +227,94 @@ export default function EmployeeModal({
                       onChange={handleChange}
                     >
                       <option value="">-- เลือกแผนก --</option>
-                      {departments?.map( (dept, index) => (
-                        <option key={`${dept.deptId}-${index}`} value={dept.deptId}>
+                      {departments?.map((dept, index) => (
+                        <option
+                          key={`${dept.deptId}-${index}`}
+                          value={dept.deptId}
+                        >
                           {dept.name}
                         </option>
                       ))}
                     </select>
                   ) : field === "commId" ? (
                     <select
-                  name="commId"
-                  className={styles.selectField}
-                  value={formData.commId || ""}
-                  onChange={handleChange}
-                  disabled={!formData.deptId}
-                >
-                  <option value="">-- เลือก Command --</option>
-                  {commands?.map(comm => (
-                    <option key={comm.commId} value={comm.commId}>
-                      {comm.name}
-                    </option>
-                  ))}
-                </select>
-                ) : field === "stnId" ? (
-                <select
-                  name="stnId"
-                  className={styles.selectField}
-                  value={formData.stnId || ""}
-                  onChange={handleChange}
-                  disabled={!formData.commId}
-                >
-                  <option value="">-- เลือก Station --</option>
-                  {stations?.map(stn => (
-                    <option key={stn.stnId} value={stn.stnId}>
-                      {stn.name}
-                    </option>
-                  ))}
-                </select>
-                ) : (
-                <input
-                  type="text"
-                  name={field}
-                  className={styles.inputField}
-                  value={formData?.[field] ?? ""}
-                  onChange={handleChange}
-                />
+                      name="commId"
+                      className={styles.selectField}
+                      value={formData.commId || ""}
+                      onChange={handleChange}
+                      disabled={!formData.deptId}
+                    >
+                      <option value="">-- เลือก Command --</option>
+                      {commands?.map((comm) => (
+                        <option key={comm.commId} value={comm.commId}>
+                          {comm.name}
+                        </option>
+                      ))}
+                    </select>
+                  ) : field === "stnId" ? (
+                    <select
+                      name="stnId"
+                      className={styles.selectField}
+                      value={formData.stnId || ""}
+                      onChange={handleChange}
+                      disabled={!formData.commId}
+                    >
+                      <option value="">-- เลือก Station --</option>
+                      {stations?.map((stn) => (
+                        <option key={stn.stnId} value={stn.stnId}>
+                          {stn.name}
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    <input
+                      type="text"
+                      name={field}
+                      className={styles.inputField}
+                      value={formData?.[field] ?? ""}
+                      onChange={handleChange}
+                    />
                   )}
-
                 </div>
-                
-
               ))}
 
               {/* ===== ROLE FIELD ===== */}
-<div className={styles.formRow}>
-  <label>{labels.roleId}</label>
+              <div className={styles.formRow}>
+                {/* <label>{labels.roleId}</label> */}
+                <label>
+                  {labels.roleId}
+                  {requiredFields.includes("roleId") && (
+                    <span className={styles.required}> *</span>
+                  )}
+                </label>
 
-  <select
-    name="roleId"
-    className={styles.selectField}
-    value={formData.roleId || ""}
-    onChange={handleChange}
-  >
-    <option value="">-- เลือกบทบาท --</option>
+                <select
+                  name="roleId"
+                  className={styles.selectField}
+                  value={formData.roleId || ""}
+                  onChange={handleChange}
+                >
+                  <option value="">-- เลือกบทบาท --</option>
 
-    {roles?.map((role) => (
-      <option key={role.id} value={role.id}>
-        {role.name || role.roleName || role.code}
-      </option>
-    ))}
-  </select>
-</div>
+                  {roles?.map((role) => (
+                    <option key={role.id} value={role.id}>
+                      {role.name || role.roleName || role.code}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-
-    {/* ===== DATE FIELD ===== */}
-<div className={styles.formRow}>
-  <label>{labels.birthDate}</label>
-  <input
-    type="date"
-    name="birthDate"
-    className={styles.inputField}
-    value={formData.birthDate || ""}
-    onChange={handleChange}
-  />
-</div>
+              {/* ===== DATE FIELD ===== */}
+              <div className={styles.formRow}>
+                <label>{labels.birthDate}</label>
+                <input
+                  type="date"
+                  name="birthDate"
+                  className={styles.inputField}
+                  value={formData.birthDate || ""}
+                  onChange={handleChange}
+                />
+              </div>
 
               <div className={styles.formRow}>
                 <label>{labels.active}</label>
@@ -316,8 +326,8 @@ export default function EmployeeModal({
                     handleChange({
                       target: {
                         name: "active",
-                        value: e.target.value === "true"
-                      }
+                        value: e.target.value === "true",
+                      },
                     })
                   }
                 >
@@ -328,7 +338,9 @@ export default function EmployeeModal({
 
               {/* Footer */}
               <div className={styles.modalFooter}>
-                <button type="submit" className={styles.saveBtn}>บันทึก</button>
+                <button type="submit" className={styles.saveBtn}>
+                  บันทึก
+                </button>
                 {/* <button type="button" onClick={onClose} className={styles.closeBtn}>
                   ยกเลิก
                 </button> */}
@@ -337,43 +349,36 @@ export default function EmployeeModal({
           )}
         </div>
 
-
-
-
         {type === "view" && (
-  <div className={styles.modalFooter}>
-    <button
-      type="button"
-      className={styles.editBtn}
-      onClick={() => onEdit?.(formData)}
-    >
-      แก้ไข
-    </button>
+          <div className={styles.modalFooter}>
+            <button
+              type="button"
+              className={styles.editBtn}
+              onClick={() => onEdit?.(formData)}
+            >
+              แก้ไข
+            </button>
 
-    <button
-      type="button"
-      className={styles.deleteBtn}
-      onClick={() => onDelete?.(formData.id)}
-    >
-      ลบ
-    </button>
+            <button
+              type="button"
+              className={styles.deleteBtn}
+              onClick={() => onDelete?.(formData.id)}
+            >
+              ลบ
+            </button>
 
-    {/*<button
+            {/*<button
       type="button"
       className={styles.closeBtn}
       onClick={onClose}
     >
       ปิด
     </button>*/}
-
-  </div>
-)}
-
-
+          </div>
+        )}
       </div>
     </div>
   );
 }
-
 
 //inputField

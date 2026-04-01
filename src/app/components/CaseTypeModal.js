@@ -113,7 +113,9 @@ export default function CaseTypeModal({
           {(isAdd || isEdit) && (
             <div className={styles.AddandEditCT}>
               <div className={styles.editRow}>
-                <label className={styles.editLabel}>ชื่อภาษาไทย:</label>
+                <label className={styles.editLabel}>
+                  ชื่อภาษาไทย:<span className={styles.required}> *</span>
+                </label>
                 <input
                   type="text"
                   name="th"
@@ -124,7 +126,9 @@ export default function CaseTypeModal({
               </div>
 
               <div className={styles.editRow}>
-                <label className={styles.editLabel}>ชื่อภาษาอังกฤษ:</label>
+                <label className={styles.editLabel}>
+                  ชื่อภาษาอังกฤษ:<span className={styles.required}> *</span>
+                </label>
                 <input
                   type="text"
                   name="en"

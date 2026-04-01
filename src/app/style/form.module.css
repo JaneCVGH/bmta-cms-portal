@@ -232,3 +232,10 @@
   margin-top: 50px;   
   margin-bottom: 12px;
 }
+
+/* ใส่ * เพื่อบอกว่า บังคับกรอก input */
+.required {
+  color: red;
+  margin-left: 4px;
+  font-weight: bold;
+}

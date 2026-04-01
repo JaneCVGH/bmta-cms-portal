@@ -183,3 +183,9 @@
   background-color: rgb(156, 0, 0);
 }
 
+/* ใส่ * เพื่อบอกว่า บังคับกรอก input */
+.required {
+  color: red;
+  margin-left: 4px;
+  font-weight: bold;
+}

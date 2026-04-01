@@ -35,6 +35,7 @@ const renderField = (field, onChange, isPrint, viewMode) => {
           <Col xs="auto" className="pe-1 ps-0">
             <Form.Label className={`${styles.titleLabel} ${styles.fontTH}`}>
               {field.label}
+              {field.required && <span className={styles.required}> *</span>}
             </Form.Label>
           </Col>
         )}
@@ -133,6 +134,7 @@ const renderField = (field, onChange, isPrint, viewMode) => {
           {child.showLabel && (
             <Form.Label className={`${styles.titleLabel} ${styles.fontTH}`}>
               {child.label}
+              {child.required && <span className={styles.required}> *</span>}
             </Form.Label>
           )}
 

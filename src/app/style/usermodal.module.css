@@ -372,3 +372,10 @@
   transform: translateY(-2px);
   box-shadow: 0 12px 26px rgba(0,0,0,0.45);
 }
+
+/* ใส่ * เพื่อบอกว่า บังคับกรอก input */
+.required {
+  color: red;
+  margin-left: 4px;
+  font-weight: bold;
+}
