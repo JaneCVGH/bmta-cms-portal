@@ -139,7 +139,7 @@ export default function FormPage() {
                 disabled={!isEdit}
                 className={styles.btnCreateCase + " mt-2 me-2"}
               >
-                บันทึกคำร้อง
+                สร้างคำร้อง
               </button>
             </div>
             <Header

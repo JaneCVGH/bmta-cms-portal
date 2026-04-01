@@ -78,12 +78,12 @@
   gap: 20px;
 }
 
-label {
+.label {
   font-size: 13px;
   color: #888;
 }
 
-p {
+.p {
   margin-top: 4px;
   font-weight: 500;
 }

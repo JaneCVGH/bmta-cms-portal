@@ -1,24 +1,55 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import styles from "./profile.module.css";
+import styles from "../../style/profile.module.css";
+import { useRouter } from "next/navigation";
 
 export default function ProfilePage() {
   const [user, setUser] = useState(null);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
+        const token = localStorage.getItem("accessToken");
+        const username = localStorage.getItem("username");
+
+        // ❗ ถ้าไม่มี token → เด้ง login
+        if (!token || !username) {
+          router.push("/pages/login");
+          return;
+        }
+
         const res = await fetch(
-          "https://welcome-service-stg.metthier.ai:65000/api/v1/users/username/ananya"
+          `https://welcome-service-stg.metthier.ai:65000/api/v1/users/username/${username}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
+
+        // ❗ token หมดอายุ
+        if (res.status === 401) {
+          localStorage.removeItem("accessToken");
+          router.push("/pages/login");
+          return;
+        }
+
         const data = await res.json();
 
         if (data.status === "0") {
           const userData = data.data;
 
-          // parse address
-          const addressObj = JSON.parse(userData.address || "{}");
+          // ✅ parse address JSON
+          let addressObj = {};
+          try {
+            addressObj = JSON.parse(userData.address || "{}");
+          } catch {
+            addressObj = {};
+          }
 
           setUser({
             ...userData,
@@ -26,13 +57,14 @@ export default function ProfilePage() {
           });
         }
       } catch (err) {
-        console.error(err);
+        console.error("Fetch error:", err);
       }
     };
 
     fetchUser();
-  }, []);
+  }, [router]);
 
+  // ✅ format วันที่
   const formatDate = (dateStr) => {
     if (!dateStr) return "-";
     const date = new Date(dateStr);
@@ -50,10 +82,15 @@ export default function ProfilePage() {
       {/* HEADER */}
       <div className={styles.header}>
         <div className={styles.profileLeft}>
-          <img src={user.photo} className={styles.avatar} />
+          <img
+            src={user.photo || "/default-avatar.png"}
+            className={styles.avatar}
+          />
+
           <div>
             <h2>{user.displayName}</h2>
             <p>{user.email}</p>
+
             <p className={styles.address}>
               {user.addressObj?.street} {user.addressObj?.building},{" "}
               {user.addressObj?.district}, {user.addressObj?.province}{" "}
@@ -68,7 +105,7 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      {/* PERSONAL INFO */}
+      {/* PERSONAL */}
       <div className={styles.card}>
         <h3>ข้อมูลส่วนบุคคล</h3>
 
