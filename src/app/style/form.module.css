@@ -196,7 +196,7 @@
   background-color: #d47f00;
 }
 
-/* ===== ปุ่ม ส่งออก และ ไม่อนุมัติ ===== */
+/* ===== ปุ่ม ปิดงาน และ ยกเลิก ===== */
 .btnReject,
 .btnDispatch {
   font-size: 18px;

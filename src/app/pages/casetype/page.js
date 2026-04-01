@@ -717,7 +717,7 @@ export default function CaseTypesPage() {
                       handleOpenCaseTypeModal("view", ct);
                     }}
                   >
-                    <FontAwesomeIcon icon={faEye} />
+                    <FontAwesomeIcon icon={faEye} /> แสดง
                   </button>
 
                   <button
@@ -727,7 +727,7 @@ export default function CaseTypesPage() {
                       handleOpenCaseTypeModal("edit", ct);
                     }}
                   >
-                    <FontAwesomeIcon icon={faPencil} />
+                    <FontAwesomeIcon icon={faPencil} /> แก้ไข
                   </button>
 
                   <button
@@ -737,7 +737,7 @@ export default function CaseTypesPage() {
                       DeleteCaseType(ct.idCasetype);
                     }}
                   >
-                    <FontAwesomeIcon icon={faTrash} />
+                    <FontAwesomeIcon icon={faTrash} /> ลบ
                   </button>
                 </div>
 

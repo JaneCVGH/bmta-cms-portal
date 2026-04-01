@@ -131,11 +131,11 @@
 }
 
 /* Buttons */
-.saveBtn {
+/* .saveBtn {
   width: 100%;
   height: 48px;
   font-size: 16px;
-  /*font-weight: 600;*/
+  /*font-weight: 600;
   background-color: #3dd47c;
   color: #000;
   border: none;
@@ -146,9 +146,27 @@
 
 .saveBtn:hover {
   background-color: #00a344;
+} */
+
+.saveBtn {
+  width: 25%;
+  height: 40px;
+  font-size: 16px;
+  font-weight: bold;
+  margin-left: 250px;
+  border-radius: 8px;
+  cursor: pointer;
+  border: none;
+  background-color: #2563eb;
+  color: #ffffff;
+  transition: background-color 0.3s ease;
 }
 
-.closeBtn {
+.saveBtn:hover {
+  background-color: #1d4ed8;
+}
+
+/* .closeBtn {
   width: 100%;
   height: 48px;
   font-size: 16px;
@@ -162,14 +180,11 @@
 
 .closeBtn:hover {
   background-color: #bdbdbd;
-}
-
-
-
+} */
 
 
 .editBtn {
-  background-color: #3b82f6;
+  background-color: #f2b707;
   color: white;
   padding: 8px 18px;
   border-radius: 6px;
@@ -177,13 +192,21 @@
   cursor: pointer;
 }
 
+.editBtn:hover {
+  background-color: #d47f00;
+}
+
 .deleteBtn {
-  background-color: #ef4444;
+  background-color: #e03c4c;
   color: white;
   padding: 8px 18px;
   border-radius: 6px;
   border: none;
   cursor: pointer;
+}
+
+.deleteBtn:hover {
+  background-color: rgb(156, 0, 0);
 }
 
 
@@ -216,7 +239,7 @@
 }
 
 /* ปุ่มกากบาท */
-.closeIcon {
+/* .closeIcon {
   width: 42px;
   height: 42px;
   border-radius: 50%;
@@ -236,8 +259,25 @@
 .closeIcon:hover {
   background: rgba(182, 181, 181, 0.25);
   transform: rotate(90deg);
+} */
+
+/*-----ปุ่ม X ปิด (แทน CloseBtn)-----*/
+.closeIcon {
+  background-color: #e03c4c !important;
+  color: #fff;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 0.4rem;
+  font-size: 18px;
+  cursor: pointer;
+  grid-column: 2 / 3;
+  grid-row: 1 / 2;
+  justify-self: end;
 }
 
+.closeIcon:hover {
+  background-color: rgb(114, 0, 0);
+}
 
 
 /* ---------- Profile Header ---------- */

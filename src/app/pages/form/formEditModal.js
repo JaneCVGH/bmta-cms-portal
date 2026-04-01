@@ -66,7 +66,7 @@ const DynamicFormRenderer = ({
     if (isLocked) return;
 
     const result = await showQuestionSwal({
-      title: "ไม่อนุมัติคำร้อง",
+      title: "การยกเลิกคำร้อง",
       text: "รายการนี้จะถูกยกเลิก และไม่สามารถเปลี่ยนสถานะได้",
     });
 
@@ -112,7 +112,7 @@ const DynamicFormRenderer = ({
       <Modal.Header closeButton>
         <Modal.Title>
           {/* {caseId} */}
-          {isCreateMode ? "สร้างคำร้อง" : `${caseId}`}
+          {isCreateMode ? "สร้างใบสั่งงาน" : `${caseId}`}
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
@@ -130,7 +130,7 @@ const DynamicFormRenderer = ({
                   // variant="success"
                   className={styles.btnCreateCase}
                 >
-                  สร้างคำร้อง
+                  สร้างใบสั่งงาน
                 </button>
               ) : (
                 <button
@@ -139,7 +139,7 @@ const DynamicFormRenderer = ({
                   // variant="warning"
                   className={styles.btnUpdateCase}
                 >
-                  แก้ไขคำร้อง
+                  แก้ไขใบสั่งงาน
                 </button>
               )}
             </>
@@ -181,7 +181,7 @@ const DynamicFormRenderer = ({
                   disabled={isLocked}
                   className={styles.btnReject}
                 >
-                  ไม่อนุมัติ
+                  ยกเลิกงาน
                 </button>
 
                 <button

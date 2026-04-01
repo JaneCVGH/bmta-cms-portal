@@ -95,9 +95,8 @@ export default function EmployeePage() {
       };
     }
 
-
-  //  token หมดอายุ
-  /*if (res.status === 401) {
+    //  token หมดอายุ
+    /*if (res.status === 401) {
 
   console.warn("401 Unauthorized:", url);
   
@@ -116,9 +115,6 @@ export default function EmployeePage() {
       message: "Session expired",
     };
   }*/
-
-    
-
 
     if (res.status === 401) {
       console.warn("401 Unauthorized:", url);
@@ -145,15 +141,11 @@ export default function EmployeePage() {
     };
   };
 
-
-    
-
- 
-// เรียก API FastAPI
-//     .then((res) => res.json())
-//     .then((data) => setEmployees(data))
-//     .catch((err) => console.error(err));
-// }, []);
+  // เรียก API FastAPI
+  //     .then((res) => res.json())
+  //     .then((data) => setEmployees(data))
+  //     .catch((err) => console.error(err));
+  // }, []);
 
   const router = useRouter();
 
@@ -602,18 +594,15 @@ export default function EmployeePage() {
       },
     );
 
+    if (!res.ok) {
+      // ส่ง Error object ออกไปเพื่อให้ catch ใน handleSubmit ทำงาน
+      const error = new Error(res.message || "สร้างผู้ใช้ไม่สำเร็จ");
+      error.status = res.status;
+      throw error;
+    }
 
-  if (!res.ok) {
-   // ส่ง Error object ออกไปเพื่อให้ catch ใน handleSubmit ทำงาน
-    const error = new Error(res.message || "สร้างผู้ใช้ไม่สำเร็จ");
-    error.status = res.status;
-    throw error;
-  }
-
-  return res.data;
-};
-
-   
+    return res.data;
+  };
 
   const updateUser = async (userId, payload) => {
     const res = await apiRequest(
@@ -707,7 +696,6 @@ export default function EmployeePage() {
       if (modalType === "add") {
         const orgId = getOrgIdFromToken();
 
-
         if (!orgId) {
           Swal.fire("ผิดพลาด", "ไม่พบ orgId", "error");
           return;
@@ -728,7 +716,7 @@ export default function EmployeePage() {
 
         const res = await createUser(payload).catch((err) => {
           if (err.message?.includes("Unauthorized")) {
-            Swal.fire( "เกิดข้อผิดพลาด","ไม่สามารถเพิ่มผู้ใช้ได้", "error");
+            Swal.fire("เกิดข้อผิดพลาด", "ไม่สามารถเพิ่มผู้ใช้ได้", "error");
             return null;
           }
           throw err;
@@ -740,45 +728,39 @@ export default function EmployeePage() {
           icon: "success",
           title: "สำเร็จ!",
           text: "เพิ่มผู้ใช้ใหม่เรียบร้อยแล้ว",
-          confirmButtonText: "ตกลง"
+          confirmButtonText: "ตกลง",
+        });
+      }
+
+      // ================= EDIT =================
+      if (modalType === "edit") {
+        //const userId = formData?.id;
+        //const userId = String(formData.id || "").trim();
+        //const userId = selectedUser?.id;
+        const userId = Number(selectedUser?.id);
+
+        if (!Number.isInteger(userId)) {
+          throw new Error("Invalid user id");
+        }
+
+        const payload = buildSafePayload(formData, {
+          mode: "edit",
+          dateFields: ["birthDate", "startDate", "endDate"],
         });
 
+        console.log("EDIT payload:", payload);
+        await updateUser(userId, payload);
+        Swal.fire({
+          icon: "success",
+          title: "สำเร็จ!",
+          text: "แก้ไขข้อมูลผู้ใช้เรียบร้อยแล้ว",
+          confirmButtonText: "ตกลง",
+        });
       }
-
-      
-
-    // ================= EDIT =================
-    if (modalType === "edit") {
-      //const userId = formData?.id;
-      //const userId = String(formData.id || "").trim();
-      //const userId = selectedUser?.id;
-      const userId = Number(selectedUser?.id);
-
-      if (!Number.isInteger(userId)) {
-        throw new Error("Invalid user id");
-      }
-
-      const payload = buildSafePayload(formData, {
-    mode: "edit",
-    dateFields: ["birthDate", "startDate", "endDate"],
-  });
-
-    
-  console.log("EDIT payload:", payload);
-  await updateUser(userId, payload);
-      Swal.fire({
-        icon: "success",
-        title: "สำเร็จ!",
-        text: "แก้ไขข้อมูลผู้ใช้เรียบร้อยแล้ว",
-        confirmButtonText: "ตกลง"
-      });
-    }
-    // ถ้าทำงานสำเร็จถึงตรงนี้ ให้ปิด Modal และ Refresh ข้อมูล
-    setShowModal(false);
-    await fetchUsers(true); // true = โหลดจาก API
-    
-
-  } catch (err) {
+      // ถ้าทำงานสำเร็จถึงตรงนี้ ให้ปิด Modal และ Refresh ข้อมูล
+      setShowModal(false);
+      await fetchUsers(true); // true = โหลดจาก API
+    } catch (err) {
       // 3. ส่วนสำคัญ: เช็ค Error "Username ซ้ำ" (SQL 23505)
       const errorMsg = err.message || "";
       if (errorMsg.includes("duplicate key") || errorMsg.includes("23505")) {
@@ -787,20 +769,16 @@ export default function EmployeePage() {
           title: "ข้อมูลซ้ำในระบบ",
           text: "Username หรือ รหัสพนักงานนี้ ถูกใช้งานไปแล้ว กรุณาตรวจสอบและเปลี่ยนใหม่",
           confirmButtonText: "ตกลง",
-          confirmButtonColor: "#f8bb86"
-
+          confirmButtonColor: "#f8bb86",
         });
         // *** ไม่เรียก setShowModal(false) เพื่อให้หน้าต่าง Modal ค้างไว้ให้แก้ไข ***
       } else {
         // Error อื่นๆ ทั่วไป
         setShowModal(false); // ปิด Modal เฉพาะเคสที่แก้ไขไม่ได้จริงๆ
         Swal.fire("ผิดพลาด", errorMsg || "ไม่สามารถบันทึกข้อมูลได้", "error");
-        
       }
     }
   };
-
-
 
   /*อาจจะไม่มี function */
   //   const generateUserId = () => {
@@ -832,17 +810,14 @@ export default function EmployeePage() {
         throw new Error(res.message || "Delete failed");
       }
 
-    
-  
-    Swal.fire({
-  icon: "success",
-  title: "ลบแล้ว!",
-  text: "ข้อมูลผู้ใช้ถูกลบเรียบร้อยแล้ว",
-  confirmButtonText: "ตกลง"
-});
-    // โหลดข้อมูลใหม่หลังลบ
-    fetchUsers(true);
-
+      Swal.fire({
+        icon: "success",
+        title: "ลบแล้ว!",
+        text: "ข้อมูลผู้ใช้ถูกลบเรียบร้อยแล้ว",
+        confirmButtonText: "ตกลง",
+      });
+      // โหลดข้อมูลใหม่หลังลบ
+      fetchUsers(true);
 
       //fetchUserCount();
     } catch (err) {
@@ -970,20 +945,20 @@ export default function EmployeePage() {
                       className={styles.viewBtn}
                       onClick={() => handleOpenModal("view", user)}
                     >
-                      แสดง
+                      <FontAwesomeIcon icon={faEye} /> แสดง
                     </button>
                     <button
                       className={styles.editBtn}
                       onClick={() => handleOpenModal("edit", user)}
                     >
-                      แก้ไข
+                      <FontAwesomeIcon icon={faPencil} /> แก้ไข
                     </button>
 
                     <button
                       className={styles.deleteBtn}
                       onClick={() => handleDelete(user.id)}
                     >
-                      ลบ
+                      <FontAwesomeIcon icon={faTrash} /> ลบ
                     </button>
                   </td>
                 </tr>
@@ -1034,19 +1009,19 @@ export default function EmployeePage() {
                         className={styles.viewBtn}
                         onClick={() => handleOpenModal("view", user)}
                       >
-                        แสดง
+                        <FontAwesomeIcon icon={faEye} /> แสดง
                       </button>
                       <button
                         className={styles.editBtn}
                         onClick={() => handleOpenModal("edit", user)}
                       >
-                        แก้ไข
+                        <FontAwesomeIcon icon={faPencil} /> แก้ไข
                       </button>
                       <button
                         className={styles.deleteBtn}
                         onClick={() => handleDelete(user.id)}
                       >
-                        ลบ
+                        <FontAwesomeIcon icon={faTrash} /> ลบ
                       </button>
                     </div>
                   </div>
