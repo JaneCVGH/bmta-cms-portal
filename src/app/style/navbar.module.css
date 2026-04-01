@@ -204,9 +204,10 @@
   align-items: center;
   gap: 10px;
   font-size: 14px;
-  color: #6b4eff;
+  color: #060606;
   border-radius: 8px;
   transition: all 0.2s ease;
+   font-weight: 600;
 }
 
 .btnProfile:hover {

@@ -480,7 +480,7 @@ export default function EmployeePage() {
       return;
     }
 
-    // 🟢 เลือก command ใหม่ → ล้าง station
+    // เลือก command ใหม่ → ล้าง station
     if (name === "commId") {
       setFormData((prev) => ({
         ...prev,

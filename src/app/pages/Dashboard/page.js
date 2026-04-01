@@ -78,7 +78,7 @@ export default function DashboardPage() {
   const getStatusLabel = (statusId) => {
     const map = {
       //S000: "ร่าง",
-      S001: "เหตุใหม่",
+      S001: "สร้างเหตุใหม่",
       //S003: "มอบหมายงาน",
       //S004: "รับงาน",
       S015: "กำลังดำเนินงาน",
@@ -329,6 +329,7 @@ export default function DashboardPage() {
       done: 0,
       progress: 0,
       new: 0,
+      cancel: 0,
     };
 
     cases.forEach((c) => {
@@ -338,6 +339,7 @@ export default function DashboardPage() {
 
       if (sid === "S016" || sid === "S007") result.done++;
       else if (sid === "S015") result.progress++;
+      else if (sid === "S014") result.cancel++;
       else result.new++;
     });
 
@@ -351,6 +353,12 @@ export default function DashboardPage() {
     progress:
       Math.round((statusSummary.progress / statusSummary.total) * 100) || 0,
   };
+
+  const cancelPercent =
+  Math.round((statusSummary.cancel / statusSummary.total) * 100) || 0;
+
+  const newPercent =
+  100 - (percent.done + percent.progress + cancelPercent);
 
   /* ---------------- MAX BAR ---------------- */
 
@@ -648,10 +656,11 @@ export default function DashboardPage() {
                 className={styles.donut}
                 style={{
                   background: `conic-gradient(
-          #22c55e 0% ${percent.done}%,
-          #3b82f6 ${percent.done}% ${percent.done + percent.progress}%,
-          #eab308 ${percent.done + percent.progress}% 100%
-        )`,
+  #22c55e 0% ${percent.done}%,
+  #3b82f6 ${percent.done}% ${percent.done + percent.progress}%,
+  #ef4444 ${percent.done + percent.progress}% ${percent.done + percent.progress + cancelPercent}%,
+  #eab308 ${percent.done + percent.progress + cancelPercent}% 100%
+)`,
                 }}
               >
                 <div className={styles.center}>
@@ -662,9 +671,10 @@ export default function DashboardPage() {
             </div>
 
             <div className={styles.legend}>
-                <div className={styles.legendItem}>
-                  <span className={styles.dot} style={{ background: "#22c55e" }} />
-                  ปิดงาน {statusSummary.done}
+              <div className={styles.legendItem}>
+
+                  <span className={styles.dot} style={{ background: "#eab308" }} />
+                  สร้างเหตุใหม่ {statusSummary.new}
                 </div>
 
                 <div className={styles.legendItem}>
@@ -673,9 +683,19 @@ export default function DashboardPage() {
                 </div>
 
                 <div className={styles.legendItem}>
-                  <span className={styles.dot} style={{ background: "#eab308" }} />
-                  งานใหม่ {statusSummary.new}
+                  <span className={styles.dot} style={{ background: "#22c55e" }} />
+                  ปิดงาน {statusSummary.done}
                 </div>
+
+                <div className={styles.legendItem}>
+                  <span className={styles.dot} style={{ background: "#ef4444" }} />
+                  ยกเลิกงาน {statusSummary.cancel}
+                </div>
+
+                
+
+                
+
               </div>
               
               </div>
@@ -701,17 +721,28 @@ export default function DashboardPage() {
 
               <div className={styles.statusBoxWrap}>
 
+<div className={styles.statusBoxNew}>
+    <div>สร้างเหตุใหม่</div>
+    <b>{statusSummary.new}</b>
+  </div>
+
+  {/* กำลังดำเนินการ */}
+                <div className={styles.statusBoxProgress}>
+                  <div>กำลังดำเนินงาน</div>
+                  <b>{statusSummary.progress}</b>
+                </div>
+
                 {/* เสร็จสิ้น */}
                 <div className={styles.statusBoxDone}>
                   <div>ปิดงาน</div>
                   <b>{statusSummary.done}</b>
                 </div>
 
-                {/* กำลังดำเนินการ */}
-                <div className={styles.statusBoxProgress}>
-                  <div>กำลังดำเนินงาน</div>
-                  <b>{statusSummary.progress}</b>
-                </div>
+                 <div className={styles.statusBoxCancel}>
+    <div>ยกเลิกงาน</div>
+    <b>{statusSummary.cancel}</b>
+  </div>
+
               </div>
             </div>
           </div>

@@ -224,7 +224,7 @@ export default function Navbar() {
               </div>
             </div>
 
-            <div className={styles.dropdownDivider} />
+            {/*<div className={styles.dropdownDivider} />*/}
 
           
             <button
@@ -235,7 +235,7 @@ export default function Navbar() {
               }}
             >
               <FontAwesomeIcon icon={faUser} />
-              โปรไฟล์
+              Profile
             </button>
 
             <div className={styles.dropdownDivider} />
