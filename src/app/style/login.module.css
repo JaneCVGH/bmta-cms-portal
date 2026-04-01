@@ -86,7 +86,7 @@
 }
 
 .inputContainer input::placeholder {
-  color: black;
+  color: rgba(0, 0, 0, 0.5);
 }
 
 /* ปุ่ม Login */

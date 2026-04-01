@@ -77,14 +77,14 @@ export default function DashboardPage() {
 
   const getStatusLabel = (statusId) => {
     const map = {
-      S000: "ร่าง",
-      S001: "งานใหม่",
-      S003: "มอบหมายงาน",
-      S004: "รับงาน",
-      S015: "กำลังดำเนินการ",
+      //S000: "ร่าง",
+      S001: "เหตุใหม่",
+      //S003: "มอบหมายงาน",
+      //S004: "รับงาน",
+      S015: "กำลังดำเนินงาน",
       S016: "เสร็จสิ้น",
       S007: "ปิดงาน",
-      S014: "ยกเลิก",
+      S014: "ยกเลิกงาน",
     };
 
     return map[statusId] || statusId;
@@ -198,7 +198,12 @@ export default function DashboardPage() {
     if (!raw) return "Unknown";
 
     const d = new Date(raw);
-    return d.toISOString().slice(0, 10);
+
+    return d.toLocaleDateString("th-TH", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
   };
 
 
@@ -243,7 +248,13 @@ export default function DashboardPage() {
       for (let i = 6; i >= 0; i--) {
         const d = new Date();
         d.setDate(now.getDate() - i);
-        arr.push(d.toISOString().slice(0, 10));
+        arr.push(
+          d.toLocaleDateString("th-TH", {
+            day: "numeric",
+            month: "short",
+            year: "numeric",
+          })
+        );
       }
     }
 
@@ -267,12 +278,12 @@ export default function DashboardPage() {
 
   const getStatusClass = (statusId) => {
     const map = {
-      S000: styles.statusDraft,
+      //S000: styles.statusDraft,
       S001: styles.statusNew,
-      S003: styles.statusDispatch,
-      S004: styles.statusAck,
+      //S003: styles.statusDispatch,
+      //S004: styles.statusAck,
       S015: styles.statusProgress,
-      S016: styles.statusDone,
+      //S016: styles.statusDone,
       S007: styles.statusClosed,
       S014: styles.statusCancel,
     };
@@ -325,7 +336,7 @@ export default function DashboardPage() {
 
       result.total++;
 
-      if (sid === "S016") result.done++;
+      if (sid === "S016" || sid === "S007") result.done++;
       else if (sid === "S015") result.progress++;
       else result.new++;
     });
@@ -571,7 +582,7 @@ export default function DashboardPage() {
                 
             ))} */}
             {Object.keys({
-              S000: 1, S001: 1, S003: 1, S004: 1, S015: 1, S016: 1, S007: 1, S014: 1
+              S001: 1, S015: 1, S007: 1, S014: 1
             }).map((sid) => (
 
               <div key={sid} className={styles.legendItem}>
@@ -653,12 +664,12 @@ export default function DashboardPage() {
             <div className={styles.legend}>
                 <div className={styles.legendItem}>
                   <span className={styles.dot} style={{ background: "#22c55e" }} />
-                  เสร็จสิ้น {statusSummary.done}
+                  ปิดงาน {statusSummary.done}
                 </div>
 
                 <div className={styles.legendItem}>
                   <span className={styles.dot} style={{ background: "#3b82f6" }} />
-                  กำลังดำเนินการ {statusSummary.progress}
+                  กำลังดำเนินงาน {statusSummary.progress}
                 </div>
 
                 <div className={styles.legendItem}>
@@ -692,13 +703,13 @@ export default function DashboardPage() {
 
                 {/* เสร็จสิ้น */}
                 <div className={styles.statusBoxDone}>
-                  <div>เสร็จสิ้น</div>
+                  <div>ปิดงาน</div>
                   <b>{statusSummary.done}</b>
                 </div>
 
                 {/* กำลังดำเนินการ */}
                 <div className={styles.statusBoxProgress}>
-                  <div>กำลังดำเนินการ</div>
+                  <div>กำลังดำเนินงาน</div>
                   <b>{statusSummary.progress}</b>
                 </div>
               </div>

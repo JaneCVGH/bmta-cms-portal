@@ -192,6 +192,27 @@
   color: #3f4041;
   font-size: 13px;
 }
+
+.btnProfile {
+  width: 100%;
+  padding: 10px 14px;
+  border: none;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: #6b4eff;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.btnProfile:hover {
+  background: #f3f0ff;
+}
+
 /*เส้นคั่น*/
 .dropdownDivider {
   height: 1px;

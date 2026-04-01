@@ -67,6 +67,7 @@ const DynamicFormRenderer = ({
 
     const result = await showQuestionSwal({
       title: "การยกเลิกคำร้อง",
+      title: "ยกเลิกคำร้อง",
       text: "รายการนี้จะถูกยกเลิก และไม่สามารถเปลี่ยนสถานะได้",
     });
 
@@ -181,7 +182,9 @@ const DynamicFormRenderer = ({
                   disabled={isLocked}
                   className={styles.btnReject}
                 >
+
                   ยกเลิกงาน
+
                 </button>
 
                 <button
