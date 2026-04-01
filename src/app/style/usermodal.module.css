@@ -1,4 +1,4 @@
-/* src/app/style/employeeModal.module.css */
+/* C:\app\style\usermodal.module.css */
 
 /* Overlay */
 .modalOverlay {
@@ -17,8 +17,8 @@
   border-radius: 14px;
   padding: 28px 26px;
   width: 650px;
-  max-width: 450px;
-  max-width: 200vh;
+  /* max-width: 450px; */
+  /* max-width: 200vh; */
   max-height: 90vh;
   overflow-y: auto;
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
@@ -131,11 +131,14 @@
 }
 
 /* Buttons */
-.saveBtn {
+/* .saveBtn {
   width: 100%;
   height: 48px;
   font-size: 16px;
-  /*font-weight: 600;*/
+  /*font-weight: 600;
+  background-color: #3dd47c;
+  color: #000;
+  /*font-weight: 600
    background: #2563eb;
   color: #fff;
   border: none;
@@ -145,10 +148,29 @@
 }
 
 .saveBtn:hover {
+  background-color: #00a344;
+} */
+
+.saveBtn {
+  width: 25%;
+  height: 40px;
+  font-size: 16px;
+  font-weight: bold;
+  margin-left: 250px;
+  border-radius: 8px;
+  cursor: pointer;
+  border: none;
+  /* background-color: #2563eb; */
+  color: #ffffff;
+  transition: background-color 0.3s ease;
    background: #1d4ed8;
 }
 
-.closeBtn {
+.saveBtn:hover {
+  background-color: #1d4ed8;
+}
+
+/* .closeBtn {
   width: 100%;
   height: 48px;
   font-size: 16px;
@@ -162,14 +184,11 @@
 
 .closeBtn:hover {
   background-color: #bdbdbd;
-}
-
-
-
+} */
 
 
 .editBtn {
-  background-color: #f4ba0b;
+  background-color: #f2b707;
   color: white;
   padding: 8px 18px;
   border-radius: 6px;
@@ -181,12 +200,16 @@
 } 
 
 .deleteBtn {
-  background-color: #ef4444;
+  background-color: #e03c4c;
   color: white;
   padding: 8px 18px;
   border-radius: 6px;
   border: none;
   cursor: pointer;
+}
+
+.deleteBtn:hover {
+  background-color: rgb(156, 0, 0);
 }
 
 
@@ -218,29 +241,24 @@
   color: #000000;
 }
 
-/* ปุ่มกากบาท */
+
+/*-----ปุ่ม X ปิด (แทน CloseBtn)-----*/
 .closeIcon {
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
+  background-color: #e03c4c !important;
+  color: #fff;
   border: none;
-
-  background: rgb(232, 232, 232);
-  color: #000000;
-  font-size: 22px; 
-
+  padding: 0.4rem 0.8rem;
+  border-radius: 0.4rem;
+  font-size: 18px;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  
+  grid-column: 2 / 3;
+  grid-row: 1 / 2;
+  justify-self: end;
 }
 
 .closeIcon:hover {
-  background: rgba(182, 181, 181, 0.25);
-  transform: rotate(90deg);
+  background-color: rgb(114, 0, 0);
 }
-
 
 
 /* ---------- Profile Header ---------- */

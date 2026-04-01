@@ -66,6 +66,7 @@ const DynamicFormRenderer = ({
     if (isLocked) return;
 
     const result = await showQuestionSwal({
+      title: "การยกเลิกคำร้อง",
       title: "ยกเลิกคำร้อง",
       text: "รายการนี้จะถูกยกเลิก และไม่สามารถเปลี่ยนสถานะได้",
     });
@@ -112,7 +113,7 @@ const DynamicFormRenderer = ({
       <Modal.Header closeButton>
         <Modal.Title>
           {/* {caseId} */}
-          {isCreateMode ? "สร้างคำร้อง" : `${caseId}`}
+          {isCreateMode ? "สร้างใบสั่งงาน" : `${caseId}`}
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
@@ -181,7 +182,9 @@ const DynamicFormRenderer = ({
                   disabled={isLocked}
                   className={styles.btnReject}
                 >
-                  ยกเลิก
+
+                  ยกเลิกงาน
+
                 </button>
 
                 <button

@@ -111,7 +111,7 @@
   color: white;
   border: none;
   padding: 0.6rem 0.8rem;
-  font-size: 18px;
+  font-size: 16px;
   border-radius: 0.5rem;
   cursor: pointer;
   transition: background-color 0.2s ease;
@@ -169,21 +169,22 @@
 /* ===== ปุ่ม ดู, แก้ไข คำร้อง View,Edit Button ===== */
 .ViewBtnTicket,
 .EditBtnTicket {
-  width: 40px;
-  height: 40px;
+  width: 70px;
+  height: 30px;
 
   color: white;
   border: none;
   padding: 0;
   border-radius: 0.5rem;
   cursor: pointer;
-  font-size: 18px;
+  font-size: 16px;
 
   display: inline-flex;
   align-items: center;
   justify-content: center;
   transition: background-color 0.2s ease;
   margin-right: 6px;
+  gap: 3px;
 }
 
 /* ===== View Button ===== */

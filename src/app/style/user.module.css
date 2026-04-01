@@ -41,6 +41,7 @@ body {
 .btnAdd {
   background-color: #2ead6b;
   color: white;
+  font-size: 16px;
   font-weight: bold;
   padding: 10px 15px;
   border: none;
@@ -55,14 +56,18 @@ body {
 /* ปุ่มในแต่ละแถว */
 /* ปุ่มดู (ไอคอนดวงตา) สีเขียว */
 .viewBtn {
+  width: 70px;
+  height: 30px;
+  font-size: 16px;
   background-color: #379ddd;
   color:#fff;
   margin-right: 5px;
   border: none;
   border-radius: 6px;
-  padding: 5px 10px;
+  /* padding: 5px 10px; */
   cursor: pointer;
   transition: background-color 0.3s ease;
+  gap: 3px;
 }
 .viewBtn:hover {
   background-color: #06639c;
@@ -70,14 +75,18 @@ body {
 
 /* ปุ่มแก้ไข (ไอคอนไม้บรรทัด/ดินสอ) สีน้ำเงิน */
 .editBtn {
+  width: 70px;
+  height: 30px;
   background-color: #f4ba0b;
+  font-size: 16px;
   color: white;
   margin-right: 5px;
   border: none;
   border-radius: 6px;
-  padding: 5px 10px;
+  /* padding: 5px 10px; */
   cursor: pointer;
   transition: background-color 0.3s ease;
+  gap: 3px;
 }
 .editBtn:hover {
   background-color: #d47f00;
@@ -85,13 +94,17 @@ body {
 
 /* ปุ่มลบ (ไอคอนถังขยะ) สีแดง */
 .deleteBtn {
+  width: 70px;
+  height: 30px;
   background-color: #e03c4c;
+  font-size: 16px;
   color: white;
   border: none;
   border-radius: 6px;
-  padding: 5px 10px;
+  /* padding: 5px 10px; */
   cursor: pointer;
   transition: background-color 0.3s ease;
+  gap: 3px;
 }
 .deleteBtn:hover {
   background-color: rgb(156, 0, 0);

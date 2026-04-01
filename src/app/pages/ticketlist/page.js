@@ -565,7 +565,7 @@ export default function TicketListPage() {
     }
   };
 
-  // update status ของ ปุ่ม "ส่งออก" และ "ไม่อนุมัติ"
+  // update status ของ ปุ่ม "ปิดงาน" และ "ยกเลิก"
   const updateStatus = async (caseId, newStatusId) => {
     const { caseData } = formState;
     if (!caseData) return;
@@ -871,7 +871,7 @@ console.log("✅ API Response:", data);
                           handleShow(ticket.caseId);
                         }}
                       >
-                        <FontAwesomeIcon icon={faEye} />
+                        <FontAwesomeIcon icon={faEye} /> แสดง
                       </button>
 
                       <button
@@ -882,7 +882,7 @@ console.log("✅ API Response:", data);
                           handleShow(ticket.caseId);
                         }}
                       >
-                        <FontAwesomeIcon icon={faPencil} />
+                        <FontAwesomeIcon icon={faPencil} /> แก้ไข
                       </button>
                     </td>
                   </tr>

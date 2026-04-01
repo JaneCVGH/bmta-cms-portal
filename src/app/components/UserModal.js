@@ -329,9 +329,9 @@ export default function EmployeeModal({
               {/* Footer */}
               <div className={styles.modalFooter}>
                 <button type="submit" className={styles.saveBtn}>บันทึก</button>
-                <button type="button" onClick={onClose} className={styles.closeBtn}>
+                {/* <button type="button" onClick={onClose} className={styles.closeBtn}>
                   ยกเลิก
-                </button>
+                </button> */}
               </div>
             </form>
           )}

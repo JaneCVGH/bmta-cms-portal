@@ -128,7 +128,7 @@ export default function CaseSubtypeListModal({
                             onView(cs);
                           }}
                         >
-                          <FontAwesomeIcon icon={faEye} />
+                          <FontAwesomeIcon icon={faEye} /> แสดง
                         </button>
 
                         <button
@@ -138,7 +138,7 @@ export default function CaseSubtypeListModal({
                             onEdit(cs);
                           }}
                         >
-                          <FontAwesomeIcon icon={faPencil} />
+                          <FontAwesomeIcon icon={faPencil} /> แก้ไข
                         </button>
 
                         <button
@@ -148,7 +148,7 @@ export default function CaseSubtypeListModal({
                             onDelete(cs.idCaseSubtype);
                           }}
                         >
-                          <FontAwesomeIcon icon={faTrash} />
+                          <FontAwesomeIcon icon={faTrash} /> ลบ
                         </button>
                       </div>
                     </div>
