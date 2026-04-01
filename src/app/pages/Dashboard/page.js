@@ -78,7 +78,7 @@ export default function DashboardPage() {
   const getStatusLabel = (statusId) => {
     const map = {
       //S000: "ร่าง",
-      S001: "เหตุใหม่",
+      S001: "สร้างเหตุใหม่",
       //S003: "มอบหมายงาน",
       //S004: "รับงาน",
       S015: "กำลังดำเนินงาน",
