@@ -10,16 +10,15 @@ const getDisplayValue = (val) => {
   if (val == null) return "";
 
   if (typeof val === "object") {
-    if (val.name) return val.name;
-    if (val.label) return val.label;
-    if (val.value) return val.value;
-
-    // 🔥 กัน object ซ้อน
-    if (typeof val.label === "object") return getDisplayValue(val.label);
-    if (typeof val.value === "object") return getDisplayValue(val.value);
-    if (typeof val.data === "object") return getDisplayValue(val.data);
-
-    return "";
+    return (
+      val.name ||
+      val.label ||
+      val.value ||
+      getDisplayValue(val.label) ||
+      getDisplayValue(val.value) ||
+      getDisplayValue(val.data) ||
+      ""
+    );
   }
 
   return val;
@@ -160,20 +159,6 @@ const renderField = (field, onChange, isPrint, viewMode) => {
   );
 };
 
-// const printText = (value, maxWidth) => (
-//   <div
-//     className={`
-//       ${styles.titleLabel}
-//       ${styles.fontTH}
-//       form-control-sm
-//       mb-2
-//       ${styles.printText}
-//       ${maxWidth ? styles.printTextFull : ""}
-//     `}
-//   >
-//     {value || " "}
-//   </div>
-// );
 
 const printText = (value, maxWidth) => {
   const displayValue = getDisplayValue(value);

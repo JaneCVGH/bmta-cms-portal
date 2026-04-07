@@ -138,12 +138,25 @@
 }
 
 /*------วิกฤต (0)------*/
-.priorityCritical {
+.priorityLow {
   border: 1px solid #ef4444;
   background-color: #fee2e2;
   border-radius: 10px;
 }
 
+/*------ปานกลาง (3-5)------*/
+.priorityMedium {
+  border: 1px solid #3b82f6;
+  background-color: #eff6ff;
+  border-radius: 10px;
+}
+
+/*------ต่ำ (6-9)------*/
+.priorityCritical {
+  border: 1px solid #10b981;
+  background-color: #ecfdf5;
+  border-radius: 10px;
+}
 /*------ ปุ่ม บันทึก แก้ไข, เพิ่ม ------*/
 .modalSave {
   display: flex;

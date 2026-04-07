@@ -59,3 +59,15 @@ export const apiFetch = async (url, options = {}) => {
   if (res.status === 204) return null;
   return res.json();
 };
+
+// ส่ง request ไปยัง API
+export const fetchData = async (url, options = {}) => {
+  try {
+    const data = await apiFetch(url, options);
+    console.log("✅ API Response:", data);
+    return data;
+  } catch (error) {
+    console.error("API error:", error.message);
+    return null;
+  }
+};

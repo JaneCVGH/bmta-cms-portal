@@ -61,7 +61,7 @@ const DynamicFormRenderer = ({
   // S014 = ยกเลิก, S007 = ปิดงาน
   const isLocked = ["S007", "S014"].includes(statusId);
 
-  // S014 = ยกเลิก
+  // S014 = ยกเลิก;
   const handleReject = async () => {
     if (isLocked) return;
 
@@ -182,9 +182,7 @@ const DynamicFormRenderer = ({
                   disabled={isLocked}
                   className={styles.btnReject}
                 >
-
                   ยกเลิกงาน
-
                 </button>
 
                 <button

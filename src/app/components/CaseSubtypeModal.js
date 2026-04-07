@@ -58,11 +58,12 @@ export default function CaseSubtypeModal({
   const priorityNum = Number(formData.priority);
   const getPriorityLabel = (p) => {
     if (p === null || p === undefined || isNaN(p)) return "-";
-    if (p === 0) return "0 (ความสำคัญวิกฤต)";
-    if (p === 1 || p === 2) return `${p} (ความสำคัญสูง)`;
-    if (p >= 3 && p <= 5) return `${p} (ความสำคัญปานกลาง)`;
-    if (p >= 6 && p <= 9) return `${p} (ความสำคัญต่ำ)`;
-
+    if (p === 0) return "0 ความสำคัญต่ำ";
+    // if (p === 0) return "0 (ความสำคัญวิกฤต)";
+    if (p === 1 || p === 2) return `ความสำคัญสูง`;
+    if (p >= 3 && p <= 5) return `ความสำคัญปานกลาง`;
+    if (p >= 6 && p <= 9) return `ความสำคัญวิกฤต`;
+    // if (p >= 6 && p <= 9) return `${p} (ความสำคัญต่ำ)`;
     return String(p);
   };
 
@@ -500,7 +501,12 @@ export default function CaseSubtypeModal({
                             ? styles.priorityCritical
                             : priorityNum === 1 || priorityNum === 2
                               ? styles.priorityHigh
-                              : ""
+                              : // : ""
+                                priorityNum >= 3 && priorityNum <= 5
+                                ? styles.priorityMedium
+                                : priorityNum >= 6 && priorityNum <= 9
+                                  ? styles.priorityLow
+                                  : ""
                         }`}
                       >
                         {getPriorityLabel(priorityNum)}

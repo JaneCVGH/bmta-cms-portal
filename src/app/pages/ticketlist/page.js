@@ -35,7 +35,7 @@ import {
   showQuestionSwal,
 } from "@/app/lib/ErrorSwal";
 
-import { apiFetch, BASE_URL } from "@/app/lib/apiClient";
+import { apiFetch, BASE_URL, fetchData } from "@/app/lib/apiClient";
 
 export default function TicketListPage() {
   const searchParams = useSearchParams();
@@ -99,6 +99,16 @@ export default function TicketListPage() {
   useEffect(() => {
     if (!requireSession()) return;
   }, []);
+
+  const resetFormState = () => {
+    setFormState({
+      fields: null,
+      response: null,
+      caseData: null,
+      jsonData: {},
+      formSelect: "",
+    });
+  };
 
   //สถานะ
   const getStatusTh = (statusId) => {
@@ -169,6 +179,7 @@ export default function TicketListPage() {
       console.log("PARAMS:", params.toString());
 
       const data = await apiFetch(`${BASE_URL}/case?${params.toString()}`);
+      if (!data) return;
       console.log("API RESPONSE:", data);
       const list = Array.isArray(data?.data) ? data.data : [];
 
@@ -190,7 +201,8 @@ export default function TicketListPage() {
   const fetchCaseTypes = async () => {
     try {
       const result = await apiFetch(`${BASE_URL}/casetypes_with_subtype`);
-      if (!Array.isArray(result?.data)) return;
+      // if (!Array.isArray(result?.data)) return;
+      if (!result || !Array.isArray(result.data)) return;
 
       // แปลงข้อมูลเป็น map
       const map = {};
@@ -272,7 +284,6 @@ export default function TicketListPage() {
 
   const onFormChange = async (e) => {
     const value = e.target.value;
-    console.log("caseSubType ที่ส่ง:", value);
 
     if (!value || value === "เลือกประเภทคำร้อง") {
       setFormState((prev) => ({
@@ -291,24 +302,22 @@ export default function TicketListPage() {
       response: null,
     }));
 
-    try {
-      const data = await apiFetch(`${BASE_URL}/forms/casesubtype`, {
-        method: "POST",
-        body: JSON.stringify({
-          caseSubType: value,
-        }),
-      });
+    const data = await apiFetch(`${BASE_URL}/forms/casesubtype`, {
+      method: "POST",
+      body: JSON.stringify({
+        caseSubType: value,
+      }),
+    });
 
-      setFormState((prev) => ({
-        ...prev,
-        fields: Array.isArray(data?.data?.formFieldJson)
-          ? data.data.formFieldJson
-          : [],
-        response: data.data,
-      }));
-    } catch (error) {
-      handleApiError(error, "โหลดข้อมูลไม่สำเร็จ");
-    }
+    if (!data) return;
+
+    setFormState((prev) => ({
+      ...prev,
+      fields: Array.isArray(data?.data?.formFieldJson)
+        ? data.data.formFieldJson
+        : [],
+      response: data.data,
+    }));
   };
 
   const onDataChange = (property, value) => {
@@ -324,14 +333,10 @@ export default function TicketListPage() {
   };
 
   const getDefaultData = async () => {
-    try {
-      console.log("API: casetypes_with_subtype");
+    const data = await apiFetch(`${BASE_URL}/casetypes_with_subtype`);
+    if (!data) return;
 
-      const data = await apiFetch(`${BASE_URL}/casetypes_with_subtype`);
-      setcasewithsub(data);
-    } catch (error) {
-      console.error("Login error:", error);
-    }
+    setcasewithsub(data);
   };
 
   //ถ้า value = placeholder → ให้ถือว่า “ยังไม่ได้เลือก”
@@ -422,7 +427,6 @@ export default function TicketListPage() {
     const { formSelect, jsonData, fields, response } = formState;
 
     const username = localStorage.getItem("username");
-    // const selectedArea = areaList?.find((item) => item.id === JsonData.Area);
     const selectedArea = areaList?.find((item) => item.id === jsonData.Area);
 
     if (!selectedArea) {
@@ -495,6 +499,7 @@ export default function TicketListPage() {
         body: JSON.stringify(json),
       });
 
+      if (!data) return;
       console.log("✅ API Response:", data);
 
       showSuccessSwal("บันทึกคำร้องสำเร็จ");
@@ -554,7 +559,8 @@ export default function TicketListPage() {
         body: JSON.stringify(json),
       });
 
-      console.log("✅ UPDATE RESPONSE:", data);
+      if (!data) return;
+      // console.log("✅ UPDATE RESPONSE:", data);
 
       showSuccessSwal("บันทึกสำเร็จ");
 
@@ -605,6 +611,7 @@ export default function TicketListPage() {
         method: "PATCH",
         body: JSON.stringify(json),
       });
+      if (!data) return;
 
       showSuccessSwal("อัปเดตสถานะสำเร็จ");
 
@@ -623,19 +630,13 @@ export default function TicketListPage() {
       console.log("API: getFormBycaseId");
 
       let data = await apiFetch(`${BASE_URL}/dispatch/${caseId}/SOP`);
-console.log("✅ API Response:", data);
-
-        if (!data || !data.data) {
-      console.log("ไม่มี form สำหรับ case นี้");
-      return;
-    }
-
-      // const data = await apiFetch(`${BASE_URL}/dispatch/${caseId}/SOP`);
+      if (!data || !data.data) return;
       // console.log("✅ API Response:", data);
-      // if (!data) {
-      //   console.log("ไม่มี form สำหรับ case นี้");
-      //   return;
-      // }
+
+      if (!data || !data.data) {
+        console.log("ไม่มี form สำหรับ case นี้");
+        return;
+      }
 
       // กัน response เก่าทับของใหม่
       if (latestCaseIdRef.current !== caseId) {
@@ -646,21 +647,18 @@ console.log("✅ API Response:", data);
       const caseData = data.data;
 
       // กัน data ว่าง
-      // const formData = data.data?.formData || data.data?.formAnswer || {};
-          const formData =
-      caseData.formData ||
-      caseData.formAnswer ||
-      { formFieldJson: [] };
+      const formData = caseData.formData ||
+        caseData.formAnswer || { formFieldJson: [] };
 
-       console.log("FORM DATA:", formData);
-    console.log("CASE DATA:", caseData);
+      console.log("FORM DATA:", formData);
+      console.log("CASE DATA:", caseData);
 
       // const selectedArea = Area?.find(
       const selectedArea = areaList.find(
         (item) =>
           String(item.countryId) === String(caseData.countryId) &&
-        String(item.provId) === String(caseData.provId) &&
-        String(item.distId) === String(caseData.distId)
+          String(item.provId) === String(caseData.provId) &&
+          String(item.distId) === String(caseData.distId),
       );
 
       setFormState((prev) => ({
@@ -691,15 +689,8 @@ console.log("✅ API Response:", data);
   const handleShow = async (caseId) => {
     console.log("OPEN CASE:", caseId);
 
-    // ✅ reset state ก่อน
-    setFormState({
-      fields: null,
-      response: null,
-      caseData: null,
-      jsonData: {},
-      formSelect: "",
-    });
-
+    // reset state ก่อน
+    resetFormState();
     setcaseId(caseId);
 
     if (areaList.length === 0) {
@@ -780,14 +771,7 @@ console.log("✅ API Response:", data);
                   setIsCreateMode(true);
 
                   // reset state (สำคัญมาก)
-                  setFormState({
-                    fields: null,
-                    response: null,
-                    caseData: null,
-                    jsonData: {},
-                    formSelect: "",
-                  });
-
+                  resetFormState();
                   if (areaList.length === 0) {
                     await fetchAreas();
                   }

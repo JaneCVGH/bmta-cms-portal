@@ -97,9 +97,9 @@ export default function CaseTypesPage() {
   //ความสำคัญ
   const getPriorityLabelShort = (p) => {
     const n = Number(p);
-    if (n === 0) return "0 (ความสำคัญวิกฤต)";
-    if (n === 1 || n === 2) return `${n} (ความสำคัญสูง)`;
-    return null; // 3–9 ไม่แสดง
+    if (n === 0 | n === 9) return "(ความสำคัญวิกฤต)";
+    if (n === 1 || n === 2) return `(ความสำคัญสูง)`;
+    return null; // 3–9 ไม่แสดง ${n}  0 
   };
 
   // เรียก CaseSubtypeListModal

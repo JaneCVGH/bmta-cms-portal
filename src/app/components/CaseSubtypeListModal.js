@@ -102,9 +102,16 @@ export default function CaseSubtypeListModal({
 
                   {/*---- ความสำคัญ ----*/}
                   <div
+                    // className={`${styles.priorityBox} ${
+                    //   getPriorityLabelShort(cs.priority)
+                    //     ? cs.priority === "0"
+                    //       ? styles.priorityCritical
+                    //       : styles.priorityHigh
+                    //     : styles.priorityEmpty
+                    // }`}
                     className={`${styles.priorityBox} ${
                       getPriorityLabelShort(cs.priority)
-                        ? cs.priority === "0"
+                        ? Number(cs.priority) === 0 || Number(cs.priority) === 9
                           ? styles.priorityCritical
                           : styles.priorityHigh
                         : styles.priorityEmpty

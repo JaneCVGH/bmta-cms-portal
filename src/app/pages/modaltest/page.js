@@ -7,7 +7,7 @@ import styles from "../../style/form.module.css";
 import ModalForm from "../form/formEditModal";
 import { useSearchParams } from "next/navigation";
 
-import { apiFetch, BASE_URL } from "@/app/lib/apiClient";
+import { apiFetch, BASE_URL, fetchData } from "@/app/lib/apiClient";
 import {
   showSuccessSwal,
   showWarningSwal,
@@ -34,6 +34,14 @@ export default function FormPage() {
   const [FormBycaseIdRes, setFormBycaseIdRes] = useState(null);
   const latestCaseIdRef = useRef(null);
 
+  const resetFormState = () => {
+    setFormFields(null);
+    setformResponse(null);
+    setFormBycaseIdRes(null);
+    setJsonData({});
+    setformSelect("");
+  };
+
   useEffect(() => {
     const init = async () => {
       console.log(mobileNo, method, username, agentName);
@@ -52,28 +60,22 @@ export default function FormPage() {
   }, []);
 
   const onFormChange = async (e) => {
-    var value = e.target.value;
+    const value = e.target.value;
+
     setformSelect(value);
     setFormFields(null);
-    const token = localStorage.getItem("accessToken");
-    try {
-      console.log("ส่ง request ไปยัง API:");
-      const data = await apiFetch(`${BASE_URL}/forms/casesubtype`, {
-        method: "POST",
-        body: JSON.stringify({
-          caseSubType: value,
-        }),
-      });
 
-      console.log("✅ API Response:", data);
+    if (!value || value === "เลือกประเภทคำร้อง") return;
 
-      setformResponse(data.data);
-      setFormFields(data.data.formFieldJson);
-    } catch (error) {
-      console.error("Login error:", error);
-    }
+    const data = await fetchData(`${BASE_URL}/forms/casesubtype`, {
+      method: "POST",
+      body: JSON.stringify({ caseSubType: value }),
+    });
 
-    console.log(e.target.value);
+    if (!data) return;
+
+    setformResponse(data.data);
+    setFormFields(data.data.formFieldJson);
   };
 
   const onDataChange = (property, value) => {
@@ -88,25 +90,13 @@ export default function FormPage() {
   };
 
   const getDefaultData = async () => {
-    const token = localStorage.getItem("accessToken");
-    if (!token) {
-      console.error("No access token found");
-      return;
-    }
-    try {
-      console.log("API: casetypes_with_subtype");
-      const data = await apiFetch(`${BASE_URL}/casetypes_with_subtype`);
+    const data = await fetchData(`${BASE_URL}/casetypes_with_subtype`);
+    if (!data) return;
 
-      console.log("✅ API Response:", data);
-      setcasewithsub(data);
-    } catch (error) {
-      console.error("Login error:", error);
-    }
+    setcasewithsub(data);
   };
 
   const UpdateCase = async () => {
-    const token = localStorage.getItem("accessToken");
-
     if (!username) {
       setusername(localStorage.getItem("username"));
     }
@@ -139,16 +129,22 @@ export default function FormPage() {
         method: "PATCH",
         body: JSON.stringify(json),
       });
-      console.log("✅ API Response:", data);
+
+      if (!data) return;
+
+      // console.log("✅ API Response:", data);
 
       showSuccessSwal("บันทึกสำเร็จ");
 
+      // setShow(false);
+      // setFormFields(null);
+      // setformResponse(null);
+      // setisDefault(true);
+      // setJsonData({});
+      // setformSelect("");
       setShow(false);
-      setFormFields(null);
-      setformResponse(null);
+      resetFormState();
       setisDefault(true);
-      setJsonData({});
-      setformSelect("");
       // setcasewithsub(null)
       // setArea(null)
     } catch (error) {
@@ -159,61 +155,21 @@ export default function FormPage() {
   const getFormBycaseId = async (caseId) => {
     latestCaseIdRef.current = caseId;
 
-    const token = localStorage.getItem("accessToken");
-    if (!token) {
-      console.error("No access token found");
-      return;
-    }
-    try {
-      console.log("API: getFormBycaseId");
-      const data = await apiFetch(`${BASE_URL}/dispatch/${caseId}/SOP`);
-      if (!data) {
-        console.log("ไม่มี form สำหรับ case นี้");
-        return;
-      }
-      
-      console.log("✅ API Response:", data);
-      const formData = data.data.formData || data.data.formAnswer || {};
+    const data = await fetchData(`${BASE_URL}/dispatch/${caseId}/SOP`);
+    if (!data || !data.data) return;
 
-      setformResponse(formData);
-      setFormFields(formData.formFieldJson || []);
-      setFormBycaseIdRes(data.data);
+    const formData = data.data.formData || data.data.formAnswer || {};
 
-      const selectedArea = Area?.find(
-        (item) =>
-          String(item.countryId) === String(data.data.countryId) &&
-          String(item.provId) === String(data.data.provId) &&
-          String(item.distId) === String(data.data.distId),
-      );
-
-      setJsonData({
-        Area: selectedArea?.id || "",
-        method: String(data.data.source || "1"),
-      });
-
-      setformSelect(data.data.caseSTypeId || "");
-    } catch (error) {
-      console.error(error);
-    }
+    setformResponse(formData);
+    setFormFields(formData.formFieldJson || []);
+    setFormBycaseIdRes(data.data);
   };
 
   const getArea = async () => {
-    const token = localStorage.getItem("accessToken");
-    if (!token) {
-      console.error("No access token found");
-      return;
-    }
-    try {
-      console.log("API: GetArea");
-      const data = await apiFetch(
-        `${BASE_URL}/area/country_province_districts`,
-      );
+    const data = await fetchData(`${BASE_URL}/area/country_province_districts`);
+    if (!data) return;
 
-      console.log("✅ API Response:", data);
-      setArea(data.data);
-    } catch (error) {
-      console.error("Login error:", error);
-    }
+    setArea(data.data);
   };
 
   const handleClose = () => {
@@ -225,11 +181,12 @@ export default function FormPage() {
     console.log("OPEN CASE:", caseId);
 
     // reset ก่อน
-    setFormFields(null);
-    setformResponse(null);
-    setFormBycaseIdRes(null);
-    setJsonData({});
-    setformSelect("");
+    // setFormFields(null);
+    // setformResponse(null);
+    // setFormBycaseIdRes(null);
+    // setJsonData({});
+    // setformSelect("");
+    resetFormState();
 
     setcaseId(caseId);
     // setformSelect(caseId);

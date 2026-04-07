@@ -14,7 +14,7 @@ import { downloadPDF } from "@/app/utils/pdf";
 // import html2canvas from "html2canvas";
 // import jsPDF from "jspdf";
 import { useSearchParams } from "next/navigation";
-import { BASE_URL, apiFetch } from "../../lib/apiClient";
+import { BASE_URL, apiFetch, fetchData } from "../../lib/apiClient";
 
 export default function FormPage() {
   const searchParams = useSearchParams();
@@ -48,26 +48,20 @@ export default function FormPage() {
   }, []);
 
   const onFormChange = async (e) => {
-    var value = e.target.value;
+    const value = e.target.value;
     setformSelect(value);
     setFormFields(null);
 
     if (!value || value === "เลือกประเภทคำร้อง") return;
-    // const token = localStorage.getItem("accessToken");
-    try {
-      console.log("ส่ง request ไปยัง API:");
-      const data = await apiFetch(`${BASE_URL}/forms/casesubtype`, {
-        method: "POST",
-        body: JSON.stringify({ caseSubType: value }),
-      });
-      console.log("✅ API Response:", data);
-      setformResponse(data.data);
-      setFormFields(data.data.formFieldJson);
-    } catch (error) {
-      console.error("API error:", error.message);
-    }
 
-    console.log(e.target.value);
+    const data = await apiFetch(`${BASE_URL}/forms/casesubtype`, {
+      method: "POST",
+      body: JSON.stringify({ caseSubType: value }),
+    });
+
+    if (!data) return;
+    setformResponse(data.data);
+    setFormFields(data.data.formFieldJson);
   };
 
   const onDataChange = (property, value) => {
@@ -85,37 +79,14 @@ export default function FormPage() {
   };
 
   const getDefaultData = async () => {
-    const token = localStorage.getItem("accessToken");
-    if (!token) {
-      console.error("No access token found");
-      return;
-    }
-    try {
-      console.log("API: casetypes_with_subtype");
-      const data = await apiFetch(`${BASE_URL}/casetypes_with_subtype`);
-      console.log("✅ API Response:", data);
-      setcasewithsub(data);
-    } catch (error) {
-      console.error("API error:", error.message);
-    }
+    const data = await apiFetch(`${BASE_URL}/casetypes_with_subtype`);
+    setcasewithsub(data);
   };
 
   const getArea = async () => {
-    const token = localStorage.getItem("accessToken");
-    if (!token) {
-      console.error("No access token found");
-      return;
-    }
-    try {
-      console.log("API: GetArea");
-      const data = await apiFetch(
-        `${BASE_URL}/area/country_province_districts`,
-      );
-      console.log("✅ API Response:", data);
-      setArea(data.data);
-    } catch (error) {
-      console.error("API error:", error.message);
-    }
+    const data = await apiFetch(`${BASE_URL}/area/country_province_districts`);
+
+    setArea(data.data);
   };
 
   if (isDefault) return null;
