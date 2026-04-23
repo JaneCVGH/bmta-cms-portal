@@ -26,7 +26,7 @@
   color: #000;
 }
 
-/*----ปุ่ม เพิ่ม ประเภท----*/
+/*----ปุ่ม สร้าง ประเภท----*/
 .AddBtnCaseType {
   background-color: #2ead6b;
   color: white;
@@ -44,13 +44,16 @@
   background-color: #14894c;
 }
 
-/* ---- List ของ CaseType (3 คอลัมน์) ---- */
+/* ---- List ของ CaseType (2 คอลัมน์) ---- */
 .CaseTypeList {
   display: grid;
-  grid-template-columns: repeat(3, 420px);
+  grid-template-columns: repeat(2, 1fr);
   justify-content: center;
-  grid-auto-rows: 1fr;
-  gap: 30px;
+  /* grid-auto-rows: 1fr; */
+  gap: 50px;
+
+  width: 80%;      
+  margin: 0 auto;
 }
 
 .CaseTypeColumn {
@@ -61,10 +64,9 @@
 
 /* ---- CaseType Card ----*/
 .CaseTypeBlock {
-  width: 420px;
-  height: 100%;
-  max-width: 420px;
-  min-width: 420px;
+  width: 100%;       
+  max-width: 100%;
+  min-width: 0;
 
   background-color: #ffffff;
   border: 1px solid #a8a8a8;
@@ -192,17 +194,24 @@
 }
 
 /*----ปุ่ม ดูประเภทย่อย ประเภท----*/
+.caretIcon {
+  font-weight: 900;
+  font-size: 1em; /* เท่าตัวอักษร */
+}
+
+.subtypeText {
+  font-weight: 400;
+  font-size: 1em; /* เท่ากัน */
+}
+
 .BtnCasesubType {
   background-color: #0c5dd5;/*#2ead6b   #14894c */
   margin-left: auto;
-  font-weight: bold;
-  width: 70px;
-  height: 40px;          
+  width: 150px;        
   /* padding: 0 20px;        */
   display: flex;
   align-items: center;
   gap: 6px;
-
 }
 .BtnCasesubType:hover {
   background-color: #023279;

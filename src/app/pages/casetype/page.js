@@ -97,9 +97,9 @@ export default function CaseTypesPage() {
   //ความสำคัญ
   const getPriorityLabelShort = (p) => {
     const n = Number(p);
-    if (n === 0 | n === 9) return "(ความสำคัญวิกฤต)";
+    if ((n === 0) | (n === 9)) return "(ความสำคัญวิกฤต)";
     if (n === 1 || n === 2) return `(ความสำคัญสูง)`;
-    return null; // 3–9 ไม่แสดง ${n}  0 
+    return null; // 3–9 ไม่แสดง ${n}  0
   };
 
   // เรียก CaseSubtypeListModal
@@ -689,9 +689,9 @@ export default function CaseTypesPage() {
                 <div className={styles.CaseTypeNameBlock}>
                   <div className={styles.CaseTypeTH}>{ct.th}</div>
                   <div className={styles.CaseTypeEN}>{ct.en}</div>
-                  <div className={styles.CountSubCasetype}>
+                  {/* <div className={styles.CountSubCasetype}>
                     ({ct.subtypeCount} ประเภทย่อย)
-                  </div>
+                  </div> */}
 
                   {editedCaseTypeIds.includes(ct.idCasetype) && (
                     <div className={styles.UpdateDate}>
@@ -755,7 +755,14 @@ export default function CaseTypesPage() {
                     setShowCaseSubtypeListModal(true);
                   }}
                 >
-                  <FontAwesomeIcon icon={faCaretDown} /> ({ct.subtypeCount})
+                  <span className={styles.subtypeText}>
+                    {ct.subtypeCount} ประเภทย่อย
+                  </span>
+
+                  <FontAwesomeIcon
+                    icon={faCaretDown}
+                    className={styles.caretIcon}
+                  />
                 </button>
               </div>
               {/* ----- CaseSubtype List ----- */}
